@@ -3,7 +3,7 @@ package org.example.combats;
 import net.kyori.adventure.sound.Sound;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.particle.Particle;
-import org.example.Utils.TKit;
+import org.example.utils.TKit;
 
 /**
  * Petit utilitaire statique : effets visuels/sonores liés au système de combat.

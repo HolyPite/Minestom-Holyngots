@@ -1,4 +1,4 @@
-package org.example.Utils.Explosion;
+package org.example.utils.Explosion;
 
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minestom.server.instance.Instance;

@@ -1,4 +1,4 @@
-package org.example.Utils;
+package org.example.utils;
 
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.instance.block.Block;

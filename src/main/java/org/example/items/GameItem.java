@@ -9,7 +9,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.item.component.AttributeList;
 import net.minestom.server.item.component.CustomModelData;
-import org.example.Utils.TKit;
+import org.example.utils.TKit;
 
 import java.util.*;
 

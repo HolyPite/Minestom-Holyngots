@@ -1,4 +1,4 @@
-package org.example.Utils.Explosion;
+package org.example.utils.Explosion;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -18,8 +18,8 @@ import net.minestom.server.network.packet.server.play.ParticlePacket;
 import net.minestom.server.particle.Particle;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
-import org.example.Utils.BlockWithPosition;
-import org.example.Utils.TKit;
+import org.example.utils.BlockWithPosition;
+import org.example.utils.TKit;
 
 import java.util.ArrayList;
 import java.util.List;

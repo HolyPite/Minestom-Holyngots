@@ -1,4 +1,4 @@
-package org.example.Utils;
+package org.example.utils;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -7,11 +7,6 @@ import net.kyori.adventure.text.format.TextColor;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.*;
-import net.minestom.server.entity.metadata.other.AreaEffectCloudMeta;
-import net.minestom.server.event.EventFilter;
-import net.minestom.server.event.EventNode;
-import net.minestom.server.event.entity.EntityTickEvent;
-import net.minestom.server.event.trait.EntityEvent;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
@@ -23,13 +18,10 @@ import net.minestom.server.potion.Potion;
 import net.minestom.server.potion.PotionEffect;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
-import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TKit {

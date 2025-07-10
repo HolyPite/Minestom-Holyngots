@@ -7,7 +7,7 @@ import net.minestom.server.component.DataComponents;
 import net.minestom.server.event.inventory.InventoryPreClickEvent;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
-import org.example.Utils.TKit;
+import org.example.utils.TKit;
 import org.example.combats.*;
 import org.example.items.*;
 import net.minestom.server.entity.Player;

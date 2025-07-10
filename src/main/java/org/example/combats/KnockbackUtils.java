@@ -2,7 +2,7 @@ package org.example.combats;
 
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.LivingEntity;
-import org.example.Utils.TKit;
+import org.example.utils.TKit;
 
 /** Aucune logique de dégâts ici – juste le déplacement. */
 public final class KnockbackUtils {

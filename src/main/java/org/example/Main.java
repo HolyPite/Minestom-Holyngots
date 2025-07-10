@@ -10,13 +10,12 @@ import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.LightingChunk;
 import net.minestom.server.instance.block.Block;
-import org.example.Utils.Explosion.ExplosionSupplierUtils;
+import org.example.utils.Explosion.ExplosionSupplierUtils;
 import org.example.combats.CombatListener;
 import org.example.commands.CommandRegister;
 import org.example.items.CustomItemEvents;
 import org.example.items.EquipItemEvent;
 import org.example.items.ItemBootstrap;
-import org.example.items.ItemRegistry;
 import org.example.items.itemsList.DEV.StatsGrimoire;
 
 public class Main {

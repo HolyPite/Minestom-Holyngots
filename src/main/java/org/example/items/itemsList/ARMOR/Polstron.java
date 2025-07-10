@@ -2,7 +2,7 @@ package org.example.items.itemsList.ARMOR;
 
 import net.kyori.adventure.text.format.TextColor;
 import net.minestom.server.item.Material;
-import org.example.Utils.TKit;
+import org.example.utils.TKit;
 import org.example.items.*;
 
 public final class Polstron {
