@@ -17,6 +17,8 @@ import org.example.items.CustomItemEvents;
 import org.example.items.EquipItemEvent;
 import org.example.items.ItemBootstrap;
 import org.example.items.itemsList.DEV.StatsGrimoire;
+import org.example.data.JsonPlayerDataRepository;
+import org.example.data.PlayerDataService;
 
 public class Main {
     public static void main(String[] args) {
@@ -28,6 +30,9 @@ public class Main {
         instance.setExplosionSupplier(ExplosionSupplierUtils.DEFAULT);
 
         GlobalEventHandler events = MinecraftServer.getGlobalEventHandler();
+
+        PlayerDataService dataService = new PlayerDataService(new JsonPlayerDataRepository());
+        dataService.init(events);
 
         // Gestion du spawn du joueur et du stack de laine rouge
         events.addListener(AsyncPlayerConfigurationEvent.class, event -> {

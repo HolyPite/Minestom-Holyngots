@@ -2,6 +2,8 @@
 
 This project is a small demo using the [Minestom](https://github.com/Minestom/Minestom) server framework. It demonstrates custom items, combat mechanics and other features implemented in `src/main/java`.
 
+Player data is persisted in the `playerdata` folder using JSON files. Each player gets a file named `<uuid>.json` containing their level, experience and inventory.
+
 ## Building
 
 The repository uses the Gradle build system. To compile the project, run:
