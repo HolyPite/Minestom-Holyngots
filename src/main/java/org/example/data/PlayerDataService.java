@@ -141,6 +141,12 @@ public class PlayerDataService {
                 .repeat(TaskSchedule.minutes(minutes))
                 .schedule();
         MinecraftServer.getSchedulerManager().buildShutdownTask(this::saveAll);
+        registerShutdownHook();
+    }
+
+    /** Registers a shutdown hook to persist all player data. */
+    public void registerShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(this::saveAll));
     }
 
     /** Saves all cached player data to the repository. */
