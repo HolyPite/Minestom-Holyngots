@@ -6,8 +6,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.entity.LivingEntity;
-import net.minestom.server.entity.attribute.Attribute;
-import org.example.items.StatType;
+import org.example.items.datas.StatType;
 
 public final class HealthUtils {
 

@@ -3,16 +3,16 @@ package org.example.data;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.inventory.InventoryItemChangeEvent;
-import net.minestom.server.event.item.PickupExperienceEvent;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.inventory.PlayerInventory;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import org.example.data.data_class.PlayerData;
 import org.example.items.GameItem;
 import org.example.items.ItemRegistry;
 import org.example.items.ItemUtils;
-import org.example.data.ItemData;
+import org.example.data.data_class.ItemData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,8 +36,8 @@ public class PlayerDataService {
             cache.put(player.getUuid(), data);
 
             // Apply saved stats to the player
-            player.setLevel(data.level);
-            player.setExp(data.experience / 100f);
+            //player.setLevel(data.level);
+            //player.setExp(data.experience / 100f);
 
             PlayerInventory inv = player.getInventory();
             inv.clear();
@@ -62,7 +62,7 @@ public class PlayerDataService {
             }
         });
 
-        // Update experience and level when picking up xp orbs
+        /* Update experience and level when picking up xp orbs
         events.addListener(PickupExperienceEvent.class, e -> {
             Player player = e.getPlayer();
             PlayerData data = cache.get(player.getUuid());
@@ -70,7 +70,7 @@ public class PlayerDataService {
                 data.level = player.getLevel();
                 data.experience = Math.round(player.getExp() * 100);
             }
-        });
+        });*/
 
         events.addListener(PlayerDisconnectEvent.class, event -> {
             Player player = event.getPlayer();
@@ -78,11 +78,12 @@ public class PlayerDataService {
             if (data != null) {
                 // Sync inventory/exp one last time before saving
                 updateInventory(player, data);
-                data.level = player.getLevel();
-                data.experience = Math.round(player.getExp() * 100);
+                //data.level = player.getLevel();
+                //data.experience = Math.round(player.getExp() * 100);
                 repository.save(data);
             }
         });
+
     }
 
     public PlayerData get(Player player) {

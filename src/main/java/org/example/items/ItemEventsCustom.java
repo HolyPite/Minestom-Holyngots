@@ -8,7 +8,6 @@ import net.minestom.server.entity.PlayerHand;
 import net.minestom.server.event.*;
 import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.event.entity.EntityTickEvent;
-import net.minestom.server.event.inventory.InventoryClickEvent;
 import net.minestom.server.event.inventory.InventoryItemChangeEvent;
 import net.minestom.server.event.inventory.InventoryPreClickEvent;
 import net.minestom.server.event.player.PlayerBlockPlaceEvent;
@@ -20,7 +19,7 @@ import net.minestom.server.item.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class CustomItemEvents {
+public final class ItemEventsCustom {
 
     /* ------------------------------------------------------------------ */
     /* 1)  public API – registration                                       */
@@ -29,7 +28,7 @@ public final class CustomItemEvents {
 
         //Inventory clic
         default void onInventoryClic(Player p, ItemStack stack, InventoryPreClickEvent e) {}
-        //default void onInventoryChange(ItemStack stack, InventoryItemChangeEvent e) {}
+        default void onInventoryChange(ItemStack stack, InventoryItemChangeEvent e) {}
 
         //Left-Clic
         default void onLeftClickAir(Player p, ItemStack stack) {}
@@ -41,6 +40,7 @@ public final class CustomItemEvents {
 
         //Every tick
         default void onHeldTick(Player p, ItemStack held) {}
+
     }
 
     private static final Map<String, Behaviour> BEHAVIOURS = new HashMap<>();
@@ -63,7 +63,7 @@ public final class CustomItemEvents {
             }
         });
 
-        /* Inventory Change ------------------------------------------------
+        /* Inventory Change ------------------------------------------------*/
         events.addListener(InventoryItemChangeEvent.class, e -> {
             Behaviour b1 = behaviour(e.getPreviousItem());
             Behaviour b2 = behaviour(e.getNewItem());
@@ -73,7 +73,7 @@ public final class CustomItemEvents {
             if (b2 != null) {
                 b2.onInventoryChange(e.getNewItem(),e);
             }
-        });*/
+        });
 
         /* right-click air ------------------------------------------------ */
         events.addListener(PlayerUseItemEvent.class, e -> {
@@ -138,5 +138,5 @@ public final class CustomItemEvents {
         return gi == null ? null : BEHAVIOURS.get(gi.id);
     }
 
-    private CustomItemEvents() {}
+    private ItemEventsCustom() {}
 }

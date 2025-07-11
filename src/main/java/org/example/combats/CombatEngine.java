@@ -4,10 +4,11 @@ package org.example.combats;
 import net.minestom.server.entity.*;
 import net.minestom.server.item.ItemStack;
 import org.example.items.*;
+import org.example.items.datas.StatType;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import static org.example.items.StatMap.ATTR_MAP;
+import static org.example.items.datas.StatMap.ATTR_MAP;
 
 public final class CombatEngine {
 

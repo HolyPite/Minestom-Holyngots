@@ -9,6 +9,10 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.item.component.AttributeList;
 import net.minestom.server.item.component.CustomModelData;
+import org.example.items.datas.Category;
+import org.example.items.datas.Rarity;
+import org.example.items.datas.StatMap;
+import org.example.items.datas.StatType;
 import org.example.utils.TKit;
 
 import java.util.*;

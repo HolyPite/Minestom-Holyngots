@@ -2,6 +2,7 @@ package org.example.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.example.data.data_class.PlayerData;
 
 import java.io.IOException;
 import java.io.Reader;

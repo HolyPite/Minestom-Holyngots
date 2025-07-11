@@ -13,8 +13,8 @@ import net.minestom.server.instance.block.Block;
 import org.example.utils.Explosion.ExplosionSupplierUtils;
 import org.example.combats.CombatListener;
 import org.example.commands.CommandRegister;
-import org.example.items.CustomItemEvents;
-import org.example.items.EquipItemEvent;
+import org.example.items.ItemEventsCustom;
+import org.example.items.ItemEventsGlobal;
 import org.example.items.ItemBootstrap;
 import org.example.items.itemsList.DEV.StatsGrimoire;
 import org.example.data.JsonPlayerDataRepository;
@@ -46,8 +46,8 @@ public class Main {
             player.getInventory().setItemStack( 17,StatsGrimoire.ITEM.toItemStack());
         });
 
-        EquipItemEvent.init(events);
-        CustomItemEvents.init(events);
+        ItemEventsGlobal.init(events);
+        ItemEventsCustom.init(events);
         CombatListener.init(events);
         CommandRegister.init();
         ItemBootstrap.init();

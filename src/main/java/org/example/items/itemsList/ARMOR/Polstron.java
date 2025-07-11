@@ -2,6 +2,9 @@ package org.example.items.itemsList.ARMOR;
 
 import net.kyori.adventure.text.format.TextColor;
 import net.minestom.server.item.Material;
+import org.example.items.datas.Category;
+import org.example.items.datas.Rarity;
+import org.example.items.datas.StatType;
 import org.example.utils.TKit;
 import org.example.items.*;
 

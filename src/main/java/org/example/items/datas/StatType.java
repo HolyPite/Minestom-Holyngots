@@ -1,8 +1,8 @@
-package org.example.items;
+package org.example.items.datas;
 
-import static org.example.items.StatType.ValueKind.FLAT;
-import static org.example.items.StatType.ValueKind.PERCENT;
-import static org.example.items.StatType.ValueKind.PROBA;
+import static org.example.items.datas.StatType.ValueKind.FLAT;
+import static org.example.items.datas.StatType.ValueKind.PERCENT;
+import static org.example.items.datas.StatType.ValueKind.PROBA;
 
 public enum StatType {
 

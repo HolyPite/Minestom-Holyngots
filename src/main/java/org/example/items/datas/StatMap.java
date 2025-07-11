@@ -1,4 +1,4 @@
-package org.example.items;
+package org.example.items.datas;
 
 import net.minestom.server.entity.attribute.Attribute;
 

@@ -1,7 +1,7 @@
 package org.example.combats;
 
 import net.minestom.server.entity.LivingEntity;
-import org.example.items.StatType;
+import org.example.items.datas.StatType;
 
 // org.example.combats.AttackSpeedManager
 public final class AttackSpeedManager {
