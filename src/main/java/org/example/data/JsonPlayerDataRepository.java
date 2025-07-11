@@ -40,6 +40,8 @@ public class JsonPlayerDataRepository implements PlayerDataRepository {
         try (Reader r = Files.newBufferedReader(file)) {
             PlayerData data = gson.fromJson(r, PlayerData.class);
             if (data == null) data = new PlayerData(playerId);
+            System.out.println("loggin");
+            System.out.println(data.inventory);
             return data;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -51,6 +53,8 @@ public class JsonPlayerDataRepository implements PlayerDataRepository {
         Path file = folder.resolve(data.uuid.toString() + ".json");
         try (Writer w = Files.newBufferedWriter(file)) {
             gson.toJson(data, w);
+            System.out.println("logout");
+            System.out.println(data.inventory);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

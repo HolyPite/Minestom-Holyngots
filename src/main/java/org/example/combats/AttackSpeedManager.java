@@ -9,7 +9,7 @@ public final class AttackSpeedManager {
     public static double getCharge(LivingEntity attacker) {
 
         long now = attacker.getInstance().getTime();      // tick courant
-        Long lastObj = attacker.getTag(CombatTags.LAST_HIT_TICK);
+        Long lastObj = attacker.getTag(CombatTags.LAST_ATTACK_TICK);
 
         if (lastObj == null) return 1.0;
 
@@ -26,9 +26,26 @@ public final class AttackSpeedManager {
         return Math.min(200,Math.max(1.0, cooldown));                      // sécurité div/0 et <10 sec
     }
 
+    public static boolean getImmunity(LivingEntity victim) {
+
+        // Tick courant de l’instance
+        long now = victim.getInstance().getTime();
+
+        // Dernier tick où la cible a pris un coup
+        Long last = victim.getTag(CombatTags.LAST_VICTIM_TICK);
+        if (last == null) return false;               // jamais touché → pas d’immunité
+
+    /* 0,2 s  ≃ 4 ticks (20 t/s) :
+       True  → encore sous « immunité »
+       False → on peut de nouveau infliger des dégâts           */
+        return now - last < 10;
+    }
+
+
     /** Mémorise la date du coup (à appeler dès que le swing est validé) */
-    public static void markAttack(LivingEntity attacker) {
-        attacker.setTag(CombatTags.LAST_HIT_TICK, attacker.getInstance().getTime());
+    public static void markAttack(LivingEntity attacker, LivingEntity victim) {
+        attacker.setTag(CombatTags.LAST_ATTACK_TICK, attacker.getInstance().getTime());
+        victim.setTag(CombatTags.LAST_VICTIM_TICK, victim.getInstance().getTime());
     }
 
     private AttackSpeedManager() {}

@@ -22,7 +22,7 @@ public final class StatsGrimoire {
                     TKit.createGradientText("Grimoire des Stats", NamedTextColor.GOLD, NamedTextColor.YELLOW))
                     .category(Category.MISC)
                     .rarity(Rarity.UNCOMMON)
-                    .material(Material.BOOK)
+                    .material(Material.WRITTEN_BOOK)
                     .tradable(false)
                     .stackSize(1)
                     .story("Clic-droit (air ou bloc) pour","afficher vos attributs actuels.")
@@ -39,14 +39,6 @@ public final class StatsGrimoire {
                 updateStats(p,stack,e);
                 e.setCancelled(true);
             }
-
-            /*@Override
-            public void onInventoryChange(ItemStack stack, InventoryItemChangeEvent e) {
-                updateStats(p);
-                e.setCancelled(true);
-            }*/
-
-
 
             private void updateStats(Player player, ItemStack stack, InventoryPreClickEvent e) {
 
@@ -66,7 +58,6 @@ public final class StatsGrimoire {
 
                 ItemStack it = stack.with(DataComponents.LORE,lines);
                 player.getInventory().setItemStack(e.getSlot(),it);
-                //lines.forEach(player::sendMessage);
             }
         });
     }

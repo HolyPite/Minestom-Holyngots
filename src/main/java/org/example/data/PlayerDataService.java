@@ -36,8 +36,8 @@ public class PlayerDataService {
             cache.put(player.getUuid(), data);
 
             // Apply saved stats to the player
-            player.setLevel(data.level);
-            player.setExp(data.experience / 100f);
+            //player.setLevel(data.level);
+            //player.setExp(data.experience / 100f);
 
             PlayerInventory inv = player.getInventory();
             inv.clear();
@@ -58,7 +58,7 @@ public class PlayerDataService {
             }
         });
 
-        // Update experience and level when picking up xp orbs
+        /* Update experience and level when picking up xp orbs
         events.addListener(PickupExperienceEvent.class, e -> {
             Player player = e.getPlayer();
             PlayerData data = cache.get(player.getUuid());
@@ -66,7 +66,7 @@ public class PlayerDataService {
                 data.level = player.getLevel();
                 data.experience = Math.round(player.getExp() * 100);
             }
-        });
+        });*/
 
         events.addListener(PlayerDisconnectEvent.class, event -> {
             Player player = event.getPlayer();
@@ -74,8 +74,8 @@ public class PlayerDataService {
             if (data != null) {
                 // Sync inventory/exp one last time before saving
                 updateInventory(player, data);
-                data.level = player.getLevel();
-                data.experience = Math.round(player.getExp() * 100);
+                //data.level = player.getLevel();
+                //data.experience = Math.round(player.getExp() * 100);
                 repository.save(data);
             }
         });

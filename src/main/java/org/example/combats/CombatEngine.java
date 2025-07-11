@@ -29,7 +29,8 @@ public final class CombatEngine {
         double charge   = AttackSpeedManager.getCharge(attacker);
         double cdFactor = computeCDFactor(charge);
         //System.out.println(cdFactor);
-        AttackSpeedManager.markAttack(attacker);
+        if (AttackSpeedManager.getImmunity(victim)) return 0;
+        AttackSpeedManager.markAttack(attacker,victim);
 
         ThreadLocalRandom rnd = ThreadLocalRandom.current();
 
@@ -78,8 +79,8 @@ public final class CombatEngine {
     /* -------- Charge-Damage factor -------- */
     private static double computeCDFactor(double charge) {
         if (charge < 0.20)        return 0;                     // spam total
-        if (charge < 0.99)        return 0.70 * charge * charge;
-        if (charge <= 1.01)       return 1.05;                  // perfect timing
+        if (charge < 0.95)        return 0.50 * charge * charge;
+        if (charge <= 1.05)       return 1.05;                  // perfect timing
         return 1.0;                                             // fully recharged
     }
 

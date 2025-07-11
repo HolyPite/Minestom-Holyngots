@@ -11,8 +11,7 @@ public class CombatListener {
                         Entity damager = evt.getEntity();
                         Entity target  = evt.getTarget();
                         if (!(damager instanceof LivingEntity attacker) || !(target  instanceof LivingEntity victim)) return;
-                        CombatEngine.computeDamage(attacker, victim);
-                        victim.damage(Damage.fromEntity(attacker,0));
+                        if (CombatEngine.computeDamage(attacker, victim) != 0) victim.damage(Damage.fromEntity(attacker,0));
             });
         };
 }
