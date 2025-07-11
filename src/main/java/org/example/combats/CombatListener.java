@@ -3,10 +3,11 @@ package org.example.combats;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.damage.Damage;
-import net.minestom.server.event.GlobalEventHandler;
+import net.minestom.server.event.Event;
+import net.minestom.server.event.EventNode;
 
 public class CombatListener {
-        public static void init(GlobalEventHandler events){
+        public static void init(EventNode<Event> events){
                 events.addListener(net.minestom.server.event.entity.EntityAttackEvent.class, evt -> {
                         Entity damager = evt.getEntity();
                         Entity target  = evt.getTarget();

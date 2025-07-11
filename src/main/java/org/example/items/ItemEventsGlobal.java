@@ -4,7 +4,8 @@ import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.attribute.Attribute;
 import net.minestom.server.entity.attribute.AttributeInstance;
-import net.minestom.server.event.GlobalEventHandler;
+import net.minestom.server.event.Event;
+import net.minestom.server.event.EventNode;
 import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.event.inventory.InventoryItemChangeEvent;
 import net.minestom.server.event.player.PlayerChangeHeldSlotEvent;
@@ -14,7 +15,7 @@ import org.example.combats.AttackSpeedManager;
 import org.example.items.datas.Stats;
 
 public class ItemEventsGlobal {
-    public static void init(GlobalEventHandler events){
+    public static void init(EventNode<Event> events){
 
         //update attack speed
         events.addListener(EntityAttackEvent.class, e -> {
