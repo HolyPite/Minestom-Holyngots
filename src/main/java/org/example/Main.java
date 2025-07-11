@@ -33,6 +33,7 @@ public class Main {
 
         PlayerDataService dataService = new PlayerDataService(new JsonPlayerDataRepository());
         dataService.init(events);
+        dataService.startAutoSave();
 
         // Gestion du spawn du joueur et du stack de laine rouge
         events.addListener(AsyncPlayerConfigurationEvent.class, event -> {
