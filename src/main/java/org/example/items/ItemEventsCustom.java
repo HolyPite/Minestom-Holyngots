@@ -5,7 +5,8 @@ import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerHand;
-import net.minestom.server.event.*;
+import net.minestom.server.event.Event;
+import net.minestom.server.event.EventNode;
 import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.event.entity.EntityTickEvent;
 import net.minestom.server.event.inventory.InventoryItemChangeEvent;
@@ -53,7 +54,7 @@ public final class ItemEventsCustom {
     /* ------------------------------------------------------------------ */
     /* 2)  single wiring on the global event bus                           */
     /* ------------------------------------------------------------------ */
-    public static void init(GlobalEventHandler events) {
+    public static void init(EventNode<Event> events) {
 
         /* Inventory clic ------------------------------------------------ */
         events.addListener(InventoryPreClickEvent.class, e -> {

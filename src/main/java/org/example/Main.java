@@ -4,6 +4,8 @@ package org.example;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.*;
+import net.minestom.server.event.Event;
+import net.minestom.server.event.EventNode;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.extras.MojangAuth;
@@ -31,25 +33,33 @@ public class Main {
     public static void main(String[] args) {
         MinecraftServer server = MinecraftServer.init();
 
-        InstanceContainer instance = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader("main_land"));
-        instance.setGenerator(u -> u.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
-        instance.setChunkSupplier(LightingChunk::new);
-        instance.setExplosionSupplier(ExplosionSupplierUtils.DEFAULT);
+        InstanceContainer gameInstance = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader("main_land"));
+        gameInstance.setGenerator(u -> u.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
+        gameInstance.setChunkSupplier(LightingChunk::new);
+        gameInstance.setExplosionSupplier(ExplosionSupplierUtils.DEFAULT);
+
+        InstanceContainer buildInstance = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader("build_world"));
+        buildInstance.setGenerator(u -> u.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
+        buildInstance.setChunkSupplier(LightingChunk::new);
+        buildInstance.setExplosionSupplier(ExplosionSupplierUtils.DEFAULT);
+
+        EventNode<Event> gameNode = (EventNode<Event>)(EventNode<?>) gameInstance.eventNode();
+        EventNode<Event> buildNode = (EventNode<Event>)(EventNode<?>) buildInstance.eventNode();
 
         GlobalEventHandler events = MinecraftServer.getGlobalEventHandler();
 
         PlayerDataService dataService = new PlayerDataService(new JsonPlayerDataRepository());
-        dataService.init(events);
+        dataService.init(gameNode);
         dataService.startAutoSave();
 
         // Gestion du spawn du joueur et du stack de laine rouge
         events.addListener(AsyncPlayerConfigurationEvent.class, event -> {
             Player player = event.getPlayer();
-            event.setSpawningInstance(instance);
+            event.setSpawningInstance(gameInstance);
             player.setRespawnPoint(new Pos(0, 42, 0));
 
             EntityCreature warden = new EntityCreature(EntityType.WARDEN);
-            warden.setInstance(instance,new Pos(0, 42, 0));
+            warden.setInstance(gameInstance,new Pos(0, 42, 0));
             
             player.getInventory().setItemStack( 17,StatsGrimoire.ITEM.toItemStack());
 
@@ -58,9 +68,9 @@ public class Main {
             }).delay(TaskSchedule.tick(1)).schedule();
         });
 
-        ItemEventsGlobal.init(events);
-        ItemEventsCustom.init(events);
-        CombatListener.init(events);
+        ItemEventsGlobal.init(gameNode);
+        ItemEventsCustom.init(gameNode);
+        CombatListener.init(gameNode);
         CommandRegister.init();
         ItemBootstrap.init();
 

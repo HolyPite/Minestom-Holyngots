@@ -2,7 +2,8 @@ package org.example.data;
 
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
-import net.minestom.server.event.GlobalEventHandler;
+import net.minestom.server.event.Event;
+import net.minestom.server.event.EventNode;
 import net.minestom.server.event.inventory.InventoryItemChangeEvent;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
@@ -33,7 +34,7 @@ public class PlayerDataService {
         this.repository = repository;
     }
 
-    public void init(GlobalEventHandler events) {
+    public void init(EventNode<Event> events) {
         events.addListener(AsyncPlayerConfigurationEvent.class, event -> {
             Player player = event.getPlayer();
             PlayerData data = repository.load(player.getUuid());
