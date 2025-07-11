@@ -1,11 +1,13 @@
 package org.example.data;
 
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.inventory.InventoryItemChangeEvent;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.inventory.PlayerInventory;
+import net.minestom.server.timer.TaskSchedule;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import org.example.data.data_class.PlayerData;
@@ -24,6 +26,8 @@ import java.util.UUID;
 public class PlayerDataService {
     private final PlayerDataRepository repository;
     private final Map<UUID, PlayerData> cache = new HashMap<>();
+
+    private static final long DEFAULT_AUTOSAVE_MINUTES = 2;
 
     public PlayerDataService(PlayerDataRepository repository) {
         this.repository = repository;
@@ -123,5 +127,30 @@ public class PlayerDataService {
         Material mat = Material.fromKey(data.itemId);
         if (mat == null) mat = Material.AIR;
         return ItemStack.of(mat).withAmount(data.amount);
+    }
+
+    /** Starts the periodic auto-save task using the default interval. */
+    public void startAutoSave() {
+        startAutoSave(DEFAULT_AUTOSAVE_MINUTES);
+    }
+
+    /** Starts the periodic auto-save task using the specified interval in minutes. */
+    public void startAutoSave(long minutes) {
+        MinecraftServer.getSchedulerManager().buildTask(this::saveAll)
+                .delay(TaskSchedule.minutes(minutes))
+                .repeat(TaskSchedule.minutes(minutes))
+                .schedule();
+        MinecraftServer.getSchedulerManager().buildShutdownTask(this::saveAll);
+    }
+
+    /** Saves all cached player data to the repository. */
+    public void saveAll() {
+        cache.forEach((uuid, data) -> {
+            Player player = MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(uuid);
+            if (player != null) {
+                updateInventory(player, data);
+            }
+            repository.save(data);
+        });
     }
 }
