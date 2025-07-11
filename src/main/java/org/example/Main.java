@@ -10,6 +10,8 @@ import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.LightingChunk;
 import net.minestom.server.instance.block.Block;
+import net.minestom.server.timer.TaskSchedule;
+import org.example.items.datas.Stats;
 import org.example.utils.Explosion.ExplosionSupplierUtils;
 import org.example.combats.CombatListener;
 import org.example.commands.CommandRegister;
@@ -45,6 +47,10 @@ public class Main {
             warden.setInstance(instance,new Pos(0, 42, 0));
             
             player.getInventory().setItemStack( 17,StatsGrimoire.ITEM.toItemStack());
+
+            player.scheduler().buildTask(() -> {
+                Stats.refresh(player);
+            }).delay(TaskSchedule.tick(1)).schedule();
         });
 
         ItemEventsGlobal.init(events);

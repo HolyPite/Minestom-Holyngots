@@ -27,7 +27,7 @@ public class PlayerDataService {
     private final PlayerDataRepository repository;
     private final Map<UUID, PlayerData> cache = new HashMap<>();
 
-    private static final long DEFAULT_AUTOSAVE_MINUTES = 2;
+    private static final long DEFAULT_AUTOSAVE_MINUTES = 1;
 
     public PlayerDataService(PlayerDataRepository repository) {
         this.repository = repository;
