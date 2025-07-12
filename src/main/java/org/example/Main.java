@@ -100,7 +100,7 @@ public class Main {
 
         dataService.startAutoSave();
 
-        dataService.init(gameNode);
+        dataService.init(gameNode, GAME_INSTANCES);
         CombatListener.init(gameNode);
         ItemEventsGlobal.init(gameNode);
         ItemEventsCustom.init(gameNode);
