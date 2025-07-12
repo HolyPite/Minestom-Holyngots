@@ -8,6 +8,7 @@ import net.minestom.server.instance.anvil.AnvilLoader;
 import net.minestom.server.instance.block.Block;
 import org.example.utils.Explosion.ExplosionSupplierUtils;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -22,6 +23,9 @@ public final class InstancesInit {
     public static final InstanceContainer GAME_INSTANCE_2;
     public static final InstanceContainer BUILD_INSTANCE_1;
 
+    /** Accès simplifié aux instances par nom. */
+    public static final Map<String, InstanceContainer> INSTANCE_BY_NAME;
+
     /** Ensemble pratique pour itérer sur les instances de jeu. */
     public static final Set<Instance> GAME_INSTANCES;
 
@@ -34,6 +38,12 @@ public final class InstancesInit {
         BUILD_INSTANCE_1 = createInstance("worlds/BUILD_INSTANCE_1");
 
         GAME_INSTANCES = Set.of(GAME_INSTANCE_1, GAME_INSTANCE_2);
+
+        INSTANCE_BY_NAME = Map.of(
+                "game1", GAME_INSTANCE_1,
+                "game2", GAME_INSTANCE_2,
+                "build1", BUILD_INSTANCE_1
+        );
     }
 
     /**
@@ -48,6 +58,14 @@ public final class InstancesInit {
      */
     public static void init() {
         /* Rien à faire : le bloc static a déjà créé les instances. */
+    }
+
+    /**
+     * Retourne l'instance correspondant au nom indiqué (null si inconnue).
+     */
+    public static InstanceContainer get(String name) {
+        if (name == null) return null;
+        return INSTANCE_BY_NAME.get(name.toLowerCase());
     }
 
     /* ------------------------------------------------------------------ */
