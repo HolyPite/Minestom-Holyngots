@@ -1,4 +1,4 @@
-package org.example.mmo.data.data_class;
+package org.example.data.data_class;
 
 import java.util.ArrayList;
 import java.util.List;

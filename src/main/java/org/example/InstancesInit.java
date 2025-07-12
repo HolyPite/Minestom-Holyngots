@@ -22,12 +22,14 @@ public final class InstancesInit {
     public static final InstanceContainer GAME_INSTANCE_1;
     public static final InstanceContainer GAME_INSTANCE_2;
     public static final InstanceContainer BUILD_INSTANCE_1;
-
-    /** Accès simplifié aux instances par nom. */
-    public static final Map<String, InstanceContainer> INSTANCE_BY_NAME;
+    public static final InstanceContainer BUILD_INSTANCE_2;
 
     /** Ensemble pratique pour itérer sur les instances de jeu. */
     public static final Set<Instance> GAME_INSTANCES;
+    public static final Set<Instance> BUILD_INSTANCES;
+
+    /** Accès simplifié aux instances par nom. */
+    public static final Map<String, InstanceContainer> INSTANCE_BY_NAME;
 
     /* ------------------------------------------------------------------ */
     /* Bloc static – exécuté une fois lorsque la classe est chargée        */
@@ -36,13 +38,16 @@ public final class InstancesInit {
         GAME_INSTANCE_1 = createInstance("worlds/GAME_INSTANCE_1");
         GAME_INSTANCE_2 = createInstance("worlds/GAME_INSTANCE_2");
         BUILD_INSTANCE_1 = createInstance("worlds/BUILD_INSTANCE_1");
+        BUILD_INSTANCE_2 = createInstance("worlds/BUILD_INSTANCE_2");
 
         GAME_INSTANCES = Set.of(GAME_INSTANCE_1, GAME_INSTANCE_2);
+        BUILD_INSTANCES = Set.of(BUILD_INSTANCE_1, BUILD_INSTANCE_2);
 
         INSTANCE_BY_NAME = Map.of(
                 "game1", GAME_INSTANCE_1,
                 "game2", GAME_INSTANCE_2,
-                "build1", BUILD_INSTANCE_1
+                "build1", BUILD_INSTANCE_1,
+                "build2", BUILD_INSTANCE_2
         );
     }
 

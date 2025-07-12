@@ -1,4 +1,4 @@
-package org.example.mmo.data;
+package org.example.data;
 
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
@@ -15,13 +15,12 @@ import net.minestom.server.timer.TaskSchedule;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import org.example.InstancesInit;
-import org.example.mmo.data.data_class.PlayerData;
+import org.example.data.data_class.PlayerData;
 import org.example.mmo.items.GameItem;
 import org.example.mmo.items.ItemRegistry;
 import org.example.mmo.items.ItemUtils;
-import org.example.mmo.data.data_class.ItemData;
+import org.example.data.data_class.ItemData;
 import org.example.mmo.items.datas.Stats;
-import org.example.mmo.items.itemsList.DEV.StatsGrimoire;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -75,6 +74,7 @@ public class PlayerDataService {
                         inv.addItemStack(dataToItem(itemData));
                     }
                 }
+
                 Stats.refresh(player);
             }
 

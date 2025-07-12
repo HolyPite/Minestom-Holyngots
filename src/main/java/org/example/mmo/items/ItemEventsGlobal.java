@@ -44,6 +44,7 @@ public class ItemEventsGlobal {
         playerNode.addListener(PlayerChangeHeldSlotEvent.class, e -> {
             Player p = e.getEntity();
             p.scheduler().buildTask(() -> {
+
                 Stats.refresh(p);
             }).delay(TaskSchedule.tick(1)).schedule();
         });

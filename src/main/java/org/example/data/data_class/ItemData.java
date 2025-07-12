@@ -1,4 +1,4 @@
-package org.example.mmo.data.data_class;
+package org.example.data.data_class;
 
 /**
  * Identifier of an item and its amount for storage.
