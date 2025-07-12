@@ -61,7 +61,7 @@ public final class NodesManagement {
     /* ------------------------------------------------------------------ */
 
     private static final PlayerDataService DATA_SERVICE =
-            new PlayerDataService(new JsonPlayerDataRepository());
+            new PlayerDataService(new JsonPlayerDataRepository(), InstancesInit.INSTANCE_GROUPS);
 
     /* ------------------------------------------------------------------ */
     /* Bloc static : exécuté une seule fois au chargement de la classe     */
@@ -79,7 +79,7 @@ public final class NodesManagement {
 
         // — Initialisation des systèmes annexes
         DATA_SERVICE.startAutoSave();
-        DATA_SERVICE.init(GAME_NODE);
+        DATA_SERVICE.init(GLOBAL_EVENTS);
 
         CombatListener.init(GAME_NODE);
         ItemEventsGlobal.init(GAME_NODE);

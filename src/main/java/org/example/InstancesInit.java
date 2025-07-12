@@ -8,8 +8,7 @@ import net.minestom.server.instance.anvil.AnvilLoader;
 import net.minestom.server.instance.block.Block;
 import org.example.utils.Explosion.ExplosionSupplierUtils;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Classe utilitaire chargée de créer et d’exposer les instances Minestom.
@@ -27,6 +26,12 @@ public final class InstancesInit {
     /** Ensemble pratique pour itérer sur les instances de jeu. */
     public static final Set<Instance> GAME_INSTANCES;
     public static final Set<Instance> BUILD_INSTANCES;
+
+    /** Mapping of group name to their instances. */
+    public static final Map<String, Set<Instance>> INSTANCE_GROUPS;
+
+    /** Reverse mapping to retrieve the group of a given instance. */
+    private static final Map<Instance, String> GROUP_BY_INSTANCE;
 
     /** Accès simplifié aux instances par nom. */
     public static final Map<String, InstanceContainer> INSTANCE_BY_NAME;
@@ -49,6 +54,15 @@ public final class InstancesInit {
                 "build1", BUILD_INSTANCE_1,
                 "build2", BUILD_INSTANCE_2
         );
+
+        INSTANCE_GROUPS = Map.of(
+                "game", GAME_INSTANCES,
+                "build", BUILD_INSTANCES
+        );
+
+        Map<Instance, String> map = new HashMap<>();
+        INSTANCE_GROUPS.forEach((name, set) -> set.forEach(inst -> map.put(inst, name)));
+        GROUP_BY_INSTANCE = Map.copyOf(map);
     }
 
     /**
@@ -71,6 +85,11 @@ public final class InstancesInit {
     public static InstanceContainer get(String name) {
         if (name == null) return null;
         return INSTANCE_BY_NAME.get(name.toLowerCase());
+    }
+
+    /** Returns the group name for the specified instance, or null if none. */
+    public static String getGroup(Instance instance) {
+        return GROUP_BY_INSTANCE.get(instance);
     }
 
     /* ------------------------------------------------------------------ */
