@@ -4,8 +4,7 @@ package org.example;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.*;
-import net.minestom.server.event.Event;
-import net.minestom.server.event.EventNode;
+
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.extras.MojangAuth;
@@ -25,6 +24,9 @@ import org.example.items.ItemBootstrap;
 import org.example.items.itemsList.DEV.StatsGrimoire;
 import org.example.data.JsonPlayerDataRepository;
 import org.example.data.PlayerDataService;
+import net.minestom.server.event.EventNode;
+import net.minestom.server.event.EventFilter;
+import net.minestom.server.event.trait.InstanceEvent;
 
 import java.time.Duration;
 @SuppressWarnings("unchecked")
@@ -43,10 +45,11 @@ public class Main {
         buildInstance.setChunkSupplier(LightingChunk::new);
         buildInstance.setExplosionSupplier(ExplosionSupplierUtils.DEFAULT);
 
-        EventNode<Event> gameNode = (EventNode<Event>)(EventNode<?>) gameInstance.eventNode();
-        EventNode<Event> buildNode = (EventNode<Event>)(EventNode<?>) buildInstance.eventNode();
-
         GlobalEventHandler events = MinecraftServer.getGlobalEventHandler();
+        EventNode<InstanceEvent> gameNode  = EventNode.value("game-node", EventFilter.INSTANCE, inst -> inst == gameInstance);
+        EventNode<InstanceEvent> buildNode = EventNode.value("build-node", EventFilter.INSTANCE, inst -> inst == buildInstance);
+        events.addChild(gameNode);
+        events.addChild(buildNode);
 
         PlayerDataService dataService = new PlayerDataService(new JsonPlayerDataRepository());
         dataService.init(events);
@@ -68,8 +71,8 @@ public class Main {
             }).delay(TaskSchedule.tick(1)).schedule();
         });
 
-        ItemEventsGlobal.init(gameNode);
-        ItemEventsCustom.init(gameNode);
+        ItemEventsGlobal.init(events, gameNode);
+        ItemEventsCustom.init(events, gameNode);
         CombatListener.init(gameNode);
         CommandRegister.init();
         ItemBootstrap.init();

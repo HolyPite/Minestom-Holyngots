@@ -7,6 +7,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerHand;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
+import net.minestom.server.event.trait.InstanceEvent;
 import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.event.entity.EntityTickEvent;
 import net.minestom.server.event.inventory.InventoryItemChangeEvent;
@@ -53,11 +54,13 @@ public final class ItemEventsCustom {
 
     /* ------------------------------------------------------------------ */
     /* 2)  single wiring on the global event bus                           */
-    /* ------------------------------------------------------------------ */
-    public static void init(EventNode<Event> events) {
+    /*     globalEvents receives non-instance events
+     *     instanceEvents is attached to a specific world
+     */
+    public static void init(EventNode<Event> globalEvents, EventNode<InstanceEvent> instanceEvents) {
 
         /* Inventory clic ------------------------------------------------ */
-        events.addListener(InventoryPreClickEvent.class, e -> {
+        instanceEvents.addListener(InventoryPreClickEvent.class, e -> {
             Behaviour b = behaviour(e.getClickedItem());
             if (b != null) {
                 b.onInventoryClic(e.getPlayer(), e.getClickedItem(), e);
@@ -65,7 +68,7 @@ public final class ItemEventsCustom {
         });
 
         /* Inventory Change ------------------------------------------------*/
-        events.addListener(InventoryItemChangeEvent.class, e -> {
+        globalEvents.addListener(InventoryItemChangeEvent.class, e -> {
             Behaviour b1 = behaviour(e.getPreviousItem());
             Behaviour b2 = behaviour(e.getNewItem());
             if (b1 != null) {
@@ -77,7 +80,7 @@ public final class ItemEventsCustom {
         });
 
         /* right-click air ------------------------------------------------ */
-        events.addListener(PlayerUseItemEvent.class, e -> {
+        instanceEvents.addListener(PlayerUseItemEvent.class, e -> {
             Behaviour b = behaviour(e.getItemStack());
             if (b != null) {
                 b.onRightClickAir(e.getPlayer(), e.getItemStack());
@@ -86,7 +89,7 @@ public final class ItemEventsCustom {
         });
 
         /* right-click block --------------------------------------------- */
-        events.addListener(PlayerUseItemOnBlockEvent.class, e -> {
+        instanceEvents.addListener(PlayerUseItemOnBlockEvent.class, e -> {
             ItemStack inHand = e.getItemStack();
             Behaviour b = behaviour(inHand);
             if (b != null) {
@@ -94,7 +97,7 @@ public final class ItemEventsCustom {
             }
         });
 
-        events.addListener(PlayerBlockPlaceEvent.class, e -> {
+        instanceEvents.addListener(PlayerBlockPlaceEvent.class, e -> {
             ItemStack inHand = e.getEntity().getItemInMainHand();
             Behaviour b = behaviour(inHand);
             if (b != null) {
@@ -104,7 +107,7 @@ public final class ItemEventsCustom {
         });
 
         /* left-click entity --------------------------------------------- */
-        events.addListener(EntityAttackEvent.class, e -> {
+        instanceEvents.addListener(EntityAttackEvent.class, e -> {
             if (!(e.getEntity() instanceof Player p)) return;
             ItemStack inHand = p.getItemInMainHand();
             Behaviour b = behaviour(inHand);
@@ -113,7 +116,7 @@ public final class ItemEventsCustom {
         });
 
         /* left-click air (arm-swing with no victim) --------------------- */
-        events.addListener(PlayerHandAnimationEvent.class, e -> {
+        instanceEvents.addListener(PlayerHandAnimationEvent.class, e -> {
             Player p = e.getPlayer();
             PlayerHand h = e.getHand();
             Behaviour b = behaviour(p.getItemInHand(h));
@@ -122,7 +125,7 @@ public final class ItemEventsCustom {
         });
 
         /* tick while held ----------------------------------------------- */
-        events.addListener(EntityTickEvent.class, e -> {
+        instanceEvents.addListener(EntityTickEvent.class, e -> {
             if (!(e.getEntity() instanceof Player p)) return;
             ItemStack inHand = p.getItemInMainHand();
             Behaviour b = behaviour(inHand);

@@ -6,6 +6,7 @@ import net.minestom.server.entity.attribute.Attribute;
 import net.minestom.server.entity.attribute.AttributeInstance;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
+import net.minestom.server.event.trait.InstanceEvent;
 import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.event.inventory.InventoryItemChangeEvent;
 import net.minestom.server.event.player.PlayerChangeHeldSlotEvent;
@@ -15,10 +16,14 @@ import org.example.combats.AttackSpeedManager;
 import org.example.items.datas.Stats;
 
 public class ItemEventsGlobal {
-    public static void init(EventNode<Event> events){
+    /**
+     * @param globalEvents   events not bound to an instance
+     * @param instanceEvents events filtered to a specific instance
+     */
+    public static void init(EventNode<Event> globalEvents, EventNode<InstanceEvent> instanceEvents){
 
         //update attack speed
-        events.addListener(EntityAttackEvent.class, e -> {
+        instanceEvents.addListener(EntityAttackEvent.class, e -> {
             if (e.getEntity() instanceof LivingEntity p){
                 AttributeInstance att = p.getAttribute(Attribute.ATTACK_SPEED);
                 //System.out.println(AttackSpeedManager.getCooldown(p));
@@ -26,7 +31,7 @@ public class ItemEventsGlobal {
             };
         });
 
-        events.addListener(InventoryItemChangeEvent.class, e -> {
+        globalEvents.addListener(InventoryItemChangeEvent.class, e -> {
             if (e.getInventory() instanceof PlayerInventory inv) {
                 for (Player viewer : inv.getViewers()) {
                     Stats.refresh(viewer);
@@ -34,7 +39,7 @@ public class ItemEventsGlobal {
             }
         });
 
-        events.addListener(PlayerChangeHeldSlotEvent.class, e -> {
+        instanceEvents.addListener(PlayerChangeHeldSlotEvent.class, e -> {
             Player p = e.getEntity();
             p.scheduler().buildTask(() -> {
                 Stats.refresh(p);
