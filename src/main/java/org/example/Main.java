@@ -39,94 +39,26 @@ public class Main {
     public static void main(String[] args) {
         MinecraftServer server = MinecraftServer.init();
 
-        InstanceContainer gameInstance1 = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader("main_land"));
-        gameInstance1.setGenerator(u -> u.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
-        gameInstance1.setChunkSupplier(LightingChunk::new);
-        gameInstance1.setExplosionSupplier(ExplosionSupplierUtils.DEFAULT);
-
-        InstanceContainer gameInstance2 = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader("main_land"));
-        gameInstance2.setGenerator(u -> u.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
-        gameInstance2.setChunkSupplier(LightingChunk::new);
-        gameInstance2.setExplosionSupplier(ExplosionSupplierUtils.DEFAULT);
-
-        InstanceContainer buildInstance1 = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader("build_world"));
-        buildInstance1.setGenerator(u -> u.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
-        buildInstance1.setChunkSupplier(LightingChunk::new);
-        buildInstance1.setExplosionSupplier(ExplosionSupplierUtils.DEFAULT);
+        GlobalEventHandler GLOBAL_EVENTS = MinecraftServer.getGlobalEventHandler();
 
 
+        //instance declaration
+        InstancesInit.init();
 
-
-        // Type d'instance
-        Set<Instance> GAME_INSTANCES = Set.of(gameInstance1, gameInstance2);
-
-        // Instance Node
-        GlobalEventHandler events = MinecraftServer.getGlobalEventHandler();
-
-        EventNode<Event> gameNode = EventNode.all("gameNode");
-
-        // Sous Node
-        EventNode<PlayerEvent> playerNode = EventNode.event("playerNode", EventFilter.PLAYER,
-                e -> {
-                    Instance inst = e.getPlayer().getInstance();
-                    return inst != null && GAME_INSTANCES.contains(inst);
-                }
-        );
-
-        EventNode<EntityEvent> entityNode = EventNode.event("entityNode", EventFilter.ENTITY,
-                e -> {
-                    Instance inst = e.getEntity().getInstance();
-                    return inst != null && GAME_INSTANCES.contains(inst);
-                }
-        );
-
-        EventNode<InventoryEvent> inventoryNode = EventNode.event("inventoryNode", EventFilter.INVENTORY,
-                e -> e.getInventory().getViewers().stream()
-                        .map(Entity::getInstance)
-                        .filter(Objects::nonNull)
-                        .anyMatch(GAME_INSTANCES::contains)
-        );
-
-        // Attach Child/Parent
-        gameNode.addChild(playerNode);
-        gameNode.addChild(entityNode);
-        gameNode.addChild(inventoryNode);
-
-        events.addChild(gameNode);
-
-
-        //Initialisation des mécaniques
-        PlayerDataService dataService = new PlayerDataService(new JsonPlayerDataRepository());
-
-        dataService.startAutoSave();
-
-        dataService.init(gameNode, GAME_INSTANCES);
-        CombatListener.init(gameNode);
-        ItemEventsGlobal.init(gameNode);
-        ItemEventsCustom.init(gameNode);
-
-        CommandRegister.init();
-        ItemBootstrap.init();
-
-
+        //NodeInit
+        NodesManagement.init();
 
 
         // Gestion du spawn du joueur
-        events.addListener(AsyncPlayerConfigurationEvent.class, event -> {
+        GLOBAL_EVENTS.addListener(AsyncPlayerConfigurationEvent.class, event -> {
             Player player = event.getPlayer();
-            event.setSpawningInstance(gameInstance1);
+            event.setSpawningInstance(InstancesInit.GAME_INSTANCE_1);
             player.setRespawnPoint(new Pos(0, 42, 0));
 
             EntityCreature warden = new EntityCreature(EntityType.WARDEN);
-            warden.setInstance(gameInstance1,new Pos(0, 42, 0));
-            
-            player.getInventory().setItemStack( 17,StatsGrimoire.ITEM.toItemStack());
+            warden.setInstance(InstancesInit.GAME_INSTANCE_1,new Pos(0, 42, 0));
 
-            player.scheduler().buildTask(() -> {
-                Stats.refresh(player);
-            }).delay(TaskSchedule.tick(1)).schedule();
         });
-
 
 
 
@@ -139,9 +71,9 @@ public class Main {
         });
 
         scheduler.buildTask( () -> {
-            System.out.println("Server autosave... Saving chunk");
-            MinecraftServer.getInstanceManager().getInstances().forEach(Instance::saveChunksToStorage);
-        })      .repeat(Duration.ofSeconds(30))
+                    System.out.println("Server autosave... Saving chunk");
+                    MinecraftServer.getInstanceManager().getInstances().forEach(Instance::saveChunksToStorage);
+                })      .repeat(Duration.ofSeconds(30))
                 .delay(Duration.ofMinutes(1))
                 .schedule();
 

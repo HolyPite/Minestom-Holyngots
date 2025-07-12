@@ -14,11 +14,13 @@ import net.minestom.server.inventory.PlayerInventory;
 import net.minestom.server.timer.TaskSchedule;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import org.example.InstancesInit;
 import org.example.mmo.data.data_class.PlayerData;
 import org.example.mmo.items.GameItem;
 import org.example.mmo.items.ItemRegistry;
 import org.example.mmo.items.ItemUtils;
 import org.example.mmo.data.data_class.ItemData;
+import org.example.mmo.items.itemsList.DEV.StatsGrimoire;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,23 +43,31 @@ public class PlayerDataService {
     }
 
 
-    public void init(EventNode<Event> events, Set<? extends Instance> groupInstances) {
+    public void init(EventNode<Event> events) {
+        Set<Instance> groupInstances = InstancesInit.GAME_INSTANCES;
 
         EventNode<PlayerEvent> playerNode = events.findChildren("playerNode",PlayerEvent.class).getFirst();
         EventNode<InventoryEvent> inventoryNode = events.findChildren("inventoryNode",InventoryEvent.class).getFirst();
 
         MinecraftServer.getGlobalEventHandler().addListener(AddEntityToInstanceEvent.class, event -> {
+            //System.out.println("1");
             if (!(event.getEntity() instanceof Player player)) return;
+            //System.out.println("2");
 
             boolean wasInGroup = activePlayers.contains(player.getUuid());
             boolean nowInGroup = groupInstances.contains(event.getInstance());
 
+            //System.out.println(wasInGroup);
+            //System.out.println(nowInGroup);
+
             if (nowInGroup && !wasInGroup) {
+                //System.out.println("3");
                 PlayerData data = repository.load(player.getUuid());
                 cache.put(player.getUuid(), data);
 
                 PlayerInventory inv = player.getInventory();
                 inv.clear();
+                inv.setItemStack( 17, StatsGrimoire.ITEM.toItemStack());
                 for (ItemData itemData : data.inventory) {
                     if (itemData.slot >= 0 && itemData.slot < inv.getSize()) {
                         inv.setItemStack(itemData.slot, dataToItem(itemData));
@@ -68,6 +78,7 @@ public class PlayerDataService {
             }
 
             if (!nowInGroup && wasInGroup) {
+                //System.out.println("4");
                 PlayerData data = cache.remove(player.getUuid());
                 if (data != null) {
                     updateInventory(player, data);
@@ -76,20 +87,22 @@ public class PlayerDataService {
             }
 
             if (nowInGroup) {
+                //System.out.println("5");
                 activePlayers.add(player.getUuid());
             } else {
+                //System.out.println("6");
                 activePlayers.remove(player.getUuid());
             }
         });
 
         playerNode.addListener(PlayerDisconnectEvent.class, event -> {
+            //System.out.println("7");
             Player player = event.getPlayer();
             PlayerData data = cache.remove(player.getUuid());
+            activePlayers.remove(player.getUuid());
             if (data != null) {
-                // Sync inventory/exp one last time before saving
+                //System.out.println("8");
                 updateInventory(player, data);
-                //data.level = player.getLevel();
-                //data.experience = Math.round(player.getExp() * 100);
                 repository.save(data);
             }
         });
