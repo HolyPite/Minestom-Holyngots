@@ -31,6 +31,7 @@ import org.example.mmo.data.JsonPlayerDataRepository;
 import org.example.mmo.data.PlayerDataService;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.Set;
 //@SuppressWarnings("unchecked")
 
@@ -66,18 +67,24 @@ public class Main {
 
         // Sous Node
         EventNode<PlayerEvent> playerNode = EventNode.event("playerNode", EventFilter.PLAYER,
-                e -> GAME_INSTANCES.contains(e.getPlayer().getInstance())
+                e -> {
+                    Instance inst = e.getPlayer().getInstance();
+                    return inst != null && GAME_INSTANCES.contains(inst);
+                }
         );
 
         EventNode<EntityEvent> entityNode = EventNode.event("entityNode", EventFilter.ENTITY,
-                e -> GAME_INSTANCES.contains(e.getEntity().getInstance())
+                e -> {
+                    Instance inst = e.getEntity().getInstance();
+                    return inst != null && GAME_INSTANCES.contains(inst);
+                }
         );
 
         EventNode<InventoryEvent> inventoryNode = EventNode.event("inventoryNode", EventFilter.INVENTORY,
-                e -> {
-                    Instance inst = e.getInventory().getViewers().stream().findFirst().get().getInstance();
-                    return GAME_INSTANCES.contains(inst);
-                }
+                e -> e.getInventory().getViewers().stream()
+                        .map(Entity::getInstance)
+                        .filter(Objects::nonNull)
+                        .anyMatch(GAME_INSTANCES::contains)
         );
 
         // Attach Child/Parent
