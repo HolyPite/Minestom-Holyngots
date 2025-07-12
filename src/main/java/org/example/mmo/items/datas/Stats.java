@@ -7,6 +7,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 import org.example.mmo.combats.CombatEngine;
 import org.example.mmo.combats.HealthUtils;
+import org.example.mmo.items.itemsList.DEV.StatsGrimoire;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class Stats {
 
         int slot = 17;
 
-        ItemStack stack = player.getInventory().getItemStack(slot);
+        ItemStack stack = StatsGrimoire.ITEM.toItemStack();
         ItemStack it = stack.with(DataComponents.LORE,lines);
         player.getInventory().setItemStack(slot,it);
         //lines.forEach(player::sendMessage);

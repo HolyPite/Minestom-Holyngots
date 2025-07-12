@@ -30,6 +30,11 @@ public class TeleportCommand extends Command {
                 return;
             }
 
+            if (target == player.getInstance()){
+                sender.sendMessage("Already in " + worldName);
+                return;
+            }
+
             player.setInstance(target, new Pos(0, 42, 0));
             sender.sendMessage("Teleported to " + worldName);
         }, worldArg);

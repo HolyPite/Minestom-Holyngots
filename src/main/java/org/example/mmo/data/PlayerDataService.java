@@ -20,6 +20,7 @@ import org.example.mmo.items.GameItem;
 import org.example.mmo.items.ItemRegistry;
 import org.example.mmo.items.ItemUtils;
 import org.example.mmo.data.data_class.ItemData;
+import org.example.mmo.items.datas.Stats;
 import org.example.mmo.items.itemsList.DEV.StatsGrimoire;
 
 import java.util.HashMap;
@@ -67,7 +68,6 @@ public class PlayerDataService {
 
                 PlayerInventory inv = player.getInventory();
                 inv.clear();
-                inv.setItemStack( 17, StatsGrimoire.ITEM.toItemStack());
                 for (ItemData itemData : data.inventory) {
                     if (itemData.slot >= 0 && itemData.slot < inv.getSize()) {
                         inv.setItemStack(itemData.slot, dataToItem(itemData));
@@ -75,6 +75,7 @@ public class PlayerDataService {
                         inv.addItemStack(dataToItem(itemData));
                     }
                 }
+                Stats.refresh(player);
             }
 
             if (!nowInGroup && wasInGroup) {
