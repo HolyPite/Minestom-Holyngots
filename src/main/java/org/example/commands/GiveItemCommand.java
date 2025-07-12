@@ -3,7 +3,7 @@ package org.example.commands;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Player;
-import org.example.items.ItemRegistry;
+import org.example.mmo.items.ItemRegistry;
 
 public final class GiveItemCommand extends Command {
 

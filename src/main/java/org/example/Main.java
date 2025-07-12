@@ -5,9 +5,13 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.*;
 import net.minestom.server.event.Event;
+import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
+import net.minestom.server.event.trait.EntityEvent;
+import net.minestom.server.event.trait.InventoryEvent;
+import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
@@ -15,51 +19,99 @@ import net.minestom.server.instance.LightingChunk;
 import net.minestom.server.instance.anvil.AnvilLoader;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.timer.TaskSchedule;
-import org.example.items.datas.Stats;
+import org.example.mmo.items.datas.Stats;
 import org.example.utils.Explosion.ExplosionSupplierUtils;
-import org.example.combats.CombatListener;
+import org.example.mmo.combats.CombatListener;
 import org.example.commands.CommandRegister;
-import org.example.items.ItemEventsCustom;
-import org.example.items.ItemEventsGlobal;
-import org.example.items.ItemBootstrap;
-import org.example.items.itemsList.DEV.StatsGrimoire;
-import org.example.data.JsonPlayerDataRepository;
-import org.example.data.PlayerDataService;
+import org.example.mmo.items.ItemEventsCustom;
+import org.example.mmo.items.ItemEventsGlobal;
+import org.example.mmo.items.ItemBootstrap;
+import org.example.mmo.items.itemsList.DEV.StatsGrimoire;
+import org.example.mmo.data.JsonPlayerDataRepository;
+import org.example.mmo.data.PlayerDataService;
 
 import java.time.Duration;
-@SuppressWarnings("unchecked")
+import java.util.Set;
+//@SuppressWarnings("unchecked")
 
 public class Main {
     public static void main(String[] args) {
         MinecraftServer server = MinecraftServer.init();
 
-        InstanceContainer gameInstance = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader("main_land"));
-        gameInstance.setGenerator(u -> u.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
-        gameInstance.setChunkSupplier(LightingChunk::new);
-        gameInstance.setExplosionSupplier(ExplosionSupplierUtils.DEFAULT);
+        InstanceContainer gameInstance1 = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader("main_land"));
+        gameInstance1.setGenerator(u -> u.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
+        gameInstance1.setChunkSupplier(LightingChunk::new);
+        gameInstance1.setExplosionSupplier(ExplosionSupplierUtils.DEFAULT);
 
-        InstanceContainer buildInstance = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader("build_world"));
-        buildInstance.setGenerator(u -> u.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
-        buildInstance.setChunkSupplier(LightingChunk::new);
-        buildInstance.setExplosionSupplier(ExplosionSupplierUtils.DEFAULT);
+        InstanceContainer gameInstance2 = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader("main_land"));
+        gameInstance2.setGenerator(u -> u.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
+        gameInstance2.setChunkSupplier(LightingChunk::new);
+        gameInstance2.setExplosionSupplier(ExplosionSupplierUtils.DEFAULT);
 
-        EventNode<Event> gameNode = (EventNode<Event>)(EventNode<?>) gameInstance.eventNode();
-        EventNode<Event> buildNode = (EventNode<Event>)(EventNode<?>) buildInstance.eventNode();
+        InstanceContainer buildInstance1 = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader("build_world"));
+        buildInstance1.setGenerator(u -> u.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
+        buildInstance1.setChunkSupplier(LightingChunk::new);
+        buildInstance1.setExplosionSupplier(ExplosionSupplierUtils.DEFAULT);
 
+
+
+
+        // Type d'instance
+        Set<Instance> GAME_INSTANCES = Set.of(gameInstance1, gameInstance2);
+
+        // Instance Node
         GlobalEventHandler events = MinecraftServer.getGlobalEventHandler();
 
+        EventNode<Event> gameNode = EventNode.all("gameNode");
+
+        // Sous Node
+        EventNode<PlayerEvent> playerNode = EventNode.event("playerNode", EventFilter.PLAYER,
+                e -> GAME_INSTANCES.contains(e.getPlayer().getInstance())
+        );
+
+        EventNode<EntityEvent> entityNode = EventNode.event("entityNode", EventFilter.ENTITY,
+                e -> GAME_INSTANCES.contains(e.getEntity().getInstance())
+        );
+
+        EventNode<InventoryEvent> inventoryNode = EventNode.event("inventoryNode", EventFilter.INVENTORY,
+                e -> {
+                    Instance inst = e.getInventory().getViewers().stream().findFirst().get().getInstance();
+                    return GAME_INSTANCES.contains(inst);
+                }
+        );
+
+        // Attach Child/Parent
+        gameNode.addChild(playerNode);
+        gameNode.addChild(entityNode);
+        gameNode.addChild(inventoryNode);
+
+        events.addChild(gameNode);
+
+
+        //Initialisation des mécaniques
         PlayerDataService dataService = new PlayerDataService(new JsonPlayerDataRepository());
-        dataService.init(events);
+
         dataService.startAutoSave();
 
-        // Gestion du spawn du joueur et du stack de laine rouge
+        dataService.init(gameNode);
+        CombatListener.init(gameNode);
+        ItemEventsGlobal.init(gameNode);
+        ItemEventsCustom.init(gameNode);
+
+        CommandRegister.init();
+        ItemBootstrap.init();
+
+
+
+
+        // Gestion du spawn du joueur
         events.addListener(AsyncPlayerConfigurationEvent.class, event -> {
             Player player = event.getPlayer();
-            event.setSpawningInstance(gameInstance);
+            event.setSpawningInstance(gameInstance1);
             player.setRespawnPoint(new Pos(0, 42, 0));
 
             EntityCreature warden = new EntityCreature(EntityType.WARDEN);
-            warden.setInstance(gameInstance,new Pos(0, 42, 0));
+            warden.setInstance(gameInstance1,new Pos(0, 42, 0));
             
             player.getInventory().setItemStack( 17,StatsGrimoire.ITEM.toItemStack());
 
@@ -68,18 +120,12 @@ public class Main {
             }).delay(TaskSchedule.tick(1)).schedule();
         });
 
-        ItemEventsGlobal.init(gameNode);
-        ItemEventsCustom.init(gameNode);
-        CombatListener.init(gameNode);
-        CommandRegister.init();
-        ItemBootstrap.init();
 
-        MojangAuth.init();
 
-        //System.out.println("Items chargés : " + ItemRegistry.all().keySet());
 
         var scheduler = MinecraftServer.getSchedulerManager();
 
+        //Save worlds
         scheduler.buildShutdownTask( () -> {
             System.out.println("Server shutting down... Saving chunk");
             MinecraftServer.getInstanceManager().getInstances().forEach(Instance::saveChunksToStorage);
@@ -92,6 +138,8 @@ public class Main {
                 .delay(Duration.ofMinutes(1))
                 .schedule();
 
+
+        MojangAuth.init();
         server.start("0.0.0.0", 25565);
     }
 
