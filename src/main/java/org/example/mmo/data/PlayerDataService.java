@@ -5,11 +5,11 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.inventory.InventoryItemChangeEvent;
-import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
-import net.minestom.server.event.trait.EntityEvent;
+import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.trait.InventoryEvent;
 import net.minestom.server.event.trait.PlayerEvent;
+import net.minestom.server.instance.Instance;
 import net.minestom.server.inventory.PlayerInventory;
 import net.minestom.server.timer.TaskSchedule;
 import net.minestom.server.item.ItemStack;
@@ -21,15 +21,18 @@ import org.example.mmo.items.ItemUtils;
 import org.example.mmo.data.data_class.ItemData;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
- * Handles loading and saving player data when players connect or disconnect.
+ * Handles loading and saving player data when players enter or leave the game instances.
  */
 public class PlayerDataService {
     private final PlayerDataRepository repository;
     private final Map<UUID, PlayerData> cache = new HashMap<>();
+    private final Set<UUID> activePlayers = new HashSet<>();
 
     private static final long DEFAULT_AUTOSAVE_MINUTES = 1;
 
@@ -38,29 +41,44 @@ public class PlayerDataService {
     }
 
 
-    public void init(EventNode<Event> events) {
+    public void init(EventNode<Event> events, Set<? extends Instance> groupInstances) {
 
         EventNode<PlayerEvent> playerNode = events.findChildren("playerNode",PlayerEvent.class).getFirst();
-        EventNode<EntityEvent> entityNode = events.findChildren("entityNode",EntityEvent.class).getFirst();
         EventNode<InventoryEvent> inventoryNode = events.findChildren("inventoryNode",InventoryEvent.class).getFirst();
 
-        playerNode.addListener(AsyncPlayerConfigurationEvent.class, event -> {
-            Player player = event.getPlayer();
-            PlayerData data = repository.load(player.getUuid());
-            cache.put(player.getUuid(), data);
+        MinecraftServer.getGlobalEventHandler().addListener(AddEntityToInstanceEvent.class, event -> {
+            if (!(event.getEntity() instanceof Player player)) return;
 
-            // Apply saved stats to the player
-            //player.setLevel(data.level);
-            //player.setExp(data.experience / 100f);
+            boolean wasInGroup = activePlayers.contains(player.getUuid());
+            boolean nowInGroup = groupInstances.contains(event.getInstance());
 
-            PlayerInventory inv = player.getInventory();
-            inv.clear();
-            for (ItemData itemData : data.inventory) {
-                if (itemData.slot >= 0 && itemData.slot < inv.getSize()) {
-                    inv.setItemStack(itemData.slot, dataToItem(itemData));
-                } else {
-                    inv.addItemStack(dataToItem(itemData));
+            if (nowInGroup && !wasInGroup) {
+                PlayerData data = repository.load(player.getUuid());
+                cache.put(player.getUuid(), data);
+
+                PlayerInventory inv = player.getInventory();
+                inv.clear();
+                for (ItemData itemData : data.inventory) {
+                    if (itemData.slot >= 0 && itemData.slot < inv.getSize()) {
+                        inv.setItemStack(itemData.slot, dataToItem(itemData));
+                    } else {
+                        inv.addItemStack(dataToItem(itemData));
+                    }
                 }
+            }
+
+            if (!nowInGroup && wasInGroup) {
+                PlayerData data = cache.remove(player.getUuid());
+                if (data != null) {
+                    updateInventory(player, data);
+                    repository.save(data);
+                }
+            }
+
+            if (nowInGroup) {
+                activePlayers.add(player.getUuid());
+            } else {
+                activePlayers.remove(player.getUuid());
             }
         });
 
