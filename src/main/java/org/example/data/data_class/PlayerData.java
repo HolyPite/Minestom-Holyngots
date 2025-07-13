@@ -1,5 +1,8 @@
 package org.example.data.data_class;
 
+import net.minestom.server.coordinate.Pos;
+import net.minestom.server.instance.Instance;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +15,8 @@ public class PlayerData {
     public int level;
     public int experience;
     public List<ItemData> inventory = new ArrayList<>();
+    public Pos position;
+    public String lastInstance;
 
     public PlayerData() {}
 

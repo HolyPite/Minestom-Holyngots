@@ -10,6 +10,7 @@ import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.trait.InventoryEvent;
 import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.inventory.PlayerInventory;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
@@ -84,7 +85,7 @@ public class PlayerDataService {
                     if (oldGroup != null) {
                         PlayerData oldData = cache.remove(player.getUuid());
                         if (oldData != null) {
-                            updateInventory(player, oldData);
+                            updatePlayerData(player, oldData);
                             repository.save(oldData, oldGroup);
                         }
                     }
@@ -117,7 +118,7 @@ public class PlayerDataService {
             Set<Instance> group = currentGroup.remove(player.getUuid());
             PlayerData data   = cache.remove(player.getUuid());
             if (data != null && group != null) {
-                updateInventory(player, data);
+                updatePlayerData(player, data);
                 repository.save(data, group);
             }
         });
@@ -128,7 +129,7 @@ public class PlayerDataService {
                 for (Player viewer : inv.getViewers()) {
                     PlayerData data = cache.get(viewer.getUuid());
                     if (data != null) {
-                        updateInventory(viewer, data);
+                        updatePlayerData(viewer, data);
                     }
                 }
             }
@@ -167,7 +168,7 @@ public class PlayerDataService {
         cache.forEach((uuid, data) -> {
             Player player = MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(uuid);
             if (player != null) {
-                updateInventory(player, data);
+                updatePlayerData(player, data);
             }
             Set<Instance> group = currentGroup.get(uuid);
             if (group != null) {
@@ -181,7 +182,7 @@ public class PlayerDataService {
     /* ------------------------------------------------------------------ */
 
     /** Copie l’inventaire du joueur dans son {@link PlayerData}. */
-    private void updateInventory(Player player, PlayerData data) {
+    private void updatePlayerData(Player player, PlayerData data) {
         data.inventory.clear();
         PlayerInventory inv = player.getInventory();
         for (int slot = 0; slot < inv.getSize(); slot++) {
@@ -190,6 +191,15 @@ public class PlayerDataService {
                 data.inventory.add(itemToData(stack, slot));
             }
         }
+
+        // Save current position and instance name
+        Instance instance = player.getInstance();
+        if (instance instanceof InstanceContainer container) {
+            data.lastInstance = InstancesInit.instance_name_get(container);
+        } else {
+            data.lastInstance = null;
+        }
+        data.position = player.getPosition();
     }
 
     /* ---------- Conversion ItemStack <-> ItemData ---------- */

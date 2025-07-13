@@ -55,7 +55,7 @@ public final class HealthUtils {
         }
 
         // Mets à jour le nom
-        entity.set(DataComponents. CUSTOM_NAME, finalBar.build());
+        entity.set(DataComponents.CUSTOM_NAME, finalBar.build());
         entity.setCustomNameVisible(true);
     }
 
