@@ -85,7 +85,6 @@ public class PlayerDataService {
                     if (oldGroup != null) {
                         PlayerData oldData = cache.remove(player.getUuid());
                         if (oldData != null) {
-                            updatePlayerData(player, oldData);
                             repository.save(oldData, oldGroup);
                         }
                     }
@@ -142,6 +141,19 @@ public class PlayerDataService {
 
     public PlayerData get(Player player) {
         return cache.get(player.getUuid());
+    }
+
+    /**
+     * Met à jour et sauvegarde les données du joueur pour son groupe actuel.
+     */
+    public void savePlayer(Player player) {
+        PlayerData data = cache.get(player.getUuid());
+        if (data == null) return;
+        updatePlayerData(player, data);
+        Set<Instance> group = currentGroup.get(player.getUuid());
+        if (group != null) {
+            repository.save(data, group);
+        }
     }
 
     /* ------------------------------------------------------------------ */
