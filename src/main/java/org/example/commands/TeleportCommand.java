@@ -24,7 +24,7 @@ public class TeleportCommand extends Command {
             }
 
             String worldName = context.get(worldArg);
-            InstanceContainer target = InstancesInit.get(worldName);
+            InstanceContainer target = InstancesInit.instance_get(worldName);
             if (target == null) {
                 sender.sendMessage("Unknown world: " + worldName);
                 return;

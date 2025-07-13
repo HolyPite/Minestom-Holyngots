@@ -2,6 +2,8 @@ package org.example.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.minestom.server.instance.Instance;
+import org.example.InstancesInit;
 import org.example.data.data_class.PlayerData;
 
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -33,8 +36,8 @@ public class JsonPlayerDataRepository implements PlayerDataRepository {
     }
 
     @Override
-    public PlayerData load(UUID playerId) {
-        Path file = folder.resolve(playerId.toString() + ".json");
+    public PlayerData load(UUID playerId, Set<Instance> inst_type) {
+        Path file = folder.resolve( InstancesInit.instance_type_name_get(inst_type) + "/" + playerId.toString() + ".json");
         if (!Files.exists(file)) {
             return new PlayerData(playerId);
         }
@@ -48,12 +51,17 @@ public class JsonPlayerDataRepository implements PlayerDataRepository {
     }
 
     @Override
-    public void save(PlayerData data) {
-        Path file = folder.resolve(data.uuid.toString() + ".json");
-        try (Writer w = Files.newBufferedWriter(file)) {
-            gson.toJson(data, w);
+    public void save(PlayerData data, Set<Instance> instanceType) {
+        String folderName = InstancesInit.instance_type_name_get(instanceType);
+        Path file = folder.resolve(folderName + "/" + data.uuid + ".json");
+        try {
+            Files.createDirectories(file.getParent());
+            try (Writer w = Files.newBufferedWriter(file)) {
+                gson.toJson(data, w);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
 }

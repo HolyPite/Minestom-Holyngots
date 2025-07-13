@@ -5,36 +5,42 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.inventory.InventoryItemChangeEvent;
-import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
+import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.trait.InventoryEvent;
 import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.inventory.PlayerInventory;
-import net.minestom.server.timer.TaskSchedule;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import net.minestom.server.timer.TaskSchedule;
 import org.example.InstancesInit;
+import org.example.data.data_class.ItemData;
 import org.example.data.data_class.PlayerData;
 import org.example.mmo.items.GameItem;
 import org.example.mmo.items.ItemRegistry;
 import org.example.mmo.items.ItemUtils;
-import org.example.data.data_class.ItemData;
 import org.example.mmo.items.datas.Stats;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
- * Handles loading and saving player data when players enter or leave the game instances.
+ * Charge / sauvegarde les données des joueurs et
+ * maintient un inventaire distinct pour chaque type d’instance (games, builds…).
  */
 public class PlayerDataService {
+
+    /* ------------------------------------------------------------------ */
+    /* Champs d’état                                                      */
+    /* ------------------------------------------------------------------ */
+
     private final PlayerDataRepository repository;
+
+    /** Données actuellement en mémoire par joueur. */
     private final Map<UUID, PlayerData> cache = new HashMap<>();
-    private final Set<UUID> activePlayers = new HashSet<>();
+
+    /** Groupe d’instances (games, builds, …) dans lequel se trouve le joueur. */
+    private final Map<UUID, Set<Instance>> currentGroup = new HashMap<>();
 
     private static final long DEFAULT_AUTOSAVE_MINUTES = 1;
 
@@ -42,74 +48,81 @@ public class PlayerDataService {
         this.repository = repository;
     }
 
+    /* ------------------------------------------------------------------ */
+    /* Initialisation                                                      */
+    /* ------------------------------------------------------------------ */
 
-    public void init(EventNode<Event> events) {
-        Set<Instance> groupInstances = InstancesInit.GAME_INSTANCES;
+    /**
+     * Branche les listeners nécessaires sur le {@code EventNode} donné
+     * (on part du principe qu’il contient déjà playerNode & inventoryNode).
+     */
+    public void init(EventNode<Event> root) {
 
-        EventNode<PlayerEvent> playerNode = events.findChildren("playerNode",PlayerEvent.class).getFirst();
-        EventNode<InventoryEvent> inventoryNode = events.findChildren("inventoryNode",InventoryEvent.class).getFirst();
+        // Sous-nœuds déjà créés dans NodesManagement
+        EventNode<PlayerEvent> playerNode =
+                root.findChildren("playerNode", PlayerEvent.class).getFirst();
+        EventNode<InventoryEvent> inventoryNode =
+                root.findChildren("inventoryNode", InventoryEvent.class).getFirst();
 
+        /* ---------------- Changement d’instance ---------------- */
         MinecraftServer.getGlobalEventHandler().addListener(AddEntityToInstanceEvent.class, event -> {
-            //System.out.println("1");
-            if (!(event.getEntity() instanceof Player player)) return;
-            //System.out.println("2");
 
-            boolean wasInGroup = activePlayers.contains(player.getUuid());
-            boolean nowInGroup = groupInstances.contains(event.getInstance());
+                    if (!(event.getEntity() instanceof Player player)) return;
 
-            //System.out.println(wasInGroup);
-            //System.out.println(nowInGroup);
+                    // Groupe auquel appartient la nouvelle instance (ou null si aucun)
+                    Set<Instance> newGroup = InstancesInit.ALL_INSTANCES.stream()
+                            .filter(g -> g.contains(event.getInstance()))
+                            .findFirst()
+                            .orElse(null);
 
-            if (nowInGroup && !wasInGroup) {
-                //System.out.println("3");
-                PlayerData data = repository.load(player.getUuid());
-                cache.put(player.getUuid(), data);
+                    Set<Instance> oldGroup = currentGroup.get(player.getUuid());
 
-                PlayerInventory inv = player.getInventory();
-                inv.clear();
-                for (ItemData itemData : data.inventory) {
-                    if (itemData.slot >= 0 && itemData.slot < inv.getSize()) {
-                        inv.setItemStack(itemData.slot, dataToItem(itemData));
-                    } else {
-                        inv.addItemStack(dataToItem(itemData));
+                    // Pas de changement de groupe ➜ rien à faire
+                    if (Objects.equals(newGroup, oldGroup)) return;
+
+                    /* ---------- 1) Quitter l’ancien groupe, le cas échéant ---------- */
+                    if (oldGroup != null) {
+                        PlayerData oldData = cache.remove(player.getUuid());
+                        if (oldData != null) {
+                            updateInventory(player, oldData);
+                            repository.save(oldData, oldGroup);
+                        }
                     }
-                }
 
-                Stats.refresh(player);
-            }
+                    /* ---------- 2) Entrer dans le nouveau groupe, le cas échéant ---------- */
+                    if (newGroup != null) {
+                        PlayerData newData = repository.load(player.getUuid(), newGroup);
+                        cache.put(player.getUuid(), newData);
 
-            if (!nowInGroup && wasInGroup) {
-                //System.out.println("4");
-                PlayerData data = cache.remove(player.getUuid());
-                if (data != null) {
-                    updateInventory(player, data);
-                    repository.save(data);
-                }
-            }
+                        // Appliquer l’inventaire
+                        PlayerInventory inv = player.getInventory();
+                        inv.clear();
+                        for (ItemData item : newData.inventory) {
+                            ItemStack stack = dataToItem(item);
+                            if (item.slot >= 0 && item.slot < inv.getSize()) {
+                                inv.setItemStack(item.slot, stack);
+                            } else {
+                                inv.addItemStack(stack);
+                            }
+                        }
+                        currentGroup.put(player.getUuid(), newGroup);
+                    } else { // Instance hors de tout groupe suivi
+                        currentGroup.remove(player.getUuid());
+                    }
+                });
 
-            if (nowInGroup) {
-                //System.out.println("5");
-                activePlayers.add(player.getUuid());
-            } else {
-                //System.out.println("6");
-                activePlayers.remove(player.getUuid());
-            }
-        });
-
+        /* ---------------- Déconnexion du joueur ---------------- */
         playerNode.addListener(PlayerDisconnectEvent.class, event -> {
-            //System.out.println("7");
             Player player = event.getPlayer();
-            PlayerData data = cache.remove(player.getUuid());
-            activePlayers.remove(player.getUuid());
-            if (data != null) {
-                //System.out.println("8");
+            Set<Instance> group = currentGroup.remove(player.getUuid());
+            PlayerData data   = cache.remove(player.getUuid());
+            if (data != null && group != null) {
                 updateInventory(player, data);
-                repository.save(data);
+                repository.save(data, group);
             }
         });
 
-
-        // Keep cache updated when the player inventory changes
+        /* ---------------- Modification de l’inventaire ---------------- */
         inventoryNode.addListener(InventoryItemChangeEvent.class, e -> {
             if (e.getInventory() instanceof PlayerInventory inv) {
                 for (Player viewer : inv.getViewers()) {
@@ -120,17 +133,54 @@ public class PlayerDataService {
                 }
             }
         });
-
     }
+
+    /* ------------------------------------------------------------------ */
+    /* Accès                                                              */
+    /* ------------------------------------------------------------------ */
 
     public PlayerData get(Player player) {
         return cache.get(player.getUuid());
     }
 
     /* ------------------------------------------------------------------ */
+    /* Tâches planifiées                                                  */
+    /* ------------------------------------------------------------------ */
+
+    /** Lance l’auto-save avec l’intervalle par défaut. */
+    public void startAutoSave() {
+        startAutoSave(DEFAULT_AUTOSAVE_MINUTES);
+    }
+
+    /** Lance l’auto-save avec l’intervalle indiqué (en minutes). */
+    public void startAutoSave(long minutes) {
+        MinecraftServer.getSchedulerManager().buildTask(this::saveAll)
+                .delay(TaskSchedule.minutes(minutes))
+                .repeat(TaskSchedule.minutes(minutes))
+                .schedule();
+        MinecraftServer.getSchedulerManager().buildShutdownTask(this::saveAll);
+        Runtime.getRuntime().addShutdownHook(new Thread(this::saveAll));
+    }
+
+    /** Sauvegarde toutes les données en cache. */
+    public void saveAll() {
+        cache.forEach((uuid, data) -> {
+            Player player = MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(uuid);
+            if (player != null) {
+                updateInventory(player, data);
+            }
+            Set<Instance> group = currentGroup.get(uuid);
+            if (group != null) {
+                repository.save(data, group);
+            }
+        });
+    }
+
+    /* ------------------------------------------------------------------ */
     /* Helpers                                                            */
     /* ------------------------------------------------------------------ */
 
+    /** Copie l’inventaire du joueur dans son {@link PlayerData}. */
     private void updateInventory(Player player, PlayerData data) {
         data.inventory.clear();
         PlayerInventory inv = player.getInventory();
@@ -142,9 +192,7 @@ public class PlayerDataService {
         }
     }
 
-    private ItemData itemToData(ItemStack stack) {
-        return itemToData(stack, -1);
-    }
+    /* ---------- Conversion ItemStack <-> ItemData ---------- */
 
     private ItemData itemToData(ItemStack stack, int slot) {
         GameItem gi = ItemUtils.resolve(stack);
@@ -160,36 +208,5 @@ public class PlayerDataService {
         Material mat = Material.fromKey(data.itemId);
         if (mat == null) mat = Material.AIR;
         return ItemStack.of(mat).withAmount(data.amount);
-    }
-
-    /** Starts the periodic auto-save task using the default interval. */
-    public void startAutoSave() {
-        startAutoSave(DEFAULT_AUTOSAVE_MINUTES);
-    }
-
-    /** Starts the periodic auto-save task using the specified interval in minutes. */
-    public void startAutoSave(long minutes) {
-        MinecraftServer.getSchedulerManager().buildTask(this::saveAll)
-                .delay(TaskSchedule.minutes(minutes))
-                .repeat(TaskSchedule.minutes(minutes))
-                .schedule();
-        MinecraftServer.getSchedulerManager().buildShutdownTask(this::saveAll);
-        registerShutdownHook();
-    }
-
-    /** Registers a shutdown hook to persist all player data. */
-    public void registerShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread(this::saveAll));
-    }
-
-    /** Saves all cached player data to the repository. */
-    public void saveAll() {
-        cache.forEach((uuid, data) -> {
-            Player player = MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(uuid);
-            if (player != null) {
-                updateInventory(player, data);
-            }
-            repository.save(data);
-        });
     }
 }
