@@ -79,7 +79,9 @@ public class PlayerDataService {
                     Set<Instance> oldGroup = currentGroup.get(player.getUuid());
 
                     // Pas de changement de groupe ➜ rien à faire
-                    if (Objects.equals(newGroup, oldGroup)) return;
+                    if (Objects.equals(newGroup, oldGroup)) {
+                        return;
+                    }
 
                     /* ---------- 1) Quitter l’ancien groupe, le cas échéant ---------- */
                     if (oldGroup != null) {
@@ -185,6 +187,7 @@ public class PlayerDataService {
     private void updatePlayerData(Player player, PlayerData data) {
         data.inventory.clear();
         PlayerInventory inv = player.getInventory();
+
         for (int slot = 0; slot < inv.getSize(); slot++) {
             ItemStack stack = inv.getItemStack(slot);
             if (!stack.isAir()) {

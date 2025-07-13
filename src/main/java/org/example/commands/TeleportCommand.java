@@ -6,8 +6,7 @@ import net.minestom.server.entity.Player;
 import org.example.InstancesInit;
 import net.minestom.server.instance.InstanceContainer;
 
-import static org.example.data.PlayerDataUtils.loadLastData;
-import static org.example.teleport.TeleportUtils.teleportToInstance;
+import static org.example.data.TeleportUtils.teleportToInstance;
 
 public class TeleportCommand extends Command {
     public TeleportCommand() {

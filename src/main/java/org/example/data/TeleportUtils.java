@@ -1,11 +1,10 @@
-package org.example.teleport;
+package org.example.data;
 
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
 import org.example.InstancesInit;
-import org.example.data.PlayerDataUtils;
 import org.example.data.data_class.PlayerData;
 
 import java.util.Iterator;
