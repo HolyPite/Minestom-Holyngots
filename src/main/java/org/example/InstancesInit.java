@@ -114,6 +114,20 @@ public final class InstancesInit {
         return NAME_BY_INSTANCE_TYPE.get(inst);
     }
 
+    public static Set<Instance> instance_type_get(Instance inst) {
+        if (inst == null) return null;
+        for (Set<Instance> group : ALL_INSTANCES) {
+            if (group.contains(inst)) {
+                return group;
+            }
+        }
+        return null; // instance inconnue
+    }
+
+    public static String instance_group_name_get(Instance inst) {
+        return instance_type_name_get(instance_type_get(inst));
+    }
+
 
     /* ------------------------------------------------------------------ */
     /* Méthode utilitaire pour éviter la duplication de code              */

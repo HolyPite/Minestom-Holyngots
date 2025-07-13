@@ -1,6 +1,9 @@
 package org.example.data;
 
+import net.minestom.server.coordinate.Pos;
+import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.instance.InstanceContainer;
 import org.example.InstancesInit;
 import org.example.data.data_class.PlayerData;
 
@@ -23,14 +26,13 @@ public final class PlayerDataUtils {
      * Loads the last saved data for the given player, if it exists.
      * If no stored data is found, a new {@link PlayerData} instance is returned.
      */
-    public static PlayerData loadLastData(UUID uuid) {
-        for (Set<Instance> group : InstancesInit.ALL_INSTANCES) {
-            String name = InstancesInit.instance_type_name_get(group);
-            Path file = FOLDER.resolve(name + "/" + uuid + ".json");
-            if (Files.exists(file)) {
-                return REPOSITORY.load(uuid, group);
-            }
+    public static PlayerData loadLastData(UUID uuid, Set<Instance> group) {
+        String name = InstancesInit.instance_type_name_get(group);
+        Path file = FOLDER.resolve(name + "/" + uuid + ".json");
+        if (Files.exists(file)) {
+            return REPOSITORY.load(uuid, group);
         }
         return new PlayerData(uuid);
     }
+
 }

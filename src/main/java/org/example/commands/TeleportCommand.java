@@ -2,10 +2,12 @@ package org.example.commands;
 
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
-import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
 import org.example.InstancesInit;
 import net.minestom.server.instance.InstanceContainer;
+
+import static org.example.data.PlayerDataUtils.loadLastData;
+import static org.example.teleport.TeleportUtils.teleportToInstance;
 
 public class TeleportCommand extends Command {
     public TeleportCommand() {
@@ -35,7 +37,7 @@ public class TeleportCommand extends Command {
                 return;
             }
 
-            player.setInstance(target, new Pos(0, 42, 0));
+            teleportToInstance(player,target);
             sender.sendMessage("Teleported to " + worldName);
         }, worldArg);
     }

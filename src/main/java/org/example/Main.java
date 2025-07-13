@@ -7,9 +7,13 @@ import net.minestom.server.entity.*;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.extras.MojangAuth;
+import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
 import org.example.data.PlayerDataUtils;
 import org.example.data.data_class.PlayerData;
+import org.example.teleport.TeleportUtils;
+
+import static org.example.teleport.TeleportUtils.lastPositionInInstanceGroup;
 
 public class Main {
     public static void main(String[] args) {
@@ -29,18 +33,15 @@ public class Main {
         GLOBAL_EVENTS.addListener(AsyncPlayerConfigurationEvent.class, event -> {
             Player player = event.getPlayer();
 
-            PlayerData data = PlayerDataUtils.loadLastData(player.getUuid());
-            InstanceContainer target = InstancesInit.instance_get(data.lastInstance);
-            if (target == null) {
-                target = InstancesInit.GAME_INSTANCE_1;
-            }
-            Pos spawn = data.position != null ? data.position : new Pos(0, 42, 0);
+            PlayerData data = PlayerDataUtils.loadLastData(player.getUuid(),InstancesInit.GAME_INSTANCES);
 
-            event.setSpawningInstance(target);
-            player.setRespawnPoint(spawn);
+            TeleportUtils.Target target = lastPositionInInstanceGroup(player,InstancesInit.GAME_INSTANCES);
+
+            event.setSpawningInstance(target.instance());
+            player.setRespawnPoint(target.pos());
 
             EntityCreature warden = new EntityCreature(EntityType.WARDEN);
-            warden.setInstance(target, spawn);
+            warden.setInstance(target.instance(),target.pos());
 
         });
 
