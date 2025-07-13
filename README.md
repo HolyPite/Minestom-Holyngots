@@ -1,25 +1,34 @@
 # Minestom-Holyngots
 
-This project is a small demo using the [Minestom](https://github.com/Minestom/Minestom) server framework. It demonstrates custom items, combat mechanics and other features implemented in `src/main/java`.
+Minestom-Holyngots is a small showcase built on top of the [Minestom](https://github.com/Minestom/Minestom) framework. It demonstrates how to create a custom Minecraft-like server without relying on a vanilla server jar.
 
-Player data is persisted in the `playerdata` folder using JSON files. Each player gets a file named `<uuid>.json` containing their level, experience and inventory.
+The project focuses on simplicity and aims to help you understand how Minestom works. It includes examples of:
+
+- Multiple worlds ("instances") loaded from the `worlds/` folder.
+- A basic combat system and event management.
+- Custom items with their own stats and lore.
+- Saving player data to JSON so progress persists between sessions.
+- Periodic world saving when the server shuts down or at regular intervals.
+
+Feel free to explore the source code in `src/main/java` to see how these features are implemented.
 
 ## Building
 
-The repository uses the Gradle build system. To compile the project, run:
+This repository uses Gradle. To compile everything, run:
 
 ```bash
 ./gradlew build
 ```
 
-This will compile the code and produce `build/libs/Minestom-Holyngots-1.0-SNAPSHOT.jar`.
+The resulting jar will be placed in `build/libs/`.
 
 ## Running the server
 
-Once built, you can start the server using the `java` command. Make sure the compiled jar and the `libs` directory are on the classpath so that dependencies are found:
+After building, start the server with:
 
 ```bash
 java -cp build/libs/* org.example.Main
 ```
 
-The server will bind on `0.0.0.0:25565` by default.
+By default it binds to `0.0.0.0:25565`. Connect with your Minecraft client to try the demo.
+
