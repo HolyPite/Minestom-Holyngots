@@ -7,9 +7,6 @@ import net.minestom.server.entity.*;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.extras.MojangAuth;
-import net.minestom.server.instance.Instance;
-
-import java.time.Duration;
 
 public class Main {
     public static void main(String[] args) {
@@ -36,23 +33,8 @@ public class Main {
 
         });
 
-
-
-        var scheduler = MinecraftServer.getSchedulerManager();
-
-        //Save worlds
-        scheduler.buildShutdownTask( () -> {
-            System.out.println("Server shutting down... Saving chunk");
-            MinecraftServer.getInstanceManager().getInstances().forEach(Instance::saveChunksToStorage);
-        });
-
-        scheduler.buildTask( () -> {
-                    System.out.println("Server autosave... Saving chunk");
-                    MinecraftServer.getInstanceManager().getInstances().forEach(Instance::saveChunksToStorage);
-                })      .repeat(Duration.ofSeconds(30))
-                .delay(Duration.ofMinutes(1))
-                .schedule();
-
+        //Sauvegarde des mondes
+        InstancesSaving.init();
 
         MojangAuth.init();
         server.start("0.0.0.0", 25565);
