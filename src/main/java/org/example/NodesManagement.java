@@ -105,4 +105,11 @@ public final class NodesManagement {
     public static void init() {
         // No-op : tout est déjà fait dans le bloc static.
     }
+
+    /**
+     * Accès au service de gestion des données joueur.
+     */
+    public static PlayerDataService getDataService() {
+        return DATA_SERVICE;
+    }
 }

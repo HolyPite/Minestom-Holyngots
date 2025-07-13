@@ -1,10 +1,12 @@
-package org.example.data;
+package org.example.teleport;
 
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
 import org.example.InstancesInit;
+import org.example.NodesManagement;
+import org.example.data.PlayerDataUtils;
 import org.example.data.data_class.PlayerData;
 
 import java.util.Iterator;
@@ -68,6 +70,9 @@ public final class TeleportUtils {
      * et renvoie la cible réellement utilisée.
      */
     public static Target teleportToInstanceGroup(Player player, Set<Instance> set) {
+        // Sauvegarder la position actuelle avant le changement d'instance
+        NodesManagement.getDataService().savePlayer(player);
+
         Target target = lastPositionInInstanceGroup(player, set);
         player.setInstance(target.instance(), target.pos());
         return target;
@@ -102,6 +107,9 @@ public final class TeleportUtils {
         Pos pos = (data != null && data.position != null)
                 ? data.position
                 : new Pos(0, 42, 0);
+
+        // Sauvegarder la position actuelle avant le changement d'instance
+        NodesManagement.getDataService().savePlayer(player);
 
         player.setInstance(instance, pos);
         return new Target(pos, instance);
