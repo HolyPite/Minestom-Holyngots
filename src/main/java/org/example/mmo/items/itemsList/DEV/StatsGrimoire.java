@@ -19,7 +19,7 @@ public final class StatsGrimoire {
                     TKit.createGradientText("Grimoire des Stats", NamedTextColor.GOLD, NamedTextColor.YELLOW))
                     .category(Category.MISC)
                     .rarity(Rarity.UNCOMMON)
-                    .material(Material.BOOK)
+                    .material(Material.WRITABLE_BOOK)
                     .tradable(false)
                     .stackSize(1)
                     .story("Clic-droit (air ou bloc) pour","afficher vos attributs actuels.")

@@ -5,6 +5,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.item.Material;
 import org.example.mmo.combats.CombatEngine;
 import org.example.mmo.combats.HealthUtils;
 import org.example.mmo.items.itemsList.DEV.StatsGrimoire;
@@ -15,6 +16,15 @@ import java.util.List;
 public class Stats {
 
     public static void refresh(Player player) {
+
+        int slot = 17;
+
+        ItemStack grimoire = player.getInventory().getItemStack(slot);
+
+        if (grimoire.material() != Material.WRITABLE_BOOK) {
+            player.sendMessage("WTF t'as pas le bouquin!");
+            return;
+        };
 
         double maxHp = HealthUtils.getCustomMax(player);
         double curHp = HealthUtils.getCustom(player);
@@ -30,10 +40,8 @@ public class Stats {
             lines.add(Component.text("• " + st.label + " : " + val, NamedTextColor.GRAY));
         }
 
-        int slot = 17;
 
-        ItemStack stack = StatsGrimoire.ITEM.toItemStack();
-        ItemStack it = stack.with(DataComponents.LORE,lines);
+        ItemStack it = grimoire.with(DataComponents.LORE,lines);
         player.getInventory().setItemStack(slot,it);
         //lines.forEach(player::sendMessage);
     }

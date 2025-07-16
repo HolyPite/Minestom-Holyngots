@@ -119,7 +119,8 @@ public class PlayerDataService {
             Set<Instance> group = currentGroup.remove(player.getUuid());
             PlayerData data   = cache.remove(player.getUuid());
             if (data != null && group != null) {
-                updatePlayerData(player, data);
+                updateInventory(player, data);
+                updatePosition(player, data);
                 repository.save(data, group);
             }
         });
@@ -130,7 +131,7 @@ public class PlayerDataService {
                 for (Player viewer : inv.getViewers()) {
                     PlayerData data = cache.get(viewer.getUuid());
                     if (data != null) {
-                        updatePlayerData(viewer, data);
+                        updateInventory(viewer, data);
                     }
                 }
             }
@@ -151,7 +152,8 @@ public class PlayerDataService {
     public void savePlayer(Player player) {
         PlayerData data = cache.get(player.getUuid());
         if (data == null) return;
-        updatePlayerData(player, data);
+        updateInventory(player, data);
+        updatePosition(player, data);
         Set<Instance> group = currentGroup.get(player.getUuid());
         if (group != null) {
             repository.save(data, group);
@@ -182,7 +184,8 @@ public class PlayerDataService {
         cache.forEach((uuid, data) -> {
             Player player = MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(uuid);
             if (player != null) {
-                updatePlayerData(player, data);
+                updateInventory(player, data);
+                updatePosition(player, data);
             }
             Set<Instance> group = currentGroup.get(uuid);
             if (group != null) {
@@ -196,7 +199,7 @@ public class PlayerDataService {
     /* ------------------------------------------------------------------ */
 
     /** Copie l’inventaire du joueur dans son {@link PlayerData}. */
-    private void updatePlayerData(Player player, PlayerData data) {
+    private void updateInventory(Player player, PlayerData data) {
         data.inventory.clear();
         PlayerInventory inv = player.getInventory();
 
@@ -206,15 +209,19 @@ public class PlayerDataService {
                 data.inventory.add(itemToData(stack, slot));
             }
         }
+    }
 
+    private void updatePosition(Player player, PlayerData data) {
         // Save current position and instance name
-        Instance instance = player.getInstance();
+        InstanceContainer instance = (InstanceContainer) player.getInstance();
         if (instance instanceof InstanceContainer container) {
             data.lastInstance = InstancesInit.instance_name_get(container);
+            System.out.println(data.lastInstance);
         } else {
             data.lastInstance = null;
         }
         data.position = player.getPosition();
+        System.out.println(data.position);
     }
 
     /* ---------- Conversion ItemStack <-> ItemData ---------- */

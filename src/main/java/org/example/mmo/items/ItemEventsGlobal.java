@@ -14,8 +14,11 @@ import net.minestom.server.event.trait.InventoryEvent;
 import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.inventory.PlayerInventory;
 import net.minestom.server.timer.TaskSchedule;
+import org.example.InstancesInit;
 import org.example.mmo.combats.AttackSpeedManager;
 import org.example.mmo.items.datas.Stats;
+
+import java.util.Objects;
 
 public class ItemEventsGlobal {
     public static void init(EventNode<Event> events){
@@ -33,10 +36,13 @@ public class ItemEventsGlobal {
             };
         });
 
+        //update stats
         inventoryNode.addListener(InventoryItemChangeEvent.class, e -> {
             if (e.getInventory() instanceof PlayerInventory inv) {
                 for (Player viewer : inv.getViewers()) {
-                    Stats.refresh(viewer);
+                    if (Objects.equals(InstancesInit.instance_type_name_get(InstancesInit.instance_type_get(viewer.getInstance())), "games"))   {
+                        Stats.refresh(viewer);
+                    }
                 }
             }
         });
@@ -44,8 +50,9 @@ public class ItemEventsGlobal {
         playerNode.addListener(PlayerChangeHeldSlotEvent.class, e -> {
             Player p = e.getEntity();
             p.scheduler().buildTask(() -> {
-
-                Stats.refresh(p);
+                if (Objects.equals(InstancesInit.instance_type_name_get(InstancesInit.instance_type_get(p.getInstance())), "games"))   {
+                    Stats.refresh(p);
+                }
             }).delay(TaskSchedule.tick(1)).schedule();
         });
 

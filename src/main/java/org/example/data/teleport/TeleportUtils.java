@@ -1,4 +1,4 @@
-package org.example.teleport;
+package org.example.data.teleport;
 
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
@@ -100,6 +100,9 @@ public final class TeleportUtils {
             return null;
         }
 
+        // Sauvegarder la position actuelle avant le changement d'instance
+        NodesManagement.getDataService().savePlayer(player);
+
         // Charger les données du joueur dans ce groupe
         PlayerData data = PlayerDataUtils.loadLastData(player.getUuid(), group);
 
@@ -107,9 +110,6 @@ public final class TeleportUtils {
         Pos pos = (data != null && data.position != null)
                 ? data.position
                 : new Pos(0, 42, 0);
-
-        // Sauvegarder la position actuelle avant le changement d'instance
-        NodesManagement.getDataService().savePlayer(player);
 
         player.setInstance(instance, pos);
         return new Target(pos, instance);
