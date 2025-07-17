@@ -8,6 +8,8 @@ The project now includes a minimal quest system. Quests are composed of several
 steps and their progress is stored with the rest of the player data. Quest
 definitions and progress classes can be found under
 `src/main/java/org/example/mmo/quests`.
+When you interact with an NPC tagged with a quest ID, the server now lists the
+quests you can start or continue with that character.
 
 ## Building
 

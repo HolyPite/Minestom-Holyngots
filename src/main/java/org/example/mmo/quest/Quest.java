@@ -15,8 +15,7 @@ public class Quest {
     public final List<QuestStep> steps;
     public final Component description;
 
-    public Quest(String id, Component name, Component description,
-                 List<QuestStep> steps, List<GameItem> rewards) {
+    public Quest(String id, Component name, Component description, List<QuestStep> steps) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -24,6 +23,6 @@ public class Quest {
     }
 
     public Quest(String id, Component name, Component description) {
-        this(id, name, description, new ArrayList<>(), new ArrayList<>());
+        this(id, name, description, new ArrayList<>());
     }
 }
