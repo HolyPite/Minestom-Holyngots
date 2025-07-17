@@ -11,12 +11,12 @@ import net.minestom.server.event.trait.InventoryEvent;
 import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.instance.Instance;
 import org.example.commands.CommandRegister;
-import org.example.mmo.combats.CombatListener;
+import org.example.mmo.combat.CombatListener;
 import org.example.data.JsonPlayerDataRepository;
 import org.example.data.PlayerDataService;
-import org.example.mmo.items.ItemBootstrap;
-import org.example.mmo.items.ItemEventsCustom;
-import org.example.mmo.items.ItemEventsGlobal;
+import org.example.mmo.item.ItemBootstrap;
+import org.example.mmo.item.ItemEventsCustom;
+import org.example.mmo.item.ItemEventsGlobal;
 
 import java.util.Objects;
 

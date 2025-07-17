@@ -1,8 +1,7 @@
 package org.example.data.data_class;
 
 import net.minestom.server.coordinate.Pos;
-import net.minestom.server.instance.Instance;
-import org.example.mmo.quests.QuestProgress;
+import org.example.mmo.quest.QuestProgress;
 
 import java.util.ArrayList;
 import java.util.List;
