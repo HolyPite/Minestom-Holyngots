@@ -19,7 +19,7 @@ public final class Try {
         s1.endNpc = "guide";
 
         QuestStep s2 = new QuestStep();
-        s2.description = Component.text("Trouvez l'\u00e9p\u00e9e Excalibur.");
+        s2.description = Component.text("Trouvez l'épée Excalibur.");
         s2.startNpc = "guide";
         s2.endNpc = "guide";
         s2.objectives = List.of(Excalibur.excalibur);
@@ -32,10 +32,9 @@ public final class Try {
 
         QUEST = new Quest(
                 "try",
-                Component.text("Premi\u00e8re qu\u00eate"),
-                Component.text("Qu\u00eate d'exemple"),
-                List.of(s1, s2, s3),
-                List.of(Excalibur.excalibur)
+                Component.text("Première quête"),
+                Component.text("Quête d'exemple"),
+                List.of(s1, s2, s3)
         );
 
         QuestRegistry.register(QUEST);
