@@ -17,6 +17,8 @@ import org.example.data.PlayerDataService;
 import org.example.mmo.item.ItemBootstrap;
 import org.example.mmo.item.ItemEventsCustom;
 import org.example.mmo.item.ItemEventsGlobal;
+import org.example.mmo.quest.QuestBootstrap;
+import org.example.mmo.quest.QuestEvents;
 
 import java.util.Objects;
 
@@ -84,10 +86,12 @@ public final class NodesManagement {
         CombatListener.init(GAME_NODE);
         ItemEventsGlobal.init(GAME_NODE);
         ItemEventsCustom.init(GAME_NODE);
+        QuestEvents.init(GAME_NODE);
 
         // — Commandes et items
         CommandRegister.init();
         ItemBootstrap.init();
+        QuestBootstrap.init();
     }
 
     /* ------------------------------------------------------------------ */
