@@ -1,0 +1,14 @@
+{
+  "uuid": "bd604bb1-ba17-419d-be10-d6bd5f3863ef",
+  "level": 1,
+  "experience": 0,
+  "inventory": [],
+  "position": {
+    "x": -1.3599477294216724,
+    "y": 40.0,
+    "z": -0.8327278271237067,
+    "yaw": -166.6863,
+    "pitch": 15.171137
+  },
+  "lastInstance": "build1"
+}

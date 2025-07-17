@@ -1,0 +1,30 @@
+{
+  "uuid": "bd604bb1-ba17-419d-be10-d6bd5f3863ef",
+  "level": 1,
+  "experience": 0,
+  "inventory": [
+    {
+      "itemId": "excalibur",
+      "amount": 1,
+      "slot": 0
+    },
+    {
+      "itemId": "stats_grimoire",
+      "amount": 1,
+      "slot": 17
+    },
+    {
+      "itemId": "polstron",
+      "amount": 1,
+      "slot": 42
+    }
+  ],
+  "position": {
+    "x": -1.153584623191633,
+    "y": 40.0,
+    "z": 8.096622813505531,
+    "yaw": 9.676788,
+    "pitch": 27.32394
+  },
+  "lastInstance": "game1"
+}

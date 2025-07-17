@@ -18,10 +18,9 @@ import net.minestom.server.timer.TaskSchedule;
 import org.example.InstancesInit;
 import org.example.data.data_class.ItemData;
 import org.example.data.data_class.PlayerData;
-import org.example.mmo.items.GameItem;
-import org.example.mmo.items.ItemRegistry;
-import org.example.mmo.items.ItemUtils;
-import org.example.mmo.items.datas.Stats;
+import org.example.mmo.item.GameItem;
+import org.example.mmo.item.ItemRegistry;
+import org.example.mmo.item.ItemUtils;
 
 import java.util.*;
 
