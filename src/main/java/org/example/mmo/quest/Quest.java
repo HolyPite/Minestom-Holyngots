@@ -15,8 +15,7 @@ public class Quest {
     public final List<QuestStep> steps;
     public final Component description;
 
-    public Quest(String id, Component name, Component description,
-                 List<QuestStep> steps) {
+    public Quest(String id, Component name, Component description, List<QuestStep> steps) {
         this.id = id;
         this.name = name;
         this.description = description;

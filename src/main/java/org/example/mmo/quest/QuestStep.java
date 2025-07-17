@@ -22,8 +22,8 @@ public class QuestStep {
     public Duration duration = Duration.ZERO;
     public int attemptLimit = 0;
     public List<Component> successDialogues = List.of();
-    public List<Component> failureDialogues = List.of();
     public List<Component> waitingDialogues = List.of();
+    public List<Component> failureDialogues = List.of();
     public List<Component> delayDialogues = List.of();
 
     public QuestStep() {
