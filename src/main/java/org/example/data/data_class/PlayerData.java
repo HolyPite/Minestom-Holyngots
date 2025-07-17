@@ -2,6 +2,7 @@ package org.example.data.data_class;
 
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.instance.Instance;
+import org.example.mmo.quests.QuestProgress;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ public class PlayerData {
     public int level;
     public int experience;
     public List<ItemData> inventory = new ArrayList<>();
+    public List<QuestProgress> quests = new ArrayList<>();
     public Pos position;
     public String lastInstance;
 

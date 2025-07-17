@@ -4,6 +4,11 @@ This project is a small demo using the [Minestom](https://github.com/Minestom/Mi
 
 Player data is persisted in the `playerdata` folder using JSON files. Each player gets a file named `<uuid>.json` containing their level, experience and inventory.
 
+The project now includes a minimal quest system. Quests are composed of several
+steps and their progress is stored with the rest of the player data. Quest
+definitions and progress classes can be found under
+`src/main/java/org/example/mmo/quests`.
+
 ## Building
 
 The repository uses the Gradle build system. To compile the project, run:
