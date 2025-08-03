@@ -8,6 +8,8 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import org.example.mmo.combat.CombatEngine;
 import org.example.mmo.combat.HealthUtils;
+import org.example.mmo.item.GameItem;
+import org.example.mmo.item.ItemRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,9 @@ public class Stats {
 
         if (grimoire.material() != Material.WRITABLE_BOOK) {
             player.sendMessage("WTF t'as pas le bouquin!");
+            ItemStack  it = ItemRegistry.byId("stats_grimoire").toItemStack();
+            player.getInventory().setItemStack(17,it);
+            //player.getInventory().setItemStack(slot, );
             return;
         };
 

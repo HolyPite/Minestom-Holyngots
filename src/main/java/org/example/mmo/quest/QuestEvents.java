@@ -37,8 +37,8 @@ public class QuestEvents {
                             .orElse(null);
 
                     if (progress == null) {
-                        if (!quest.steps.isEmpty() && id.equals(quest.steps.get(0).startNpc)) {
-                            lines.add(qid + " : " + TKit.extractPlainText(quest.steps.get(0).description));
+                        if (!quest.steps.isEmpty() && id.equals(quest.steps.getFirst().startNpc)) {
+                            lines.add(qid + " : " + TKit.extractPlainText(quest.steps.getFirst().description));
                         }
                         return;
                     }

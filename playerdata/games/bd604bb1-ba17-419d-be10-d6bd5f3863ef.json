@@ -19,12 +19,20 @@
       "slot": 42
     }
   ],
+  "quests": [
+    {
+      "questId": "try",
+      "stepIndex": 0,
+      "acceptedTime": 1752728616333,
+      "attempts": 0
+    }
+  ],
   "position": {
-    "x": -1.153584623191633,
+    "x": 3.417910771731329,
     "y": 40.0,
-    "z": 8.096622813505531,
-    "yaw": 9.676788,
-    "pitch": 27.32394
+    "z": 3.0769922540463575,
+    "yaw": 18.197876,
+    "pitch": 32.143974
   },
-  "lastInstance": "game1"
+  "lastInstance": "game2"
 }

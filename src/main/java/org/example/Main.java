@@ -6,9 +6,12 @@ import net.minestom.server.entity.*;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.extras.MojangAuth;
+import net.minestom.server.item.ItemStack;
 import org.example.data.PlayerDataUtils;
 import org.example.data.data_class.PlayerData;
 import org.example.data.teleport.TeleportUtils;
+import org.example.mmo.item.ItemRegistry;
+import org.example.mmo.quest.QuestTags;
 
 
 public class Main {
@@ -38,8 +41,8 @@ public class Main {
             player.setRespawnPoint(target.pos());
 
             EntityCreature warden = new EntityCreature(EntityType.WARDEN);
+            warden.setTag(QuestTags.ID,"guide");
             warden.setInstance(target.instance(),target.pos());
-
         });
 
 

@@ -11,7 +11,7 @@ public final class ItemBootstrap {
         try (ScanResult scan = new ClassGraph()
                 .enableClassInfo()
                 .ignoreClassVisibility()
-                .acceptPackages("org.example.mmo.items.itemsList")   // toute la hiérarchie
+                .acceptPackages("org.example.mmo.item.items")   // toute la hiérarchie
                 .scan())
         {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
