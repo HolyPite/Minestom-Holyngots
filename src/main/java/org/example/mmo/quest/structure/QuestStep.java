@@ -1,6 +1,8 @@
-package org.example.mmo.quest;
+package org.example.mmo.quest.structure;
 
 import net.kyori.adventure.text.Component;
+import org.example.mmo.quest.api.IQuestObjective;
+import org.example.mmo.quest.api.IQuestReward;
 
 import java.time.Duration;
 import java.util.Collections;

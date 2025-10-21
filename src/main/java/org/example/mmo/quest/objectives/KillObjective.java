@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
 import org.example.data.data_class.PlayerData;
-import org.example.mmo.quest.IQuestObjective;
+import org.example.mmo.quest.api.IQuestObjective;
 
 /**
  * An objective that requires the player to kill a certain number of a specific entity type.

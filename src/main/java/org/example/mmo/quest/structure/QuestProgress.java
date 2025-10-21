@@ -1,4 +1,4 @@
-package org.example.mmo.quest;
+package org.example.mmo.quest.structure;
 
 /**
  * Stores the progress of a single quest for a player.

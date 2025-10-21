@@ -1,4 +1,4 @@
-package org.example.mmo.quest;
+package org.example.mmo.quest.event;
 
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;

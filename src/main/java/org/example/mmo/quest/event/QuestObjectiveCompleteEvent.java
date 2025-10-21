@@ -1,7 +1,10 @@
-package org.example.mmo.quest;
+package org.example.mmo.quest.event;
 
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.trait.PlayerEvent;
+import org.example.mmo.quest.api.IQuestObjective;
+import org.example.mmo.quest.structure.QuestProgress;
+import org.example.mmo.quest.structure.QuestStep;
 import org.jetbrains.annotations.NotNull;
 
 /**

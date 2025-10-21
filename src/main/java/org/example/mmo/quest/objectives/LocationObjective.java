@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
 import org.example.data.data_class.PlayerData;
-import org.example.mmo.quest.IQuestObjective;
+import org.example.mmo.quest.api.IQuestObjective;
 
 /**
  * An objective that requires the player to reach a specific location.
@@ -36,6 +36,8 @@ public class LocationObjective implements IQuestObjective {
 
     @Override
     public boolean isCompleted(Player player, PlayerData data) {
+        // The check is performed by the distance calculation.
+        // The radius is squared for a more efficient comparison, avoiding square roots.
         return player.getPosition().distanceSquared(center) <= radius * radius;
     }
 

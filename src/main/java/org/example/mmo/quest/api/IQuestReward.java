@@ -1,4 +1,4 @@
-package org.example.mmo.quest;
+package org.example.mmo.quest.api;
 
 import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Player;

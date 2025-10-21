@@ -1,15 +1,12 @@
-package org.example.mmo.quest;
+package org.example.mmo.quest.registry;
+
+import org.example.mmo.quest.structure.Quest;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Registre contenant toutes les quêtes connues du serveur.
- */
 public final class QuestRegistry {
     private static final Map<String, Quest> MAP = new HashMap<>();
-
-    private QuestRegistry() {}
 
     public static void register(Quest quest) {
         MAP.put(quest.id, quest);

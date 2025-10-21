@@ -3,10 +3,10 @@ package org.example.mmo.quest.quests;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.damage.DamageType;
-import org.example.mmo.quest.Quest;
-import org.example.mmo.quest.QuestRegistry;
-import org.example.mmo.quest.QuestStep;
 import org.example.mmo.quest.objectives.SlayObjective;
+import org.example.mmo.quest.registry.QuestRegistry;
+import org.example.mmo.quest.structure.Quest;
+import org.example.mmo.quest.structure.QuestStep;
 
 import java.util.List;
 

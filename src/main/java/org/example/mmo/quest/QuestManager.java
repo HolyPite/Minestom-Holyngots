@@ -16,11 +16,17 @@ import net.minestom.server.timer.TaskSchedule;
 import org.example.NodesManagement;
 import org.example.data.data_class.PlayerData;
 import org.example.mmo.combat.DamageHistory;
-import org.example.mmo.combat.DamageRecord;
 import org.example.mmo.combat.DamageTracker;
+import org.example.mmo.quest.event.PlayerKillEntityEvent;
+import org.example.mmo.quest.event.QuestObjectiveCompleteEvent;
 import org.example.mmo.quest.objectives.KillObjective;
 import org.example.mmo.quest.objectives.LocationObjective;
 import org.example.mmo.quest.objectives.SlayObjective;
+import org.example.mmo.quest.registry.QuestRegistry;
+import org.example.mmo.quest.structure.Quest;
+import org.example.mmo.quest.structure.QuestProgress;
+import org.example.mmo.quest.structure.QuestStep;
+import org.example.mmo.quest.api.IQuestObjective;
 import org.example.utils.TKit;
 
 import java.util.ArrayList;

@@ -5,7 +5,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 import org.example.data.data_class.PlayerData;
 import org.example.mmo.item.GameItem;
-import org.example.mmo.quest.IQuestObjective;
+import org.example.mmo.quest.api.IQuestObjective;
 import org.example.utils.TKit;
 
 import java.util.List;

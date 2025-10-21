@@ -1,9 +1,8 @@
-package org.example.mmo.quest;
+package org.example.mmo.quest.structure;
 
 import net.kyori.adventure.text.Component;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

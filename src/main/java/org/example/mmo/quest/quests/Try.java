@@ -2,11 +2,11 @@ package org.example.mmo.quest.quests;
 
 import net.kyori.adventure.text.Component;
 import org.example.mmo.item.items.WEAPON.Excalibur;
-import org.example.mmo.quest.Quest;
-import org.example.mmo.quest.QuestRegistry;
-import org.example.mmo.quest.QuestStep;
 import org.example.mmo.quest.objectives.FetchObjective;
+import org.example.mmo.quest.registry.QuestRegistry;
 import org.example.mmo.quest.rewards.ItemReward;
+import org.example.mmo.quest.structure.Quest;
+import org.example.mmo.quest.structure.QuestStep;
 
 import java.util.List;
 

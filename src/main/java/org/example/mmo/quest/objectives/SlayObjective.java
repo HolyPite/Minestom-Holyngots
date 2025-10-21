@@ -5,7 +5,7 @@ import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.damage.Damage;
 import org.example.data.data_class.PlayerData;
-import org.example.mmo.quest.IQuestObjective;
+import org.example.mmo.quest.api.IQuestObjective;
 
 import java.util.function.Predicate;
 

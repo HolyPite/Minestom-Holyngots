@@ -3,7 +3,7 @@ package org.example.mmo.quest.rewards;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Player;
 import org.example.mmo.item.GameItem;
-import org.example.mmo.quest.IQuestReward;
+import org.example.mmo.quest.api.IQuestReward;
 
 import java.util.List;
 
