@@ -1,13 +1,13 @@
 package org.example.mmo.quest;
 
 import net.kyori.adventure.text.Component;
-import org.example.mmo.item.GameItem;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Définition d'une quête composée de plusieurs étapes.
+ * Defines a quest, composed of multiple steps and global properties.
  */
 public class Quest {
     public final String id;
@@ -15,14 +15,23 @@ public class Quest {
     public final List<QuestStep> steps;
     public final Component description;
 
-    public Quest(String id, Component name, Component description, List<QuestStep> steps) {
+    // New properties for more modularity
+    public final int requiredLevel;
+    public final boolean repeatable;
+    public final Duration cooldown;
+
+    public Quest(String id, Component name, Component description, List<QuestStep> steps, int requiredLevel, boolean repeatable, Duration cooldown) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.steps = List.copyOf(steps);
+        this.requiredLevel = requiredLevel;
+        this.repeatable = repeatable;
+        this.cooldown = cooldown;
     }
 
-    public Quest(String id, Component name, Component description) {
-        this(id, name, description, new ArrayList<>());
+    // Overloaded constructor for simpler quests
+    public Quest(String id, Component name, Component description, List<QuestStep> steps) {
+        this(id, name, description, steps, 0, false, Duration.ZERO);
     }
 }

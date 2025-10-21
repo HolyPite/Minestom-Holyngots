@@ -14,11 +14,12 @@ import org.example.commands.CommandRegister;
 import org.example.mmo.combat.CombatListener;
 import org.example.data.JsonPlayerDataRepository;
 import org.example.data.PlayerDataService;
+import org.example.mmo.combat.DamageTracker;
 import org.example.mmo.item.ItemBootstrap;
 import org.example.mmo.item.ItemEventsCustom;
 import org.example.mmo.item.ItemEventsGlobal;
 import org.example.mmo.quest.QuestBootstrap;
-import org.example.mmo.quest.QuestEvents;
+import org.example.mmo.quest.QuestManager;
 
 import java.util.Objects;
 
@@ -83,10 +84,11 @@ public final class NodesManagement {
         DATA_SERVICE.startAutoSave();
         DATA_SERVICE.init(GAME_NODE);
 
+        DamageTracker.init(); // Initialize the new damage tracking system
         CombatListener.init(GAME_NODE);
         ItemEventsGlobal.init(GAME_NODE);
         ItemEventsCustom.init(GAME_NODE);
-        QuestEvents.init(GAME_NODE);
+        QuestManager.init(GAME_NODE); // I noticed you were using QuestEvents, I updated it to QuestManager
 
         // — Commandes et items
         CommandRegister.init();

@@ -21,7 +21,9 @@ import net.minestom.server.timer.TaskSchedule;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TKit {
@@ -170,7 +172,7 @@ public class TKit {
         return players;
     }
 
-    // Retourne le joueur le plus proche d'une position donnée (null si aucun)
+    // Retourne le joueur le plus proche d’une position donnée (null si aucun)
     public static Player getNearestPlayer(Instance instance, Pos pos) {
         Player nearest = null;
         double minDistSq = Double.MAX_VALUE;
@@ -284,12 +286,17 @@ public class TKit {
         }
     }
 
-    public static boolean removeItems(Player player, ItemStack reference, int amount) {
-        if (amount <= 0 || reference.isAir()) return true;          // rien à retirer
+    /**
+     * Checks if a player has a sufficient amount of a specific item.
+     * @param player The player to check.
+     * @param reference The item to look for (material and NBT must match).
+     * @param amount The required amount.
+     * @return true if the player has at least the specified amount.
+     */
+    public static boolean hasItems(Player player, ItemStack reference, int amount) {
+        if (amount <= 0 || reference.isAir()) return true;
 
         var inv = player.getInventory();
-
-        /* ---------- 1) Comptage pour savoir si l’on a assez d’items ---------- */
         int available = 0;
         for (int slot = 0; slot < inv.getSize(); slot++) {
             ItemStack stack = inv.getItemStack(slot);
@@ -297,16 +304,56 @@ public class TKit {
 
             boolean same =
                     stack.material() == reference.material() &&
-                            stack.toItemNBT().equals(reference.toItemNBT());         // même NBT/meta
+                            stack.toItemNBT().equals(reference.toItemNBT());
             if (same) available += stack.amount();
         }
+        return available >= amount;
+    }
 
-        if (available < amount) {
-            return false;     // pas assez d’objets : on ne débite rien
+    /**
+     * Removes a list of items from a player's inventory transactionally.
+     * All items are removed only if the player possesses all of them.
+     * @param player The player to remove items from.
+     * @param itemsToRemove The list of ItemStacks to remove.
+     * @return true if all items were successfully removed, false otherwise.
+     */
+    public static boolean removeItemsList(Player player, List<ItemStack> itemsToRemove) {
+        if (itemsToRemove == null || itemsToRemove.isEmpty()) {
+            return true;
         }
 
-        /* ---------- 2) Retrait réel (on est sûr d’en avoir assez) ------------ */
-        for (int slot = 0; slot < inv.getSize() && amount > 0; slot++) {
+        // --- 1. Verification Pass ---
+        Map<ItemStack, Integer> requiredAmounts = new HashMap<>();
+        for (ItemStack item : itemsToRemove) {
+            if (item.isAir()) continue;
+            ItemStack keyItem = item.withAmount(1);
+            requiredAmounts.merge(keyItem, item.amount(), Integer::sum);
+        }
+
+        for (Map.Entry<ItemStack, Integer> entry : requiredAmounts.entrySet()) {
+            if (!hasItems(player, entry.getKey(), entry.getValue())) {
+                return false; // Abort if any item is missing
+            }
+        }
+
+        // --- 2. Removal Pass ---
+        for (Map.Entry<ItemStack, Integer> entry : requiredAmounts.entrySet()) {
+            removeItems(player, entry.getKey(), entry.getValue());
+        }
+
+        return true;
+    }
+
+    public static boolean removeItems(Player player, ItemStack reference, int amount) {
+        if (amount <= 0 || reference.isAir()) return true;          // rien à retirer
+
+        if (!hasItems(player, reference, amount)) {
+            return false; // Not enough items, do nothing
+        }
+
+        var inv = player.getInventory();
+        int amountToRemove = amount;
+        for (int slot = 0; slot < inv.getSize() && amountToRemove > 0; slot++) {
             ItemStack stack = inv.getItemStack(slot);
             if (stack.isAir()) continue;
 
@@ -315,8 +362,8 @@ public class TKit {
                             stack.toItemNBT().equals(reference.toItemNBT());
             if (!same) continue;
 
-            int take = Math.min(amount, stack.amount());
-            amount -= take;
+            int take = Math.min(amountToRemove, stack.amount());
+            amountToRemove -= take;
 
             if (stack.amount() == take) {
                 inv.setItemStack(slot, ItemStack.AIR);                  // vide la case
