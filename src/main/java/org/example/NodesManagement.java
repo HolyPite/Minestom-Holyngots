@@ -18,7 +18,7 @@ import org.example.mmo.combat.DamageTracker;
 import org.example.mmo.item.ItemBootstrap;
 import org.example.mmo.item.ItemEventsCustom;
 import org.example.mmo.item.ItemEventsGlobal;
-import org.example.mmo.quest.QuestBootstrap;
+import org.example.mmo.quest.registry.QuestBootstrap;
 import org.example.mmo.quest.QuestManager;
 
 import java.util.Objects;

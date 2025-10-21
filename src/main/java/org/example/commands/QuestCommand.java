@@ -6,9 +6,9 @@ import net.minestom.server.entity.Player;
 import org.example.NodesManagement;
 import org.example.data.PlayerDataService;
 import org.example.data.data_class.PlayerData;
-import org.example.mmo.quest.Quest;
-import org.example.mmo.quest.QuestProgress;
-import org.example.mmo.quest.QuestRegistry;
+import org.example.mmo.quest.structure.Quest;
+import org.example.mmo.quest.structure.QuestProgress;
+import org.example.mmo.quest.registry.QuestRegistry;
 
 import java.util.Optional;
 
