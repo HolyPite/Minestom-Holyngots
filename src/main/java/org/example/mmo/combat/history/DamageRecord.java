@@ -1,4 +1,4 @@
-package org.example.mmo.combat;
+package org.example.mmo.combat.history;
 
 import net.minestom.server.entity.damage.Damage;
 

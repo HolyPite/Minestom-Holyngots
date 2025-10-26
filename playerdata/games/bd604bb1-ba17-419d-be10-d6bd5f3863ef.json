@@ -4,7 +4,7 @@
   "experience": 0,
   "inventory": [
     {
-      "itemId": "excalibur",
+      "itemId": "admin_slayer",
       "amount": 1,
       "slot": 0
     },
@@ -12,27 +12,31 @@
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
-    },
-    {
-      "itemId": "polstron",
-      "amount": 1,
-      "slot": 42
     }
   ],
   "quests": [
     {
-      "questId": "try",
+      "questId": "monster_plague",
       "stepIndex": 0,
-      "acceptedTime": 1752728616333,
-      "attempts": 0
+      "acceptedTime": 1761506079571,
+      "stepStartTime": 1761506079571,
+      "attempts": 1
     }
   ],
+  "completedQuests": [],
+  "failedQuests": [],
   "position": {
-    "x": 3.417910771731329,
+    "x": -0.8606992047306136,
     "y": 40.0,
-    "z": 3.0769922540463575,
-    "yaw": 18.197876,
-    "pitch": 32.143974
+    "z": 6.82364531958741,
+    "yaw": 8.933893,
+    "pitch": 6.2530365
   },
-  "lastInstance": "game2"
+  "lastInstance": "game1",
+  "questCounters": {
+    "monster_plague_zombies": 0,
+    "monster_plague_skeletons": 0,
+    "monster_plague_spiders": 0
+  },
+  "questCooldowns": {}
 }

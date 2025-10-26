@@ -1,11 +1,15 @@
-package org.example.mmo.combat;
+package org.example.mmo.combat.history;
 
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.damage.Damage;
+import net.minestom.server.instance.Instance;
 import net.minestom.server.timer.TaskSchedule;
+import org.example.InstancesInit;
+import org.example.mmo.combat.util.StatUtils;
+import org.example.mmo.item.datas.StatType;
 
 import java.time.Duration;
 import java.util.Map;
@@ -24,40 +28,23 @@ public final class DamageTracker {
         // Private constructor to prevent instantiation
     }
 
-    /**
-     * Initializes the DamageTracker system.
-     * Starts a periodic task to clean up expired damage histories.
-     */
     public static void init() {
         MinecraftServer.getSchedulerManager()
                 .buildTask(DamageTracker::cleanupExpiredHistories)
-                .repeat(TaskSchedule.seconds(30)) // Check for cleanup every 30 seconds
+                .repeat(TaskSchedule.seconds(30))
                 .schedule();
     }
 
-    /**
-     * Records a new damage event for a specific entity.
-     * @param victim The entity that was damaged.
-     * @param damage The damage object.
-     */
     public static void recordDamage(LivingEntity victim, Damage damage) {
         DamageHistory history = DAMAGE_HISTORY_MAP.computeIfAbsent(victim.getUuid(), k -> new DamageHistory());
         DamageRecord record = new DamageRecord(damage, System.currentTimeMillis());
         history.addRecord(record);
     }
 
-    /**
-     * Retrieves the damage history for a given entity.
-     * @param entity The entity whose history to retrieve.
-     * @return The DamageHistory object, or null if none exists.
-     */
     public static DamageHistory getHistory(Entity entity) {
         return DAMAGE_HISTORY_MAP.get(entity.getUuid());
     }
 
-    /**
-     * The cleanup task that runs periodically to remove old damage histories.
-     */
     private static void cleanupExpiredHistories() {
         long now = System.currentTimeMillis();
         DAMAGE_HISTORY_MAP.entrySet().removeIf(entry -> {
@@ -65,10 +52,22 @@ public final class DamageTracker {
             boolean expired = (now - lastDamageTime) > EXPIRATION_TIME.toMillis();
 
             if (expired) {
-                Entity entity = Entity.getEntity(entry.getKey());
-                // If the entity is still loaded, is not a player, and is alive, heal it to full.
+                // Find the entity across all game instances
+                Entity entity = null;
+                for (Instance instance : InstancesInit.GAME_INSTANCES) {
+                    for (Entity entInInstance : instance.getEntities()) {
+                        if (entInInstance.getUuid().equals(entry.getKey())) {
+                            entity = entInInstance;
+                            break;
+                        }
+                    }
+                    if (entity != null) break;
+                }
+
                 if (entity instanceof LivingEntity livingEntity && !(entity instanceof Player) && !livingEntity.isDead()) {
-                    livingEntity.setHealth(livingEntity.getMaxHealth());
+                    // Use StatUtils to get max health, consistent with the rest of the system
+                    float maxHealth = StatUtils.getTotal(livingEntity, StatType.HEALTH);
+                    livingEntity.setHealth(maxHealth);
                 }
             }
             return expired;

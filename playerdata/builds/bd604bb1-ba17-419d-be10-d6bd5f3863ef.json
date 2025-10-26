@@ -4,23 +4,22 @@
   "experience": 0,
   "inventory": [
     {
-      "itemId": "excalibur",
+      "itemId": "stats_grimoire",
       "amount": 1,
-      "slot": 0
-    },
-    {
-      "itemId": "polstron",
-      "amount": 1,
-      "slot": 42
+      "slot": 17
     }
   ],
   "quests": [],
+  "completedQuests": [],
+  "failedQuests": [],
   "position": {
-    "x": 1.0256510046784402,
+    "x": 1.3145253056162254,
     "y": 40.0,
-    "z": -24.22809795212859,
-    "yaw": -22.145475,
-    "pitch": 24.937523
+    "z": 17.364975624357495,
+    "yaw": 162.69662,
+    "pitch": 13.796274
   },
-  "lastInstance": "build2"
+  "lastInstance": "build1",
+  "questCounters": {},
+  "questCooldowns": {}
 }
