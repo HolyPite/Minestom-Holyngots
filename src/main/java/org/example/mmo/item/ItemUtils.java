@@ -1,18 +1,24 @@
 package org.example.mmo.item;
 
-import net.minestom.server.component.DataComponents;
 import net.minestom.server.item.ItemStack;
-import net.minestom.server.item.component.CustomModelData;
+import net.minestom.server.tag.Tag;
+import org.jetbrains.annotations.Nullable;
 
 public final class ItemUtils {
-    /** Récupère le GameItem correspondant à l’ItemStack (ou null) */
+
+    private ItemUtils() {}
+
+    @Nullable
     public static GameItem resolve(ItemStack stack) {
-        if (stack.isAir()) return null;
+        if (stack == null || stack.isAir()) return null;
+        Integer customModelData = stack.getTag(Tag.Integer("CustomModelData"));
+        if (customModelData == null) return null;
+        return ItemRegistry.fromCustomModelData(customModelData);
+    }
 
-        CustomModelData cmd = stack.get(DataComponents.CUSTOM_MODEL_DATA);
-        if (cmd == null || cmd.strings().isEmpty()) return null;
-
-        String id = cmd.strings().get(0);              // id stocké ici
-        return ItemRegistry.byId(id);
+    @Nullable
+    public static String getId(ItemStack stack) {
+        GameItem gameItem = resolve(stack);
+        return (gameItem != null) ? gameItem.getId() : null;
     }
 }

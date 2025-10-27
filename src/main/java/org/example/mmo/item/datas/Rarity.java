@@ -1,17 +1,37 @@
 package org.example.mmo.item.datas;
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 
 public enum Rarity {
-    USELESS(NamedTextColor.GRAY),
-    COMMON(NamedTextColor.WHITE),
-    UNCOMMON(NamedTextColor.GREEN),
-    RARE(NamedTextColor.BLUE),
-    EPIC(NamedTextColor.DARK_PURPLE),
-    LEGENDARY(NamedTextColor.GOLD),
-    MYTHIC(NamedTextColor.DARK_RED),
-    UNIC(NamedTextColor.BLACK);
+    USELESS("Useless", NamedTextColor.GRAY),
+    COMMON("Common", NamedTextColor.WHITE),
+    UNCOMMON("Uncommon", NamedTextColor.GREEN),
+    RARE("Rare", NamedTextColor.BLUE),
+    EPIC("Epic", NamedTextColor.DARK_PURPLE),
+    LEGENDARY("Legendary", NamedTextColor.GOLD),
+    MYTHIC("Mythic", NamedTextColor.DARK_RED),
+    UNIC("Unic", NamedTextColor.BLACK);
+    ;
 
-    public final NamedTextColor color;
-    Rarity(NamedTextColor c){ this.color = c; }
+    private final String name;
+    private final TextColor color;
+
+    Rarity(String name, TextColor color) {
+        this.name = name;
+        this.color = color;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public TextColor color() {
+        return color;
+    }
+
+    public Component toComponent() {
+        return Component.text(name, color);
+    }
 }

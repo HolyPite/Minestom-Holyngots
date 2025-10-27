@@ -15,7 +15,7 @@ public final class PriestNpc {
         INSTANCE = new NPC(
                 "priest",
                 Component.text("Prêtre", NamedTextColor.AQUA),
-                new Pos(2, 40, 0, -90, 0), // Facing the hunter
+                new Pos(2, 40, 0, -90, 0), // Y-coordinate set to 40
                 List.of(
                         Component.text("Que la lumière guide vos pas."),
                         Component.text("Attention aux ombres qui rôdent."),

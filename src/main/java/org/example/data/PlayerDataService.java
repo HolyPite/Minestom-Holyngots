@@ -69,7 +69,7 @@ public class PlayerDataService {
 
                     if (!(event.getEntity() instanceof Player player)) return;
 
-                    // Groupe auquel appartient la nouvelle instance (ou null si aucun)
+                    // Groupe auquel appartient la nueva instancia (o null si ninguno)
                     Set<Instance> newGroup = InstancesInit.ALL_INSTANCES.stream()
                             .filter(g -> g.contains(event.getInstance()))
                             .findFirst()
@@ -77,12 +77,12 @@ public class PlayerDataService {
 
                     Set<Instance> oldGroup = currentGroup.get(player.getUuid());
 
-                    // Pas de changement de groupe ➜ rien à faire
+                    // No hay cambio de grupo ➜ nada que hacer
                     if (Objects.equals(newGroup, oldGroup)) {
                         return;
                     }
 
-                    /* ---------- 1) Quitter l’ancien groupe, le cas échéant ---------- */
+                    /* ---------- 1) Salir del grupo antiguo, si lo hay ---------- */
                     if (oldGroup != null) {
                         PlayerData oldData = cache.remove(player.getUuid());
                         if (oldData != null) {
@@ -90,29 +90,21 @@ public class PlayerDataService {
                         }
                     }
 
-                    /* ---------- 2) Entrer dans le nouveau groupe, le cas échéant ---------- */
+                    /* ---------- 2) Entrar en el nuevo grupo, si lo hay ---------- */
                     if (newGroup != null) {
                         PlayerData newData = repository.load(player.getUuid(), newGroup);
                         cache.put(player.getUuid(), newData);
 
-                        // Appliquer l’inventaire
-                        PlayerInventory inv = player.getInventory();
-                        inv.clear();
-                        for (ItemData item : newData.inventory) {
-                            ItemStack stack = dataToItem(item);
-                            if (item.slot >= 0 && item.slot < inv.getSize()) {
-                                inv.setItemStack(item.slot, stack);
-                            } else {
-                                inv.addItemStack(stack);
-                            }
-                        }
+                        // FIX: Call the new applyInventory method
+                        applyInventory(player, newData);
+
                         currentGroup.put(player.getUuid(), newGroup);
-                    } else { // Instance hors de tout groupe suivi
+                    } else { // Instancia fuera de cualquier grupo seguido
                         currentGroup.remove(player.getUuid());
                     }
                 });
 
-        /* ---------------- Déconnexion du joueur ---------------- */
+        /* ---------------- Desconexión del jugador ---------------- */
         playerNode.addListener(PlayerDisconnectEvent.class, event -> {
             Player player = event.getPlayer();
             Set<Instance> group = currentGroup.remove(player.getUuid());
@@ -124,7 +116,7 @@ public class PlayerDataService {
             }
         });
 
-        /* ---------------- Modification de l’inventaire ---------------- */
+        /* ---------------- Modificación del inventario ---------------- */
         inventoryNode.addListener(InventoryItemChangeEvent.class, e -> {
             if (e.getInventory() instanceof PlayerInventory inv) {
                 for (Player viewer : inv.getViewers()) {
@@ -204,14 +196,15 @@ public class PlayerDataService {
 
         for (int slot = 0; slot < inv.getSize(); slot++) {
             ItemStack stack = inv.getItemStack(slot);
-            if (!stack.isAir()) {
-                data.inventory.add(itemToData(stack, slot));
+            String itemId = ItemUtils.getId(stack);
+            // Only save if it's a GameItem
+            if (itemId != null) {
+                data.inventory.add(new ItemData(itemId, stack.amount(), slot));
             }
         }
     }
 
     private void updatePosition(Player player, PlayerData data) {
-        // Save current position and instance name
         InstanceContainer instance = (InstanceContainer) player.getInstance();
         if (instance instanceof InstanceContainer container) {
             data.lastInstance = InstancesInit.instance_name_get(container);
@@ -223,21 +216,51 @@ public class PlayerDataService {
         System.out.println(data.position);
     }
 
+    /**
+     * Applies the inventory stored in PlayerData to the actual player's inventory.
+     * This method clears the player's current inventory before applying the saved items.
+     * @param player The player whose inventory to update.
+     * @param data The PlayerData containing the inventory to apply.
+     */
+    public void applyInventory(Player player, PlayerData data) {
+        PlayerInventory inv = player.getInventory();
+        inv.clear(); // Clear inventory before loading new items
+
+        for (ItemData item : data.inventory) {
+            ItemStack stack = dataToItem(item);
+            if (!stack.isAir()) {
+                if (item.slot >= 0 && item.slot < inv.getSize()) {
+                    inv.setItemStack(item.slot, stack);
+                } else {
+                    inv.addItemStack(stack); // Fallback for invalid slot, though ideally slots should be valid
+                }
+            }
+        }
+    }
+
     /* ---------- Conversion ItemStack <-> ItemData ---------- */
 
     private ItemData itemToData(ItemStack stack, int slot) {
-        GameItem gi = ItemUtils.resolve(stack);
-        String id = gi != null ? gi.id : stack.material().name();
-        return new ItemData(id, stack.amount(), slot);
+        String itemId = ItemUtils.getId(stack);
+        // Only return ItemData if it's a GameItem
+        if (itemId != null) {
+            return new ItemData(itemId, stack.amount(), slot);
+        }
+        return null; // Do not save vanilla items, so return null
     }
 
     private ItemStack dataToItem(ItemData data) {
+        // If itemId is null, it means it was a vanilla item or empty slot that we chose not to save.
+        // In this case, return AIR to represent an empty slot.
+        if (data.itemId == null) {
+            return ItemStack.AIR;
+        }
+
         GameItem gi = ItemRegistry.byId(data.itemId);
         if (gi != null) {
             return gi.toItemStack().withAmount(data.amount);
         }
-        Material mat = Material.fromKey(data.itemId);
-        if (mat == null) mat = Material.AIR;
-        return ItemStack.of(mat).withAmount(data.amount);
+        // If itemId is not a GameItem, it means it was an invalid ID. Return AIR.
+        return ItemStack.AIR;
     }
 }

@@ -16,7 +16,7 @@ public class PlayerData {
     public UUID uuid;
     public int level;
     public int experience;
-    public List<ItemData> inventory = new ArrayList<>();
+    public List<ItemData> inventory = new ArrayList<>(); // Use ItemData
     public List<QuestProgress> quests = new ArrayList<>();
     public List<String> completedQuests = new ArrayList<>();
     public List<String> failedQuests = new ArrayList<>();
@@ -24,10 +24,6 @@ public class PlayerData {
     public String lastInstance;
 
     public Map<String, Integer> questCounters = new HashMap<>();
-    /**
-     * Stores the completion timestamp for repeatable quests to manage cooldowns.
-     * Key: Quest ID, Value: System.currentTimeMillis() of completion.
-     */
     public Map<String, Long> questCooldowns = new HashMap<>();
 
     public PlayerData() {}

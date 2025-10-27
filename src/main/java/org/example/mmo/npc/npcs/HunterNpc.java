@@ -15,7 +15,7 @@ public final class HunterNpc {
         INSTANCE = new NPC(
                 "hunter",
                 Component.text("Chasseur", NamedTextColor.GOLD),
-                new Pos(-2, 40, 0, 90, 0), // Facing the priest
+                new Pos(-2, 40, 0, 90, 0), // Y-coordinate set to 40
                 List.of(
                         Component.text("La nature est impitoyable. Soyez-le aussi."),
                         Component.text("J'ai vu des traces étranges près du bois..."),

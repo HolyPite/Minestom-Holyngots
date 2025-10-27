@@ -3,22 +3,34 @@ package org.example.mmo.quest.objectives;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
+import net.minestom.server.particle.Particle;
+import net.minestom.server.timer.Task;
+import net.minestom.server.timer.TaskSchedule;
 import org.example.data.data_class.PlayerData;
 import org.example.mmo.quest.api.IQuestObjective;
+import org.example.utils.TKit;
 
-/**
- * An objective that requires the player to reach a specific location.
- */
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class LocationObjective implements IQuestObjective {
+
+    // FIX: Use a nested map to track multiple particle tasks per player
+    // Outer Key: Player UUID, Inner Key: A unique ID for the objective (e.g., its coordinates)
+    private static final Map<UUID, Map<String, Task>> PLAYER_PARTICLE_TASKS = new ConcurrentHashMap<>();
 
     private final Pos center;
     private final double radius;
     private final Component description;
+    private final String objectiveId; // Unique ID for this specific objective instance
 
     public LocationObjective(Pos center, double radius, Component description) {
         this.center = center;
         this.radius = radius;
         this.description = description;
+        // Create a unique ID based on the target coordinates
+        this.objectiveId = String.format("loc_%.0f_%.0f_%.0f", center.x(), center.y(), center.z());
     }
 
     public Pos getCenter() {
@@ -36,23 +48,38 @@ public class LocationObjective implements IQuestObjective {
 
     @Override
     public boolean isCompleted(Player player, PlayerData data) {
-        // The check is performed by the distance calculation.
-        // The radius is squared for a more efficient comparison, avoiding square roots.
         return player.getPosition().distanceSquared(center) <= radius * radius;
     }
 
     @Override
     public void onStart(Player player, PlayerData data) {
-        // No special action needed when the objective starts.
+        // Ensure the player has a map for their tasks
+        PLAYER_PARTICLE_TASKS.computeIfAbsent(player.getUuid(), k -> new ConcurrentHashMap<>());
+
+        Task particleTask = player.scheduler().buildTask(() -> {
+            Pos particlePos = center.add(0, 10, 0);
+            TKit.spawnParticles(player.getInstance(), Particle.END_ROD, particlePos, 0.5f, 2f, 0.5f, 0.05f, 10);
+        }).repeat(TaskSchedule.seconds(1)).schedule();
+
+        // Store the task using the unique objectiveId
+        PLAYER_PARTICLE_TASKS.get(player.getUuid()).put(this.objectiveId, particleTask);
     }
 
     @Override
     public void onComplete(Player player, PlayerData data) {
-        // No special action needed upon completion, as it's a passive objective.
+        // Stop the specific particle task for this objective
+        Map<String, Task> playerTasks = PLAYER_PARTICLE_TASKS.get(player.getUuid());
+        if (playerTasks != null) {
+            Task task = playerTasks.remove(this.objectiveId);
+            if (task != null) {
+                task.cancel();
+            }
+        }
     }
 
     @Override
     public void onReset(Player player, PlayerData data) {
-        // No state to reset for this objective type.
+        // Also stop the particle task if the quest is reset
+        onComplete(player, data);
     }
 }

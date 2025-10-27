@@ -19,10 +19,6 @@ public class QuestEntitySpawner {
 
     private static final Pos HUNTING_GROUND_CENTER = new Pos(0, 42, 15);
 
-    /**
-     * Spawns all defined NPCs and quest monsters in all game instances.
-     * This method is designed to be called once at server startup.
-     */
     public static void spawnPersistentEntities() {
         for (Instance instance : InstancesInit.GAME_INSTANCES) {
             spawnNpcsForInstance(instance);
@@ -32,14 +28,9 @@ public class QuestEntitySpawner {
 
     private static void spawnNpcsForInstance(Instance instance) {
         NpcRegistry.all().values().forEach(npc -> {
-            EntityType entityType = switch (npc.id()) {
-                case "guide" -> EntityType.WARDEN;
-                default -> EntityType.VILLAGER;
-            };
+            EntityCreature creature = new EntityCreature(npc.entityType());
 
-            EntityCreature creature = new EntityCreature(entityType);
-
-            // Set NPC properties using the modern DataComponents API
+            // Set NPC properties using the correct API methods
             creature.set(DataComponents.CUSTOM_NAME, npc.name());
             creature.setCustomNameVisible(true);
             creature.setInvulnerable(true);

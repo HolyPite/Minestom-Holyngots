@@ -10,7 +10,7 @@ import org.example.mmo.item.*;
 
 public final class Excalibur {
 
-    public static final GameItem excalibur =
+    public static final GameItem INSTANCE =
         new GameItem.Builder("excalibur",
                 TKit.createGradientText("Excalibur",
                         TextColor.color(0xFFE600),
@@ -27,5 +27,5 @@ public final class Excalibur {
                 .stackSize(1)
                 .build();
 
-    static { ItemRegistry.register(excalibur); }
+    static { ItemRegistry.register(INSTANCE); }
 }

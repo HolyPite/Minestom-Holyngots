@@ -19,7 +19,6 @@ import java.util.*;
 
 public final class GameItem {
 
-    /* -------- champs immuables -------- */
     public final String id;
     public final Component displayName;
     public final Rarity rarity;
@@ -44,19 +43,20 @@ public final class GameItem {
         this.maxStack    = b.maxStack;
     }
 
-    /* -------- conversion -------- */
+    public String getId() {
+        return id;
+    }
+
     public ItemStack toItemStack() {
         return ItemStack.of(material)
                 .with(DataComponents.CUSTOM_NAME,  displayName)
                 .with(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(customModel), List.of()))
                 .with(DataComponents.LORE,          buildLore())
                 .with(DataComponents.MAX_STACK_SIZE, maxStack)
-                /* ------------- SUPPRIME les attributs vanilla ------------- */
                 .with(DataComponents.ATTRIBUTE_MODIFIERS, new AttributeList(List.of()))
                 .withoutExtraTooltip();
     }
 
-    /* -------- lore -------- */
     private List<Component> buildLore() {
         List<Component> lore = new ArrayList<>();
 
@@ -66,20 +66,18 @@ public final class GameItem {
             lore.add(Component.empty());
         }
 
-        lore.add(Component.text(rarity.name(),rarity.color, TextDecoration.BOLD));
+        lore.add(Component.text(rarity.name(), rarity.color(), TextDecoration.BOLD));
         lore.add(Component.text(category.name(), NamedTextColor.GRAY));
         lore.add(Component.empty());
 
         stats.forEach((stat, value) -> {
 
-            /* ---------- 1) label en or ---------- */
             Component line = Component.text(" • ", NamedTextColor.GRAY);
             line = line.append(Component.text(stat.label + " :", NamedTextColor.GRAY).decorate(TextDecoration.UNDERLINED));
 
-            /* ---------- 2) valeur + signe / % ---------- */
             String valueStr = switch (stat.kind) {
                 case FLAT     -> " %s%d".formatted(value > 0 ? "+" : "", value);
-                case PROBA    ->              " %d%%".formatted(value);                 // jamais de signe
+                case PROBA    ->              " %d%%".formatted(value);
                 case PERCENT  -> " %s%d%%".formatted(value > 0 ? "+" : "", value);
             };
 
@@ -87,8 +85,6 @@ public final class GameItem {
             line = line.append(Component.text(valueStr, color));
             lore.add(line);
         });
-
-
 
         if (!tradable) {
             lore.add(Component.empty());
@@ -100,19 +96,18 @@ public final class GameItem {
         return lore;
     }
 
-    /* -------- Builder -------- */
     public static final class Builder {
         private final String id;
         private final Component displayName;
         private final String customModel;
 
-        private Rarity   rarity   = Rarity.USELESS;
+        private Rarity   rarity   = Rarity.COMMON;
         private Category category = Category.MISC;
         private boolean  tradable = true;
         private Material material = Material.STICK;
         private final StatMap stats = new StatMap();
         private List<String> story = Collections.emptyList();
-        private int maxStack = 64;                 // ← NEW
+        private int maxStack = 64;
 
         public Builder(String id, Component name) {
             this.id = id;

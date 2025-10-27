@@ -5,6 +5,7 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.coordinate.Pos;
+import net.minestom.server.entity.EntityType;
 import org.example.mmo.npc.NPC;
 import org.example.mmo.npc.NpcRegistry;
 
@@ -17,7 +18,8 @@ public final class GuideNpc {
         INSTANCE = new NPC(
                 "guide",
                 Component.text("Guide Ancien", NamedTextColor.DARK_PURPLE),
-                new Pos(0, 40, 0, 180, 0), // Facing towards the hunting ground
+                EntityType.WARDEN,
+                new Pos(0, 40, 0, 180, 0), // Y-coordinate set to 40
                 List.of(
                         Component.text("Les échos du passé résonnent en ces lieux..."),
                         Component.text("Cherchez la force qui est en vous."),

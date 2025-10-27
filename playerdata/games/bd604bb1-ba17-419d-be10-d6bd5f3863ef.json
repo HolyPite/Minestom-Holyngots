@@ -2,41 +2,56 @@
   "uuid": "bd604bb1-ba17-419d-be10-d6bd5f3863ef",
   "level": 1,
   "experience": 0,
-  "inventory": [
-    {
-      "itemId": "admin_slayer",
-      "amount": 1,
-      "slot": 0
-    },
-    {
-      "itemId": "stats_grimoire",
-      "amount": 1,
-      "slot": 17
-    }
-  ],
+  "inventory": [],
   "quests": [
     {
-      "questId": "monster_plague",
+      "questId": "grand_tour",
       "stepIndex": 0,
-      "acceptedTime": 1761506079571,
-      "stepStartTime": 1761506079571,
-      "attempts": 1
+      "acceptedTime": 1761594865832,
+      "stepStartTime": 1761594865832,
+      "attempts": 1,
+      "objectiveCompletionStatus": {
+        "TextComponentImpl{content\u003d\"Trouvez le point de vue caché\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
+        "TextComponentImpl{content\u003d\"Rapportez 3 os\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
+      }
+    },
+    {
+      "questId": "try",
+      "stepIndex": 0,
+      "acceptedTime": 1761594964382,
+      "stepStartTime": 1761594964382,
+      "attempts": 1,
+      "objectiveCompletionStatus": {}
+    },
+    {
+      "questId": "learning_quest",
+      "stepIndex": 0,
+      "acceptedTime": 1761594994181,
+      "stepStartTime": 1761594994181,
+      "attempts": 1,
+      "objectiveCompletionStatus": {}
+    },
+    {
+      "questId": "new_beginning",
+      "stepIndex": 0,
+      "acceptedTime": 1761595906204,
+      "stepStartTime": 1761595906204,
+      "attempts": 1,
+      "objectiveCompletionStatus": {}
     }
   ],
   "completedQuests": [],
   "failedQuests": [],
   "position": {
-    "x": -0.8606992047306136,
+    "x": 2.097473675287931,
     "y": 40.0,
-    "z": 6.82364531958741,
-    "yaw": 8.933893,
-    "pitch": 6.2530365
+    "z": 15.266327045556928,
+    "yaw": -28.741205,
+    "pitch": 33.69321
   },
   "lastInstance": "game1",
   "questCounters": {
-    "monster_plague_zombies": 0,
-    "monster_plague_skeletons": 0,
-    "monster_plague_spiders": 0
+    "grand_tour_zombies": 3
   },
   "questCooldowns": {}
 }
