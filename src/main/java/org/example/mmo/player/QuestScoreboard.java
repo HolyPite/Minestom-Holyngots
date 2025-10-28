@@ -9,6 +9,7 @@ import org.example.data.data_class.PlayerData;
 import org.example.mmo.npc.NPC;
 import org.example.mmo.npc.NpcRegistry;
 import org.example.mmo.quest.api.IQuestObjective;
+import org.example.mmo.quest.objectives.FetchObjective;
 import org.example.mmo.quest.objectives.KillObjective;
 import org.example.mmo.quest.objectives.LocationObjective;
 import org.example.mmo.quest.objectives.SlayObjective;
@@ -61,6 +62,9 @@ public class QuestScoreboard {
                         } else if (objective instanceof LocationObjective locObj) {
                             Pos target = locObj.getCenter();
                             progressText = String.format(" (%d, %d, %d)", target.blockX(), target.blockY(), target.blockZ());
+                        } else if (objective instanceof FetchObjective fetchObj) {
+                            int currentAmount = TKit.countItems(player, fetchObj.getItemToFetch().toItemStack());
+                            progressText = String.format(" %d/%d", currentAmount, fetchObj.getRequiredAmount());
                         }
 
                         boolean isCompleted = progress.isObjectiveCompleted(objective);

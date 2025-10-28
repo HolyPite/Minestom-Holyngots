@@ -34,7 +34,7 @@ public class FetchObjective implements IQuestObjective {
 
     @Override
     public boolean isCompleted(Player player, PlayerData data) {
-        return false; //TKit.countItems(player, itemToFetch.toItemStack()) >= requiredAmount;
+        return TKit.countItems(player, itemToFetch.toItemStack()) >= requiredAmount;
     }
 
     @Override

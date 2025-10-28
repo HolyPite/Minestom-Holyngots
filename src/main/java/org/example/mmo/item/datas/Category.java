@@ -4,4 +4,4 @@ public enum Category {
     MISC,
     WEAPON,
     ARMOR,
-    RESOURCE }
+    MATERIAL, RESOURCE }

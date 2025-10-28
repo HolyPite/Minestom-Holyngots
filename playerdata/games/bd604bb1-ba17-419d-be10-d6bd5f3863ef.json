@@ -4,12 +4,12 @@
   "experience": 0,
   "inventory": [
     {
-      "itemId": "excalibur",
-      "amount": 1,
+      "itemId": "bone",
+      "amount": 3,
       "slot": 0
     },
     {
-      "itemId": "excalibur",
+      "itemId": "admin_slayer",
       "amount": 1,
       "slot": 1
     },
@@ -24,45 +24,23 @@
       "slot": 17
     }
   ],
-  "quests": [
-    {
-      "questId": "try",
-      "stepIndex": 1,
-      "acceptedTime": 1761657026268,
-      "stepStartTime": 1761657030668,
-      "attempts": 1,
-      "objectiveCompletionStatus": {}
-    },
-    {
-      "questId": "fire_purge",
-      "stepIndex": 0,
-      "acceptedTime": 1761657078218,
-      "stepStartTime": 1761657078218,
-      "attempts": 1,
-      "objectiveCompletionStatus": {}
-    }
-  ],
+  "quests": [],
   "completedQuests": [
-    "monster_plague",
-    "grand_tour",
     "new_beginning",
-    "speed_trial"
+    "grand_tour",
+    "try"
   ],
   "failedQuests": [],
   "position": {
-    "x": -2.300000011920929,
-    "y": 39.0,
-    "z": 2.660253004174253,
-    "yaw": -44.338013,
-    "pitch": 14.105452
+    "x": -1.392851750518476,
+    "y": 40.0,
+    "z": 2.5309122492180136,
+    "yaw": -107.00098,
+    "pitch": 8.106947
   },
-  "lastInstance": "game1",
+  "lastInstance": "game2",
   "questCounters": {
-    "monster_plague_zombies": 3,
-    "monster_plague_skeletons": 5,
-    "monster_plague_spiders": 2,
-    "grand_tour_zombies": 5,
-    "fire_purge_zombies": 0
+    "grand_tour_zombies": 5
   },
   "questCooldowns": {}
 }

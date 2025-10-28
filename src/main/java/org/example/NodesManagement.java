@@ -17,6 +17,7 @@ import org.example.data.JsonPlayerDataRepository;
 import org.example.data.PlayerDataService;
 import org.example.mmo.combat.history.DamageTracker;
 import org.example.mmo.dev.QuestEntitySpawner;
+import org.example.mmo.inventory.InventoryListener;
 import org.example.mmo.item.ItemBootstrap;
 import org.example.mmo.item.ItemEventsCustom;
 import org.example.mmo.item.ItemEventsGlobal;
@@ -61,6 +62,7 @@ public final class NodesManagement {
         ItemEventsCustom.init(GAME_NODE);
         QuestManager.init(GAME_NODE);
         PlayerQuestListener.init(PLAYER_NODE);
+        InventoryListener.init(INVENTORY_NODE); // Initialize the InventoryListener
 
         CommandRegister.init();
         MinecraftServer.getCommandManager().register(new NpcInteractionCommand());

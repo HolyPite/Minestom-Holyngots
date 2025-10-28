@@ -18,12 +18,11 @@ import net.minestom.server.potion.Potion;
 import net.minestom.server.potion.PotionEffect;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
+import org.example.mmo.item.ItemUtils;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TKit {
@@ -443,10 +442,33 @@ public class TKit {
 
         /* arrêt après lifetimeTicks */
         inst.scheduler()
-            .buildTask(t::cancel)
-            .delay(TaskSchedule.tick(lifetimeTicks))
-            .schedule();
+                .buildTask(t::cancel)
+                .delay(TaskSchedule.tick(lifetimeTicks))
+                .schedule();
     }
+
+
+    public static int countItems(Player player, ItemStack reference) {
+        String referenceId = ItemUtils.getId(reference);
+        if (referenceId == null) { // It's a vanilla item
+            int amount = 0;
+            for (ItemStack stack : player.getInventory().getItemStacks()) {
+                if (stack.material() == reference.material()) {
+                    amount += stack.amount();
+                }
+            }
+            return amount;
+        } else { // It's a GameItem
+            int amount = 0;
+            for (ItemStack stack : player.getInventory().getItemStacks()) {
+                if (Objects.equals(ItemUtils.getId(stack), referenceId)) {
+                    amount += stack.amount();
+                }
+            }
+            return amount;
+        }
+    }
+
 
     /*
     public static void spawnEffectCloud(InstanceContainer inst,
