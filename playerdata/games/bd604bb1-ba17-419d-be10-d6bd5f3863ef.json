@@ -9,6 +9,11 @@
       "slot": 0
     },
     {
+      "itemId": "admin_slayer",
+      "amount": 1,
+      "slot": 1
+    },
+    {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
@@ -16,32 +21,41 @@
   ],
   "quests": [
     {
-      "questId": "speed_trial",
+      "questId": "try",
       "stepIndex": 1,
-      "acceptedTime": 1761656305914,
-      "stepStartTime": 1761656315764,
+      "acceptedTime": 1761657026268,
+      "stepStartTime": 1761657030668,
       "attempts": 1,
-      "objectiveCompletionStatus": {
-        "TextComponentImpl{content\u003d\"Atteignez le cercle au sommet de la colline\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
-      }
+      "objectiveCompletionStatus": {}
+    },
+    {
+      "questId": "fire_purge",
+      "stepIndex": 0,
+      "acceptedTime": 1761657078218,
+      "stepStartTime": 1761657078218,
+      "attempts": 1,
+      "objectiveCompletionStatus": {}
     }
   ],
   "completedQuests": [
-    "monster_plague"
+    "monster_plague",
+    "grand_tour"
   ],
   "failedQuests": [],
   "position": {
-    "x": -2.9052944549764743,
-    "y": 41.024424088213685,
-    "z": -5.43864666669113,
-    "yaw": 129.73364,
-    "pitch": -15.595507
+    "x": -2.971153417096739,
+    "y": 40.0,
+    "z": 4.16661570752756,
+    "yaw": -168.00603,
+    "pitch": 14.941622
   },
-  "lastInstance": "game2",
+  "lastInstance": "game1",
   "questCounters": {
     "monster_plague_zombies": 3,
     "monster_plague_skeletons": 5,
-    "monster_plague_spiders": 2
+    "monster_plague_spiders": 2,
+    "grand_tour_zombies": 5,
+    "fire_purge_zombies": 0
   },
   "questCooldowns": {}
 }
