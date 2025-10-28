@@ -4,9 +4,19 @@
   "experience": 0,
   "inventory": [
     {
-      "itemId": "admin_slayer",
+      "itemId": "excalibur",
       "amount": 1,
       "slot": 0
+    },
+    {
+      "itemId": "excalibur",
+      "amount": 1,
+      "slot": 1
+    },
+    {
+      "itemId": "excalibur",
+      "amount": 1,
+      "slot": 2
     },
     {
       "itemId": "stats_grimoire",
@@ -40,13 +50,13 @@
   ],
   "failedQuests": [],
   "position": {
-    "x": -0.7234065446401423,
-    "y": 40.0,
-    "z": 3.7185301351729994,
-    "yaw": -168.65344,
-    "pitch": 30.355589
+    "x": -2.300000011920929,
+    "y": 39.0,
+    "z": 2.660253004174253,
+    "yaw": -44.338013,
+    "pitch": 14.105452
   },
-  "lastInstance": "game2",
+  "lastInstance": "game1",
   "questCounters": {
     "monster_plague_zombies": 3,
     "monster_plague_skeletons": 5,

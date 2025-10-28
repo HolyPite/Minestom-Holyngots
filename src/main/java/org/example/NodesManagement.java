@@ -31,9 +31,18 @@ public final class NodesManagement {
 
     private static final GlobalEventHandler GLOBAL_EVENTS = MinecraftServer.getGlobalEventHandler();
     private static final EventNode<Event> GAME_NODE = EventNode.all("gameNode");
-    private static final EventNode<PlayerEvent> PLAYER_NODE = EventNode.type("playerNode", EventFilter.PLAYER);
-    private static final EventNode<EntityEvent> ENTITY_NODE = EventNode.type("entityNode", EventFilter.ENTITY);
-    private static final EventNode<InventoryEvent> INVENTORY_NODE = EventNode.type("inventoryNode", EventFilter.INVENTORY);
+    private static final EventNode<PlayerEvent> PLAYER_NODE = EventNode.event("playerNode", EventFilter.PLAYER, event -> {
+        Instance inst = event.getPlayer().getInstance();
+        return inst != null && InstancesInit.GAME_INSTANCES.contains(inst);
+    });
+    private static final EventNode<EntityEvent> ENTITY_NODE = EventNode.event("entityNode", EventFilter.ENTITY, event -> {
+        Instance inst = event.getEntity().getInstance();
+        return inst != null && InstancesInit.GAME_INSTANCES.contains(inst);
+    });
+    private static final EventNode<InventoryEvent> INVENTORY_NODE = EventNode.event("inventoryNode", EventFilter.INVENTORY, event -> event.getInventory().getViewers().stream()
+            .map(Entity::getInstance)
+            .filter(Objects::nonNull)
+            .anyMatch(InstancesInit.GAME_INSTANCES::contains));
 
     private static final PlayerDataService DATA_SERVICE = new PlayerDataService(new JsonPlayerDataRepository());
 
