@@ -9,11 +9,6 @@
       "slot": 0
     },
     {
-      "itemId": "admin_slayer",
-      "amount": 1,
-      "slot": 1
-    },
-    {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
@@ -39,17 +34,19 @@
   ],
   "completedQuests": [
     "monster_plague",
-    "grand_tour"
+    "grand_tour",
+    "new_beginning",
+    "speed_trial"
   ],
   "failedQuests": [],
   "position": {
-    "x": -2.971153417096739,
+    "x": -0.7234065446401423,
     "y": 40.0,
-    "z": 4.16661570752756,
-    "yaw": -168.00603,
-    "pitch": 14.941622
+    "z": 3.7185301351729994,
+    "yaw": -168.65344,
+    "pitch": 30.355589
   },
-  "lastInstance": "game1",
+  "lastInstance": "game2",
   "questCounters": {
     "monster_plague_zombies": 3,
     "monster_plague_skeletons": 5,

@@ -10,6 +10,8 @@ import org.example.data.PlayerDataUtils;
 import org.example.data.data_class.PlayerData;
 import org.example.data.teleport.TeleportUtils;
 import org.example.mmo.item.datas.Stats;
+import org.example.mmo.quest.QuestManager;
+import org.example.mmo.quest.registry.QuestRegistry;
 
 public class Main {
     public static void main(String[] args) {
@@ -24,35 +26,34 @@ public class Main {
         // --- Phase 1: Player Configuration ---
         GLOBAL_EVENTS.addListener(AsyncPlayerConfigurationEvent.class, event -> {
             Player player = event.getPlayer();
-
-            // --- DIAGNOSTIC TEST ---
-            // We are temporarily disabling the call to TeleportUtils to confirm it is the source of the crash.
-            // We will just spawn the player in the first available game instance.
             if (!InstancesInit.GAME_INSTANCES.isEmpty()) {
-                // Correct way to get the first element from a generic collection
                 event.setSpawningInstance(InstancesInit.GAME_INSTANCES.iterator().next());
             }
-            // --- END OF DIAGNOSTIC TEST ---
-
-            // Original code that is likely causing the issue:
-            // TeleportUtils.Target target = TeleportUtils.lastPositionInInstanceGroup(player, InstancesInit.GAME_INSTANCES);
-            // event.setSpawningInstance(target.instance());
         });
 
         // --- Phase 2: Player Spawning ---
         GLOBAL_EVENTS.addListener(PlayerSpawnEvent.class, event -> {
             Player player = event.getPlayer();
 
-            // Now that the player is in-game, we can safely load their data and teleport them.
-            PlayerData data = PlayerDataUtils.loadLastData(player.getUuid(), InstancesInit.GAME_INSTANCES);
-            TeleportUtils.Target target = TeleportUtils.lastPositionInInstanceGroup(player, InstancesInit.GAME_INSTANCES);
+            // Load data into the service
+            PlayerDataUtils.loadLastData(player.getUuid(), InstancesInit.GAME_INSTANCES);
+
+            // Get the official data object from the service
+            PlayerData data = NodesManagement.getDataService().get(player);
+            if (data == null) return; // Safety check
 
             // Teleport the player to their actual last position
+            TeleportUtils.Target target = TeleportUtils.lastPositionInInstanceGroup(player, InstancesInit.GAME_INSTANCES);
             player.teleport(target.pos());
             player.setRespawnPoint(target.pos());
 
-            // Refresh player stats for the first time now that they are fully in-game
+            // Refresh stats
             Stats.refresh(player);
+
+            // Try to auto-start quests using the official data object
+            QuestRegistry.all().values().forEach(quest -> {
+                QuestManager.tryAutoStartQuest(player, data, quest);
+            });
         });
 
         // World saving

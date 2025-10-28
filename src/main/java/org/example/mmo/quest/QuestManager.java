@@ -8,6 +8,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
@@ -26,18 +27,18 @@ import org.example.mmo.npc.NPC;
 import org.example.mmo.npc.NpcRegistry;
 import org.example.mmo.quest.api.IQuestObjective;
 import org.example.mmo.quest.event.*;
-import org.example.mmo.quest.objectives.KillObjective;
-import org.example.mmo.quest.objectives.LocationObjective;
-import org.example.mmo.quest.objectives.SlayObjective;
-import org.example.mmo.quest.objectives.TalkObjective;
-import org.example.mmo.quest.objectives.FetchObjective;
+import org.example.mmo.quest.objectives.*;
 import org.example.mmo.quest.registry.QuestRegistry;
 import org.example.mmo.quest.structure.Quest;
 import org.example.mmo.quest.structure.QuestProgress;
 import org.example.mmo.quest.structure.QuestStep;
 import org.example.utils.TKit;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class QuestManager {
@@ -282,6 +283,7 @@ public final class QuestManager {
                 data.completedQuests.add(quest.id);
             }
             EVENT_NODE.call(new QuestStepAdvanceEvent(player, quest, newStepIndex));
+            QuestRegistry.all().values().forEach(q -> tryAutoStartQuest(player, data, q));
             return true;
         }
 
@@ -319,6 +321,7 @@ public final class QuestManager {
         });
 
         EVENT_NODE.call(new QuestStepAdvanceEvent(player, quest, newStepIndex));
+        QuestRegistry.all().values().forEach(q -> tryAutoStartQuest(player, data, q));
         return true;
     }
 
@@ -448,7 +451,7 @@ public final class QuestManager {
 
     private static void handlePlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if (!getPlayersWithLocationObjectives().contains(player)) return;
+        if (!playersWithLocationObjectives.contains(player)) return;
 
         PlayerData data = NodesManagement.getDataService().get(player);
         if (data == null) return;
