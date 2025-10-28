@@ -5,6 +5,7 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.coordinate.Pos;
+import net.minestom.server.entity.EntityType;
 import org.example.mmo.npc.NPC;
 import org.example.mmo.npc.NpcRegistry;
 
@@ -17,13 +18,11 @@ public final class GuideNpc {
         INSTANCE = new NPC(
                 "guide",
                 Component.text("Guide Ancien", NamedTextColor.DARK_PURPLE),
-                new Pos(0, 40, 0, 180, 0), // Facing towards the hunting ground
+                EntityType.WARDEN,
+                new Pos(0, 40, 0, 180, 0),
                 List.of(
                         Component.text("Les échos du passé résonnent en ces lieux..."),
-                        Component.text("Cherchez la force qui est en vous."),
-                        Component.text("Le chemin est long, mais la récompense est grande."),
-                        Component.text("Ne vous fiez pas aux apparences."),
-                        Component.text("Les ténèbres ne sont jamais loin.")
+                        Component.text("Cherchez la force qui est en vous.")
                 ),
                 Sound.sound(Key.key("minecraft:entity.warden.ambient"), Sound.Source.NEUTRAL, 1.5f, 0.8f)
         );

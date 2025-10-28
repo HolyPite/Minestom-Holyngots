@@ -12,17 +12,10 @@ import org.example.mmo.quest.QuestManager;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * A developer utility class to spawn all necessary quest-related entities in one place.
- */
 public class QuestEntitySpawner {
 
     private static final Pos HUNTING_GROUND_CENTER = new Pos(0, 42, 15);
 
-    /**
-     * Spawns all defined NPCs and quest monsters in all game instances.
-     * This method is designed to be called once at server startup.
-     */
     public static void spawnPersistentEntities() {
         for (Instance instance : InstancesInit.GAME_INSTANCES) {
             spawnNpcsForInstance(instance);
@@ -32,20 +25,13 @@ public class QuestEntitySpawner {
 
     private static void spawnNpcsForInstance(Instance instance) {
         NpcRegistry.all().values().forEach(npc -> {
-            EntityType entityType = switch (npc.id()) {
-                case "guide" -> EntityType.WARDEN;
-                default -> EntityType.VILLAGER;
-            };
+            EntityCreature creature = new EntityCreature(npc.entityType());
 
-            EntityCreature creature = new EntityCreature(entityType);
-
-            // Set NPC properties using the modern DataComponents API
             creature.set(DataComponents.CUSTOM_NAME, npc.name());
             creature.setCustomNameVisible(true);
             creature.setInvulnerable(true);
             creature.setNoGravity(true);
 
-            // Set quest tag and spawn the entity
             creature.setTag(QuestManager.NPC_ID_TAG, npc.id());
             creature.setInstance(instance, npc.spawnPosition());
         });

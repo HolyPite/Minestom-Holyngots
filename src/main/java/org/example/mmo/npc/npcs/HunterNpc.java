@@ -15,12 +15,10 @@ public final class HunterNpc {
         INSTANCE = new NPC(
                 "hunter",
                 Component.text("Chasseur", NamedTextColor.GOLD),
-                new Pos(-2, 40, 0, 90, 0), // Facing the priest
+                new Pos(-2, 40, 0, 90, 0),
                 List.of(
                         Component.text("La nature est impitoyable. Soyez-le aussi."),
-                        Component.text("J'ai vu des traces étranges près du bois..."),
-                        Component.text("Un bon chasseur connaît sa proie."),
-                        Component.text("Le silence est votre meilleur allié.")
+                        Component.text("J'ai vu des traces étranges près du bois...")
                 )
         );
         NpcRegistry.register(INSTANCE);

@@ -1,18 +1,19 @@
 package org.example.mmo.quest.structure;
 
-/**
- * Stores the progress of a single quest for a player.
- */
+import org.example.mmo.quest.api.IQuestObjective;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class QuestProgress {
     public String questId;
     public int stepIndex;
-    public long acceptedTime; // When the quest was first accepted
-    public long stepStartTime; // When the current step was started, for duration checks
+    public long acceptedTime;
+    public long stepStartTime;
     public int attempts;
+    public Map<String, Boolean> objectiveCompletionStatus = new HashMap<>();
 
-    // Default constructor for deserialization
-    public QuestProgress() {
-    }
+    public QuestProgress() {}
 
     public QuestProgress(String questId) {
         this.questId = questId;
@@ -20,5 +21,17 @@ public class QuestProgress {
         this.acceptedTime = System.currentTimeMillis();
         this.stepStartTime = System.currentTimeMillis();
         this.attempts = 1;
+    }
+
+    public boolean isObjectiveCompleted(IQuestObjective objective) {
+        return objectiveCompletionStatus.getOrDefault(objective.getDescription().toString(), false);
+    }
+
+    public void setObjectiveCompleted(IQuestObjective objective, boolean completed) {
+        objectiveCompletionStatus.put(objective.getDescription().toString(), completed);
+    }
+
+    public void resetObjectiveCompletionStatus() {
+        objectiveCompletionStatus.clear();
     }
 }

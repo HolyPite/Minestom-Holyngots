@@ -16,27 +16,32 @@
   ],
   "quests": [
     {
-      "questId": "monster_plague",
-      "stepIndex": 0,
-      "acceptedTime": 1761506079571,
-      "stepStartTime": 1761506079571,
-      "attempts": 1
+      "questId": "speed_trial",
+      "stepIndex": 1,
+      "acceptedTime": 1761656305914,
+      "stepStartTime": 1761656315764,
+      "attempts": 1,
+      "objectiveCompletionStatus": {
+        "TextComponentImpl{content\u003d\"Atteignez le cercle au sommet de la colline\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
+      }
     }
   ],
-  "completedQuests": [],
+  "completedQuests": [
+    "monster_plague"
+  ],
   "failedQuests": [],
   "position": {
-    "x": -0.8606992047306136,
-    "y": 40.0,
-    "z": 6.82364531958741,
-    "yaw": 8.933893,
-    "pitch": 6.2530365
+    "x": -2.9052944549764743,
+    "y": 41.024424088213685,
+    "z": -5.43864666669113,
+    "yaw": 129.73364,
+    "pitch": -15.595507
   },
-  "lastInstance": "game1",
+  "lastInstance": "game2",
   "questCounters": {
-    "monster_plague_zombies": 0,
-    "monster_plague_skeletons": 0,
-    "monster_plague_spiders": 0
+    "monster_plague_zombies": 3,
+    "monster_plague_skeletons": 5,
+    "monster_plague_spiders": 2
   },
   "questCooldowns": {}
 }

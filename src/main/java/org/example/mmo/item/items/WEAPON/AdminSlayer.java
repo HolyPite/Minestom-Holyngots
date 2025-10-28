@@ -19,8 +19,8 @@ public final class AdminSlayer {
                 .rarity(Rarity.LEGENDARY)
                 .category(Category.WEAPON)
                 .material(Material.NETHERITE_SWORD)
-                .stat(StatType.ATTACK, 9999)       // Overkill damage
-                .stat(StatType.KNOCKBACK, -100)  // Negates all knockback
+                .stat(StatType.ATTACK, 9999)
+                .stat(StatType.KNOCKBACK, -100)
                 .tradable(false)
                 .story("For testing purposes only.")
                 .stackSize(1)

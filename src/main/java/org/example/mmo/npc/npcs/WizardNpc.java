@@ -8,21 +8,21 @@ import org.example.mmo.npc.NpcRegistry;
 
 import java.util.List;
 
-public final class PriestNpc {
+public final class WizardNpc {
     public static final NPC INSTANCE;
 
     static {
         INSTANCE = new NPC(
-                "priest",
-                Component.text("Prêtre", NamedTextColor.AQUA),
-                new Pos(2, 40, 0, -90, 0),
+                "wizard",
+                Component.text("Archimage", NamedTextColor.LIGHT_PURPLE),
+                new Pos(5, 40, 5),
                 List.of(
-                        Component.text("Que la lumière guide vos pas."),
-                        Component.text("Attention aux ombres qui rôdent.")
+                        Component.text("L'énergie arcanique est instable aujourd'hui..."),
+                        Component.text("Ne touchez pas à cette fiole !")
                 )
         );
         NpcRegistry.register(INSTANCE);
     }
 
-    private PriestNpc() {}
+    private WizardNpc() {}
 }

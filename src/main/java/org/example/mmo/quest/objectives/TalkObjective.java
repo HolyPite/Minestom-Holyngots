@@ -3,28 +3,28 @@ package org.example.mmo.quest.objectives;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Player;
 import org.example.data.data_class.PlayerData;
-import org.example.mmo.item.GameItem;
 import org.example.mmo.quest.api.IQuestObjective;
-import org.example.utils.TKit;
 
-public class FetchObjective implements IQuestObjective {
+import java.util.List;
 
-    private final GameItem itemToFetch;
-    private final int requiredAmount;
+public class TalkObjective implements IQuestObjective {
+
+    private final String npcId;
     private final Component description;
+    private final List<Component> dialogues;
 
-    public FetchObjective(GameItem itemToFetch, int requiredAmount, Component description) {
-        this.itemToFetch = itemToFetch;
-        this.requiredAmount = requiredAmount;
+    public TalkObjective(String npcId, Component description, List<Component> dialogues) {
+        this.npcId = npcId;
         this.description = description;
+        this.dialogues = dialogues;
     }
 
-    public GameItem getItemToFetch() {
-        return itemToFetch;
+    public String getNpcId() {
+        return npcId;
     }
 
-    public int getRequiredAmount() {
-        return requiredAmount;
+    public List<Component> getDialogues() {
+        return dialogues;
     }
 
     @Override
@@ -34,7 +34,8 @@ public class FetchObjective implements IQuestObjective {
 
     @Override
     public boolean isCompleted(Player player, PlayerData data) {
-        return false; //TKit.countItems(player, itemToFetch.toItemStack()) >= requiredAmount;
+        // Completion is handled by QuestProgress
+        return false;
     }
 
     @Override

@@ -32,7 +32,7 @@ public final class Try {
         s2.startNpc = "guide"; // You get this step from the guide
         s2.endNpc = "guide";   // You return to the guide
         s2.objectives = List.of(
-                new FetchObjective(List.of(Excalibur.excalibur), s2.description)
+                new FetchObjective(Excalibur.excalibur, 1, s2.description)
         );
         s2.waitingDialogues = List.of(Component.text("Vous n'avez pas encore trouvé l'épée, on dirait. Cherchez mieux !"));
         s2.successDialogues = List.of(Component.text("Incroyable ! C'est bien elle ! Vous êtes digne de la recevoir."));

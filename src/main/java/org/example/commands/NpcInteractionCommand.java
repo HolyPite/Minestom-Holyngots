@@ -8,31 +8,31 @@ import org.example.data.data_class.PlayerData;
 import org.example.mmo.npc.NPC;
 import org.example.mmo.npc.NpcRegistry;
 import org.example.mmo.quest.QuestManager;
+import org.example.mmo.quest.api.IQuestObjective;
+import org.example.mmo.quest.event.QuestObjectiveCompleteEvent;
+import org.example.mmo.quest.objectives.TalkObjective;
 import org.example.mmo.quest.registry.QuestRegistry;
 import org.example.mmo.quest.structure.Quest;
+import org.example.mmo.quest.structure.QuestProgress;
+import org.example.mmo.quest.structure.QuestStep;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * Internal command to handle player interactions from the NPC dialogue menu.
- * This command is not meant to be typed by players.
- */
 public class NpcInteractionCommand extends Command {
 
     public NpcInteractionCommand() {
         super("npc_interact");
 
-        setCondition((sender,context) -> sender instanceof Player);
+        setCondition((sender, context) -> sender instanceof Player);
 
-        // --- Argument Definitions ---
         var talkLiteral = ArgumentType.Literal("talk");
         var startQuestLiteral = ArgumentType.Literal("start_quest");
         var advanceQuestLiteral = ArgumentType.Literal("advance_quest");
+        var talkObjectiveLiteral = ArgumentType.Literal("talk_objective");
 
         var npcIdArg = ArgumentType.String("npcId");
         var questIdArg = ArgumentType.String("questId");
 
-        // --- Syntax 1: /npc_interact talk <npcId> ---
         addSyntax((sender, context) -> {
             Player player = (Player) sender;
             String npcId = context.get(npcIdArg);
@@ -43,7 +43,6 @@ public class NpcInteractionCommand extends Command {
             }
         }, talkLiteral, npcIdArg);
 
-        // --- Syntax 2: /npc_interact start_quest <npcId> <questId> ---
         addSyntax((sender, context) -> {
             Player player = (Player) sender;
             String npcId = context.get(npcIdArg);
@@ -57,7 +56,6 @@ public class NpcInteractionCommand extends Command {
             }
         }, startQuestLiteral, npcIdArg, questIdArg);
 
-        // --- Syntax 3: /npc_interact advance_quest <npcId> <questId> ---
         addSyntax((sender, context) -> {
             Player player = (Player) sender;
             String npcId = context.get(npcIdArg);
@@ -73,5 +71,31 @@ public class NpcInteractionCommand extends Command {
                         .ifPresent(progress -> QuestManager.tryAdvanceQuestByNpc(player, data, quest, progress, npcId));
             }
         }, advanceQuestLiteral, npcIdArg, questIdArg);
+
+        addSyntax((sender, context) -> {
+            Player player = (Player) sender;
+            String npcId = context.get(npcIdArg);
+            String questId = context.get(questIdArg);
+            PlayerData data = NodesManagement.getDataService().get(player);
+            if (data == null) return;
+
+            Quest quest = QuestRegistry.byId(questId);
+            if (quest == null) return;
+
+            data.quests.stream()
+                    .filter(p -> p.questId.equals(questId))
+                    .findFirst()
+                    .ifPresent(progress -> {
+                        QuestStep currentStep = quest.steps.get(progress.stepIndex);
+                        for (IQuestObjective objective : currentStep.objectives) {
+                            if (objective instanceof TalkObjective talkObj && talkObj.getNpcId().equals(npcId) && !progress.isObjectiveCompleted(objective)) {
+                                talkObj.getDialogues().forEach(player::sendMessage);
+                                progress.setObjectiveCompleted(objective, true);
+                                QuestManager.getEventNode().call(new QuestObjectiveCompleteEvent(player, progress, currentStep, talkObj));
+                                break;
+                            }
+                        }
+                    });
+        }, talkObjectiveLiteral, npcIdArg, questIdArg);
     }
 }

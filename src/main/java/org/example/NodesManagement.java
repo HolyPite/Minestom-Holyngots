@@ -21,6 +21,7 @@ import org.example.mmo.item.ItemBootstrap;
 import org.example.mmo.item.ItemEventsCustom;
 import org.example.mmo.item.ItemEventsGlobal;
 import org.example.mmo.npc.NpcBootstrap;
+import org.example.mmo.player.PlayerQuestListener;
 import org.example.mmo.quest.registry.QuestBootstrap;
 import org.example.mmo.quest.QuestManager;
 
@@ -30,18 +31,9 @@ public final class NodesManagement {
 
     private static final GlobalEventHandler GLOBAL_EVENTS = MinecraftServer.getGlobalEventHandler();
     private static final EventNode<Event> GAME_NODE = EventNode.all("gameNode");
-    private static final EventNode<PlayerEvent> PLAYER_NODE = EventNode.event("playerNode", EventFilter.PLAYER, event -> {
-        Instance inst = event.getPlayer().getInstance();
-        return inst != null && InstancesInit.GAME_INSTANCES.contains(inst);
-    });
-    private static final EventNode<EntityEvent> ENTITY_NODE = EventNode.event("entityNode", EventFilter.ENTITY, event -> {
-        Instance inst = event.getEntity().getInstance();
-        return inst != null && InstancesInit.GAME_INSTANCES.contains(inst);
-    });
-    private static final EventNode<InventoryEvent> INVENTORY_NODE = EventNode.event("inventoryNode", EventFilter.INVENTORY, event -> event.getInventory().getViewers().stream()
-            .map(Entity::getInstance)
-            .filter(Objects::nonNull)
-            .anyMatch(InstancesInit.GAME_INSTANCES::contains));
+    private static final EventNode<PlayerEvent> PLAYER_NODE = EventNode.type("playerNode", EventFilter.PLAYER);
+    private static final EventNode<EntityEvent> ENTITY_NODE = EventNode.type("entityNode", EventFilter.ENTITY);
+    private static final EventNode<InventoryEvent> INVENTORY_NODE = EventNode.type("inventoryNode", EventFilter.INVENTORY);
 
     private static final PlayerDataService DATA_SERVICE = new PlayerDataService(new JsonPlayerDataRepository());
 
@@ -59,6 +51,7 @@ public final class NodesManagement {
         ItemEventsGlobal.init(GAME_NODE);
         ItemEventsCustom.init(GAME_NODE);
         QuestManager.init(GAME_NODE);
+        PlayerQuestListener.init(PLAYER_NODE);
 
         CommandRegister.init();
         MinecraftServer.getCommandManager().register(new NpcInteractionCommand());
@@ -67,7 +60,6 @@ public final class NodesManagement {
         QuestBootstrap.init();
         NpcBootstrap.init();
 
-        // Spawn all persistent NPCs and monsters at server startup
         QuestEntitySpawner.spawnPersistentEntities();
     }
 
