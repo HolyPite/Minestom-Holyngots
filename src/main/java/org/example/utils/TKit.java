@@ -301,9 +301,7 @@ public class TKit {
             ItemStack stack = inv.getItemStack(slot);
             if (stack.isAir()) continue;
 
-            boolean same =
-                    stack.material() == reference.material() &&
-                            stack.toItemNBT().equals(reference.toItemNBT());
+            boolean same = (stack.material() == reference.material() && Objects.equals(ItemUtils.getId(stack), ItemUtils.getId(reference)));
             if (same) available += stack.amount();
         }
         return available >= amount;
@@ -349,6 +347,7 @@ public class TKit {
         if (!hasItems(player, reference, amount)) {
             return false; // Not enough items, do nothing
         }
+        System.out.println("T'as assez d'items");
 
         var inv = player.getInventory();
         int amountToRemove = amount;
@@ -356,9 +355,7 @@ public class TKit {
             ItemStack stack = inv.getItemStack(slot);
             if (stack.isAir()) continue;
 
-            boolean same =
-                    stack.material() == reference.material() &&
-                            stack.toItemNBT().equals(reference.toItemNBT());
+            boolean same =(stack.material() == reference.material() && Objects.equals(ItemUtils.getId(stack), ItemUtils.getId(reference)));
             if (!same) continue;
 
             int take = Math.min(amountToRemove, stack.amount());

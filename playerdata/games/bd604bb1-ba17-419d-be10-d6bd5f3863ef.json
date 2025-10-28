@@ -4,8 +4,8 @@
   "experience": 0,
   "inventory": [
     {
-      "itemId": "bone",
-      "amount": 3,
+      "itemId": "admin_slayer",
+      "amount": 1,
       "slot": 0
     },
     {
@@ -14,32 +14,38 @@
       "slot": 1
     },
     {
-      "itemId": "excalibur",
-      "amount": 1,
-      "slot": 2
-    },
-    {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
     }
   ],
-  "quests": [],
+  "quests": [
+    {
+      "questId": "new_beginning",
+      "stepIndex": 0,
+      "acceptedTime": 1761682169288,
+      "stepStartTime": 1761682169288,
+      "attempts": 1,
+      "objectiveCompletionStatus": {}
+    }
+  ],
   "completedQuests": [
-    "new_beginning",
-    "grand_tour",
-    "try"
+    "monster_plague",
+    "grand_tour"
   ],
   "failedQuests": [],
   "position": {
-    "x": -1.392851750518476,
+    "x": -2.5583856205462707,
     "y": 40.0,
-    "z": 2.5309122492180136,
-    "yaw": -107.00098,
-    "pitch": 8.106947
+    "z": 2.1120329865192358,
+    "yaw": -166.1461,
+    "pitch": 8.397693
   },
   "lastInstance": "game2",
   "questCounters": {
+    "monster_plague_zombies": 3,
+    "monster_plague_skeletons": 5,
+    "monster_plague_spiders": 2,
     "grand_tour_zombies": 5
   },
   "questCooldowns": {}
