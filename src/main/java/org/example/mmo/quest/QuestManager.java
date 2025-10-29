@@ -152,17 +152,17 @@ public final class QuestManager {
         }
 
         List<Quest> availableQuests = new ArrayList<>();
-        QuestRegistry.all().forEach((questId, quest) -> {
-            boolean hasQuest = data.quests.stream().anyMatch(p -> p.questId.equals(questId));
-            boolean hasCompleted = data.hasCompletedQuest(questId);
-            boolean hasFailed = data.hasFailedQuest(questId);
+        for (Quest quest : QuestRegistry.byStartNpc(npcId)) {
+            boolean hasQuest = data.quests.stream().anyMatch(p -> p.questId.equals(quest.id));
+            boolean hasCompleted = data.hasCompletedQuest(quest.id);
+            boolean hasFailed = data.hasFailedQuest(quest.id);
 
             if (!hasQuest && !hasCompleted && !hasFailed && !quest.steps.isEmpty()) {
-                if (npcId.equals(quest.steps.getFirst().startNpc) && checkPrerequisites(data, quest.steps.getFirst())) {
+                if (checkPrerequisites(data, quest.steps.getFirst())) {
                     availableQuests.add(quest);
                 }
             }
-        });
+        }
 
         if (!availableQuests.isEmpty()) {
             player.sendMessage(Component.text("Quêtes disponibles :", NamedTextColor.YELLOW));
@@ -283,7 +283,7 @@ public final class QuestManager {
                 data.completedQuests.add(quest.id);
             }
             EVENT_NODE.call(new QuestStepAdvanceEvent(player, quest, newStepIndex));
-            QuestRegistry.all().values().forEach(q -> tryAutoStartQuest(player, data, q));
+            QuestRegistry.autoStartQuests().forEach(q -> tryAutoStartQuest(player, data, q));
             return true;
         }
 
@@ -315,7 +315,7 @@ public final class QuestManager {
         });
 
         EVENT_NODE.call(new QuestStepAdvanceEvent(player, quest, newStepIndex));
-        QuestRegistry.all().values().forEach(q -> tryAutoStartQuest(player, data, q));
+        QuestRegistry.autoStartQuests().forEach(q -> tryAutoStartQuest(player, data, q));
         return true;
     }
 
