@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class QuestManager {
 
     public static final Tag<String> NPC_ID_TAG = Tag.String("quest_npc_id");
-    public static final Set<UUID> playersWithLocationObjectives = ConcurrentHashMap.newKeySet(); // FIX: Store UUIDs instead of Player instances
+    public static final Set<UUID> playersWithLocationObjectives = ConcurrentHashMap.newKeySet();
     private static final Map<UUID, Long> lastInteractionTime = new ConcurrentHashMap<>();
     private static final long INTERACTION_COOLDOWN = 1000; // 1 second cooldown
     private static EventNode<Event> EVENT_NODE;
@@ -429,12 +429,13 @@ public final class QuestManager {
         data.incrementQuestCounter(progressId, 1);
         int currentCount = data.getQuestCounter(progressId);
 
-        Component feedback = Component.text("(", NamedTextColor.GRAY)
-                .append(quest.name.color(NamedTextColor.GOLD))
-                .append(Component.text(") ", NamedTextColor.GRAY))
-                .append(objective.getDescription().color(NamedTextColor.WHITE))
-                .append(Component.text(": " + currentCount + "/" + requiredCount, NamedTextColor.GRAY));
-        player.sendMessage(feedback);
+        // FIX: The chat message for kill progress is now removed.
+        // Component feedback = Component.text("(", NamedTextColor.GRAY)
+        //         .append(quest.name.color(NamedTextColor.GOLD))
+        //         .append(Component.text(") ", NamedTextColor.GRAY))
+        //         .append(objective.getDescription().color(NamedTextColor.WHITE))
+        //         .append(Component.text(": " + currentCount + "/" + requiredCount, NamedTextColor.GRAY));
+        // player.sendMessage(feedback);
 
         boolean isNowComplete = currentCount >= requiredCount;
         if (isNowComplete) {

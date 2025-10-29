@@ -4,51 +4,26 @@
   "experience": 0,
   "inventory": [
     {
-      "itemId": "admin_slayer",
-      "amount": 1,
-      "slot": 0
-    },
-    {
-      "itemId": "excalibur",
-      "amount": 1,
-      "slot": 1
-    },
-    {
-      "itemId": "admin_slayer",
-      "amount": 1,
-      "slot": 2
-    },
-    {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
     }
   ],
-  "quests": [
-    {
-      "questId": "new_beginning",
-      "stepIndex": 0,
-      "acceptedTime": 1761747340412,
-      "stepStartTime": 1761747340412,
-      "attempts": 1,
-      "objectiveCompletionStatus": {
-        "TextComponentImpl{content\u003d\"Parler au Guide Ancien\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
-      }
-    }
-  ],
+  "quests": [],
   "completedQuests": [
     "grand_tour",
-    "speed_trial"
+    "monster_plague",
+    "new_beginning"
   ],
   "failedQuests": [],
   "position": {
-    "x": -0.4627731753081803,
+    "x": -2.0056912137106755,
     "y": 40.0,
-    "z": 1.919345659240237,
-    "yaw": -163.98822,
-    "pitch": 1.8541902
+    "z": 3.339751584378263,
+    "yaw": -170.11694,
+    "pitch": 9.724511
   },
-  "lastInstance": "game2",
+  "lastInstance": "game1",
   "questCounters": {},
   "questCooldowns": {}
 }
