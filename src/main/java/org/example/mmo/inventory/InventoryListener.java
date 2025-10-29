@@ -2,8 +2,9 @@ package org.example.mmo.inventory;
 
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventNode;
-import net.minestom.server.event.inventory.InventoryPreClickEvent;
+import net.minestom.server.event.inventory.InventoryItemChangeEvent;
 import net.minestom.server.event.trait.InventoryEvent;
+import net.minestom.server.inventory.PlayerInventory;
 import net.minestom.server.timer.TaskSchedule;
 import org.example.NodesManagement;
 import org.example.data.data_class.PlayerData;
@@ -19,8 +20,13 @@ import org.example.mmo.quest.structure.QuestStep;
 public class InventoryListener {
 
     public static void init(EventNode<InventoryEvent> eventNode) {
-        eventNode.addListener(InventoryPreClickEvent.class, event -> {
-            Player player = event.getPlayer();
+        eventNode.addListener(InventoryItemChangeEvent.class, event -> {
+            if (!(event.getInventory() instanceof PlayerInventory inv)) return;
+
+            // A player's inventory should only have one viewer: the player themselves.
+            if (inv.getViewers().isEmpty()) return;
+            Player player = inv.getViewers().iterator().next();
+
             PlayerData data = NodesManagement.getDataService().get(player);
             if (data == null) return;
 
