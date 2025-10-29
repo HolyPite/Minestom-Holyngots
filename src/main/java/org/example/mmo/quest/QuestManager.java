@@ -429,13 +429,7 @@ public final class QuestManager {
         data.incrementQuestCounter(progressId, 1);
         int currentCount = data.getQuestCounter(progressId);
 
-        // FIX: The chat message for kill progress is now removed.
-        // Component feedback = Component.text("(", NamedTextColor.GRAY)
-        //         .append(quest.name.color(NamedTextColor.GOLD))
-        //         .append(Component.text(") ", NamedTextColor.GRAY))
-        //         .append(objective.getDescription().color(NamedTextColor.WHITE))
-        //         .append(Component.text(": " + currentCount + "/" + requiredCount, NamedTextColor.GRAY));
-        // player.sendMessage(feedback);
+        player.playSound(Sound.sound(Key.key("entity.experience_orb.pickup"), Sound.Source.NEUTRAL, 0.5f, 1.2f), player.getPosition());
 
         boolean isNowComplete = currentCount >= requiredCount;
         if (isNowComplete) {
@@ -475,6 +469,7 @@ public final class QuestManager {
         PlayerData data = NodesManagement.getDataService().get(player);
         QuestStep completedStep = event.getCompletedStep();
 
+        player.playSound(Sound.sound(Key.key("block.note_block.pling"), Sound.Source.NEUTRAL, 1f, 1.5f), player.getPosition());
         event.getCompletedObjective().onComplete(player, data);
 
         player.sendMessage(Component.text("Objectif atteint : ", NamedTextColor.GREEN).append(event.getCompletedObjective().getDescription()));
