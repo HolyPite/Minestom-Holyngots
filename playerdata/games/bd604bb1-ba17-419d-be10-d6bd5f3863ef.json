@@ -13,30 +13,58 @@
     {
       "questId": "grand_tour",
       "stepIndex": 0,
-      "acceptedTime": 1761764530567,
-      "stepStartTime": 1761764530567,
+      "acceptedTime": 1761769196809,
+      "stepStartTime": 1761769196809,
       "attempts": 1,
       "objectiveCompletionStatus": {
         "TextComponentImpl{content\u003d\"Trouvez le point de vue caché\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
+        "TextComponentImpl{content\u003d\"Rapportez 3 os\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": false,
         "TextComponentImpl{content\u003d\"Consultez l\u0027Archimage\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
       }
+    },
+    {
+      "questId": "new_beginning",
+      "stepIndex": 0,
+      "acceptedTime": 1761769196811,
+      "stepStartTime": 1761769196811,
+      "attempts": 1,
+      "objectiveCompletionStatus": {}
+    },
+    {
+      "questId": "fire_purge",
+      "stepIndex": 0,
+      "acceptedTime": 1761770570910,
+      "stepStartTime": 1761770570910,
+      "attempts": 1,
+      "objectiveCompletionStatus": {}
+    },
+    {
+      "questId": "monster_plague",
+      "stepIndex": 0,
+      "acceptedTime": 1761770575409,
+      "stepStartTime": 1761770575409,
+      "attempts": 1,
+      "objectiveCompletionStatus": {}
     }
   ],
-  "completedQuests": [
-    "new_beginning",
+  "completedQuests": [],
+  "failedQuests": [
     "speed_trial"
   ],
-  "failedQuests": [],
   "position": {
-    "x": 2.3579431712613936,
+    "x": 0.7785002382651935,
     "y": 40.0,
-    "z": 5.258421163168422,
-    "yaw": -89.655,
-    "pitch": 10.015368
+    "z": 1.5897612446628677,
+    "yaw": -98.59277,
+    "pitch": 32.208176
   },
-  "lastInstance": "game1",
+  "lastInstance": "game2",
   "questCounters": {
-    "grand_tour_zombies": 0
+    "grand_tour_zombies": 0,
+    "fire_purge_zombies": 0,
+    "monster_plague_zombies": 0,
+    "monster_plague_skeletons": 0,
+    "monster_plague_spiders": 0
   },
   "questCooldowns": {}
 }

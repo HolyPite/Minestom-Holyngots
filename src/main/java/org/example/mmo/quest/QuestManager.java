@@ -140,7 +140,7 @@ public final class QuestManager {
         }
 
         if (!questsToAdvance.isEmpty()) {
-            player.sendMessage(Component.text("Quêtes en cours (cliquez pour valider) :", NamedTextColor.YELLOW));
+            player.sendMessage(Component.text("Quêtes à valider :", NamedTextColor.YELLOW));
             for (Quest quest : questsToAdvance) {
                 String command = String.format("/npc_interact advance_quest %s %s", npcId, quest.id);
                 QuestStep currentStep = quest.steps.get(data.quests.stream().filter(p -> p.questId.equals(quest.id)).findFirst().get().stepIndex);
@@ -274,8 +274,8 @@ public final class QuestManager {
         }
 
         if (newStepIndex >= quest.steps.size()) {
-            ToastManager.showToast(player, "Quête terminée", TKit.extractPlainText(quest.name), Material.CHEST, FrameType.CHALLENGE);
-            player.playSound(Sound.sound(Key.key("minecraft:entity.player.levelup"), Sound.Source.MASTER, 1f, 1f), player.getPosition());
+            ToastManager.showToast(player, quest.name, Material.CHEST, FrameType.CHALLENGE);
+            player.playSound(Sound.sound(Key.key("minecraft:entity.player.levelup"), Sound.Source.MASTER, 0.8f, 1f), player.getPosition());
             data.quests.removeIf(p -> p.questId.equals(quest.id));
             if (quest.repeatable) {
                 data.questCooldowns.put(quest.id, System.currentTimeMillis());
@@ -305,12 +305,7 @@ public final class QuestManager {
         progress.resetObjectiveCompletionStatus();
 
         if (newStepIndex == 0) {
-            ToastManager.showToast(player, "Nouvelle quête", TKit.extractPlainText(quest.name), Material.BOOK, FrameType.TASK);
-        } else {
-            player.sendMessage(Component.text("Nouvel objectif (", NamedTextColor.YELLOW)
-                    .append(quest.name.color(NamedTextColor.GOLD))
-                    .append(Component.text(") : ", NamedTextColor.YELLOW))
-                    .append(newStep.name != null ? newStep.name : Component.empty()));
+            ToastManager.showToast(player, quest.name, Material.BOOK, FrameType.TASK);
         }
         player.sendMessage(newStep.description.color(NamedTextColor.WHITE));
 
@@ -474,7 +469,7 @@ public final class QuestManager {
         player.playSound(Sound.sound(Key.key("block.note_block.pling"), Sound.Source.NEUTRAL, 1f, 1.5f), player.getPosition());
         event.getCompletedObjective().onComplete(player, data);
 
-        ToastManager.showToast(player, "Objectif atteint", TKit.extractPlainText(event.getCompletedObjective().getDescription()), Material.WRITABLE_BOOK, FrameType.GOAL);
+        ToastManager.showToast(player, event.getCompletedObjective().getDescription(), Material.WRITABLE_BOOK, FrameType.GOAL);
 
         boolean allComplete = completedStep.objectives.stream().allMatch(obj -> event.getQuestProgress().isObjectiveCompleted(obj));
 

@@ -39,7 +39,8 @@ public class NpcInteractionCommand extends Command {
             NPC npc = NpcRegistry.byId(npcId);
             if (npc != null && !npc.randomDialogues().isEmpty()) {
                 int randomIndex = ThreadLocalRandom.current().nextInt(npc.randomDialogues().size());
-                player.sendMessage(npc.randomDialogues().get(randomIndex));
+                // FIX: Use ActionBar for less intrusive dialogue
+                player.sendActionBar(npc.randomDialogues().get(randomIndex));
             }
         }, talkLiteral, npcIdArg);
 

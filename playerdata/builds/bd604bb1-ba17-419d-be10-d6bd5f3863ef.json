@@ -2,22 +2,16 @@
   "uuid": "bd604bb1-ba17-419d-be10-d6bd5f3863ef",
   "level": 1,
   "experience": 0,
-  "inventory": [
-    {
-      "itemId": "stats_grimoire",
-      "amount": 1,
-      "slot": 17
-    }
-  ],
+  "inventory": [],
   "quests": [],
   "completedQuests": [],
   "failedQuests": [],
   "position": {
-    "x": 1.3145253056162254,
+    "x": 1.654003336050757,
     "y": 40.0,
-    "z": 17.364975624357495,
-    "yaw": 162.69662,
-    "pitch": 13.796274
+    "z": 1.7388789919984886,
+    "yaw": 72.53833,
+    "pitch": 35.135883
   },
   "lastInstance": "build1",
   "questCounters": {},
