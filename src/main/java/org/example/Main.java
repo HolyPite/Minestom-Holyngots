@@ -91,7 +91,7 @@ public class Main {
         InstancesSaving.init();
 
         // Start the server
-        MojangAuth.init();
+        //MojangAuth.init();
         server.start("0.0.0.0", 25565);
     }
 }

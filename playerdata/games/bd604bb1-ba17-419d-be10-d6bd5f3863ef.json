@@ -9,21 +9,34 @@
       "slot": 17
     }
   ],
-  "quests": [],
+  "quests": [
+    {
+      "questId": "grand_tour",
+      "stepIndex": 0,
+      "acceptedTime": 1761764530567,
+      "stepStartTime": 1761764530567,
+      "attempts": 1,
+      "objectiveCompletionStatus": {
+        "TextComponentImpl{content\u003d\"Trouvez le point de vue caché\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
+        "TextComponentImpl{content\u003d\"Consultez l\u0027Archimage\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
+      }
+    }
+  ],
   "completedQuests": [
-    "grand_tour",
-    "monster_plague",
-    "new_beginning"
+    "new_beginning",
+    "speed_trial"
   ],
   "failedQuests": [],
   "position": {
-    "x": -2.0056912137106755,
+    "x": 2.3579431712613936,
     "y": 40.0,
-    "z": 3.339751584378263,
-    "yaw": -170.11694,
-    "pitch": 9.724511
+    "z": 5.258421163168422,
+    "yaw": -89.655,
+    "pitch": 10.015368
   },
   "lastInstance": "game1",
-  "questCounters": {},
+  "questCounters": {
+    "grand_tour_zombies": 0
+  },
   "questCooldowns": {}
 }

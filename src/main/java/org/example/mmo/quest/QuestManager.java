@@ -8,6 +8,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.advancements.FrameType;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
@@ -15,6 +16,7 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.entity.EntityDeathEvent;
 import net.minestom.server.event.player.PlayerEntityInteractEvent;
 import net.minestom.server.event.player.PlayerMoveEvent;
+import net.minestom.server.item.Material;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.timer.TaskSchedule;
 import org.example.NodesManagement;
@@ -32,6 +34,7 @@ import org.example.mmo.quest.structure.Quest;
 import org.example.mmo.quest.structure.QuestProgress;
 import org.example.mmo.quest.structure.QuestStep;
 import org.example.utils.TKit;
+import org.example.utils.ToastManager;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -271,7 +274,7 @@ public final class QuestManager {
         }
 
         if (newStepIndex >= quest.steps.size()) {
-            player.sendMessage(Component.text("Quête terminée : ", NamedTextColor.GREEN).append(quest.name.color(NamedTextColor.GOLD)));
+            ToastManager.showToast(player, "Quête terminée", TKit.extractPlainText(quest.name), Material.CHEST, FrameType.CHALLENGE);
             player.playSound(Sound.sound(Key.key("minecraft:entity.player.levelup"), Sound.Source.MASTER, 1f, 1f), player.getPosition());
             data.quests.removeIf(p -> p.questId.equals(quest.id));
             if (quest.repeatable) {
@@ -302,13 +305,12 @@ public final class QuestManager {
         progress.resetObjectiveCompletionStatus();
 
         if (newStepIndex == 0) {
-            player.sendMessage(Component.text("Nouvelle quête : ", NamedTextColor.GREEN).append(quest.name.color(NamedTextColor.GOLD)));
+            ToastManager.showToast(player, "Nouvelle quête", TKit.extractPlainText(quest.name), Material.BOOK, FrameType.TASK);
         } else {
-            Component stepMessage = Component.text("Nouvel objectif (", NamedTextColor.YELLOW)
+            player.sendMessage(Component.text("Nouvel objectif (", NamedTextColor.YELLOW)
                     .append(quest.name.color(NamedTextColor.GOLD))
                     .append(Component.text(") : ", NamedTextColor.YELLOW))
-                    .append(newStep.name != null ? newStep.name : Component.empty());
-            player.sendMessage(stepMessage);
+                    .append(newStep.name != null ? newStep.name : Component.empty()));
         }
         player.sendMessage(newStep.description.color(NamedTextColor.WHITE));
 
@@ -472,7 +474,7 @@ public final class QuestManager {
         player.playSound(Sound.sound(Key.key("block.note_block.pling"), Sound.Source.NEUTRAL, 1f, 1.5f), player.getPosition());
         event.getCompletedObjective().onComplete(player, data);
 
-        player.sendMessage(Component.text("Objectif atteint : ", NamedTextColor.GREEN).append(event.getCompletedObjective().getDescription()));
+        ToastManager.showToast(player, "Objectif atteint", TKit.extractPlainText(event.getCompletedObjective().getDescription()), Material.WRITABLE_BOOK, FrameType.GOAL);
 
         boolean allComplete = completedStep.objectives.stream().allMatch(obj -> event.getQuestProgress().isObjectiveCompleted(obj));
 
