@@ -12,6 +12,9 @@ import org.example.data.teleport.TeleportUtils;
 import org.example.mmo.item.datas.Stats;
 import org.example.mmo.quest.QuestManager;
 import org.example.mmo.quest.registry.QuestRegistry;
+import org.example.mmo.quest.structure.Quest;
+import org.example.mmo.quest.structure.QuestProgress;
+import org.example.mmo.quest.structure.QuestStep;
 
 public class Main {
     public static void main(String[] args) {

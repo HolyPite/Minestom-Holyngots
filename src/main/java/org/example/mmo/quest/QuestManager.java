@@ -262,12 +262,18 @@ public final class QuestManager {
         if (newStepIndex > 0 && progress.stepIndex < quest.steps.size()) {
             QuestStep oldStep = quest.steps.get(progress.stepIndex);
             oldStep.successDialogues.forEach(player::sendMessage);
+
             for (IQuestObjective objective : oldStep.objectives) {
                 if (objective instanceof FetchObjective fetchObj) {
                     TKit.removeItems(player, fetchObj.getItemToFetch().toItemStack(), fetchObj.getRequiredAmount());
+                } else if (objective instanceof KillObjective killObj) {
+                    data.questCounters.remove(killObj.getProgressId());
+                } else if (objective instanceof SlayObjective slayObj) {
+                    data.questCounters.remove(slayObj.getProgressId());
                 }
                 objective.onComplete(player, data);
             }
+
             oldStep.rewards.forEach(reward -> reward.apply(player));
             playersWithLocationObjectives.remove(player);
             progress.resetObjectiveCompletionStatus();

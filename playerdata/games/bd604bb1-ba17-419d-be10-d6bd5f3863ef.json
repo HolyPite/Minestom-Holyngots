@@ -9,7 +9,7 @@
       "slot": 0
     },
     {
-      "itemId": "admin_slayer",
+      "itemId": "excalibur",
       "amount": 1,
       "slot": 1
     },
@@ -23,30 +23,39 @@
     {
       "questId": "new_beginning",
       "stepIndex": 0,
-      "acceptedTime": 1761682169288,
-      "stepStartTime": 1761682169288,
+      "acceptedTime": 1761692488441,
+      "stepStartTime": 1761692488441,
       "attempts": 1,
       "objectiveCompletionStatus": {}
+    },
+    {
+      "questId": "grand_tour",
+      "stepIndex": 0,
+      "acceptedTime": 1761692527126,
+      "stepStartTime": 1761692527126,
+      "attempts": 1,
+      "objectiveCompletionStatus": {
+        "TextComponentImpl{content\u003d\"Trouvez le point de vue caché\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
+      }
     }
   ],
   "completedQuests": [
-    "monster_plague",
-    "grand_tour"
+    "monster_plague"
   ],
   "failedQuests": [],
   "position": {
-    "x": -2.5583856205462707,
+    "x": 1.5707798721362074,
     "y": 40.0,
-    "z": 2.1120329865192358,
-    "yaw": -166.1461,
-    "pitch": 8.397693
+    "z": 3.484777727742764,
+    "yaw": 34.483887,
+    "pitch": 8.543187
   },
   "lastInstance": "game2",
   "questCounters": {
     "monster_plague_zombies": 3,
     "monster_plague_skeletons": 5,
     "monster_plague_spiders": 2,
-    "grand_tour_zombies": 5
+    "grand_tour_zombies": 0
   },
   "questCooldowns": {}
 }
