@@ -16,6 +16,7 @@ public final class Bone {
                 .rarity(Rarity.COMMON)
                 .category(Category.MATERIAL)
                 .material(Material.BONE)
+                .questItem(true) // Mark as quest item
                 .build();
 
         ItemRegistry.register(INSTANCE);
