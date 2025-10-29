@@ -8,7 +8,6 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
@@ -34,17 +33,13 @@ import org.example.mmo.quest.structure.QuestProgress;
 import org.example.mmo.quest.structure.QuestStep;
 import org.example.utils.TKit;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class QuestManager {
 
     public static final Tag<String> NPC_ID_TAG = Tag.String("quest_npc_id");
-    public static final Set<Player> playersWithLocationObjectives = ConcurrentHashMap.newKeySet();
+    public static final Set<UUID> playersWithLocationObjectives = ConcurrentHashMap.newKeySet(); // FIX: Store UUIDs instead of Player instances
     private static final Map<UUID, Long> lastInteractionTime = new ConcurrentHashMap<>();
     private static final long INTERACTION_COOLDOWN = 1000; // 1 second cooldown
     private static EventNode<Event> EVENT_NODE;
@@ -62,10 +57,6 @@ public final class QuestManager {
 
     public static EventNode<Event> getEventNode() {
         return EVENT_NODE;
-    }
-
-    public static Set<Player> getPlayersWithLocationObjectives() {
-        return playersWithLocationObjectives;
     }
 
     private static void handleNpcInteraction(PlayerEntityInteractEvent event) {
@@ -105,7 +96,7 @@ public final class QuestManager {
             if (quest != null && progress.stepIndex < quest.steps.size()) {
                 QuestStep currentStep = quest.steps.get(progress.stepIndex);
                 for (IQuestObjective objective : currentStep.objectives) {
-                    if (objective instanceof TalkObjective talkObj && talkObj.getNpcId().equals(npcId) && !progress.isObjectiveCompleted(talkObj)) {
+                    if (objective instanceof TalkObjective talkObj && talkObj.getNpcId().equals(npcId) && !progress.isObjectiveCompleted(objective)) {
                         talkObjectivesToComplete.add(progress);
                         break;
                     }
@@ -275,7 +266,7 @@ public final class QuestManager {
             }
 
             oldStep.rewards.forEach(reward -> reward.apply(player));
-            playersWithLocationObjectives.remove(player);
+            playersWithLocationObjectives.remove(player.getUuid());
             progress.resetObjectiveCompletionStatus();
         }
 
@@ -323,7 +314,7 @@ public final class QuestManager {
 
         newStep.objectives.forEach(obj -> {
             obj.onStart(player, data);
-            if (obj instanceof LocationObjective) playersWithLocationObjectives.add(player);
+            if (obj instanceof LocationObjective) playersWithLocationObjectives.add(player.getUuid());
         });
 
         EVENT_NODE.call(new QuestStepAdvanceEvent(player, quest, newStepIndex));
@@ -340,7 +331,7 @@ public final class QuestManager {
             player.sendMessage(Component.text("Vous avez échoué la quête définitivement.", NamedTextColor.DARK_RED));
             data.quests.remove(progress);
             data.failedQuests.add(quest.id);
-            playersWithLocationObjectives.remove(player);
+            playersWithLocationObjectives.remove(player.getUuid());
             currentStep.objectives.forEach(obj -> obj.onComplete(player, data));
             EVENT_NODE.call(new QuestFailEvent(player, quest));
         } else {
@@ -457,7 +448,7 @@ public final class QuestManager {
 
     private static void handlePlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if (!playersWithLocationObjectives.contains(player)) return;
+        if (!playersWithLocationObjectives.contains(player.getUuid())) return;
 
         PlayerData data = NodesManagement.getDataService().get(player);
         if (data == null) return;
