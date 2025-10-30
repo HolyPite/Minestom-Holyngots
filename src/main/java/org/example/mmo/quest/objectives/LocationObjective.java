@@ -7,6 +7,7 @@ import net.minestom.server.particle.Particle;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
 import org.example.data.data_class.PlayerData;
+import org.example.mmo.quest.QuestManager;
 import org.example.mmo.quest.api.IQuestObjective;
 import org.example.utils.TKit;
 
@@ -58,6 +59,7 @@ public class LocationObjective implements IQuestObjective {
         }).repeat(TaskSchedule.seconds(1)).schedule();
 
         PLAYER_PARTICLE_TASKS.get(player.getUuid()).put(this.objectiveId, particleTask);
+        QuestManager.trackLocationObjective(player);
     }
 
     @Override
@@ -69,6 +71,8 @@ public class LocationObjective implements IQuestObjective {
                 task.cancel();
             }
         }
+
+        QuestManager.refreshLocationObjectiveTracking(player, data);
     }
 
     @Override

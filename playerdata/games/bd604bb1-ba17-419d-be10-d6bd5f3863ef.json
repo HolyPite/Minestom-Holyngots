@@ -21,27 +21,35 @@
   ],
   "quests": [
     {
-      "questId": "try",
-      "stepIndex": 2,
-      "acceptedTime": 1761842596900,
-      "stepStartTime": 1761842630101,
+      "questId": "speed_trial",
+      "stepIndex": 1,
+      "acceptedTime": 1761845890974,
+      "stepStartTime": 1761845893326,
+      "attempts": 1,
+      "objectiveCompletionStatus": {
+        "TextComponentImpl{content\u003d\"Atteignez le cercle au sommet de la colline\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
+        "TextComponentImpl{content\u003d\"Atteignez le cercle dans la vallée\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
+      }
+    },
+    {
+      "questId": "new_beginning",
+      "stepIndex": 0,
+      "acceptedTime": 1761845890979,
+      "stepStartTime": 1761845890979,
       "attempts": 1,
       "objectiveCompletionStatus": {}
     }
   ],
-  "completedQuests": [
-    "speed_trial",
-    "new_beginning"
-  ],
+  "completedQuests": [],
   "failedQuests": [],
   "position": {
-    "x": -0.3435101804789815,
+    "x": -17.843325081388517,
     "y": 40.0,
-    "z": 2.3091196282006514,
-    "yaw": 131.6278,
-    "pitch": 31.252274
+    "z": -16.18153533381277,
+    "yaw": -31.106262,
+    "pitch": -6.2647643
   },
-  "lastInstance": "game2",
+  "lastInstance": "game1",
   "questCounters": {},
   "questCooldowns": {}
 }
