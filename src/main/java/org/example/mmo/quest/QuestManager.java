@@ -151,14 +151,23 @@ public final class QuestManager {
         if (currentStep.objectives.stream().allMatch(obj -> progress.isObjectiveCompleted(obj))) {
             advanceToStep(player, data, quest, progress, progress.stepIndex + 1);
         } else {
-            BookGuiManager.showDialogueBook(player, NpcRegistry.byId(npcId), currentStep.waitingDialogues);
+            BookGuiManager.showDialogueBook(player, NpcRegistry.byId(npcId), quest, currentStep, currentStep.waitingDialogues);
         }
     }
 
     private static boolean advanceToStep(Player player, PlayerData data, Quest quest, QuestProgress progress, int newStepIndex) {
         if (newStepIndex > 0 && progress.stepIndex < quest.steps.size()) {
             QuestStep oldStep = quest.steps.get(progress.stepIndex);
-            oldStep.successDialogues.forEach(player::sendMessage);
+            if (!oldStep.successDialogues.isEmpty()) {
+                NPC dialogueNpc = null;
+                if (oldStep.endNpc != null) {
+                    dialogueNpc = NpcRegistry.byId(oldStep.endNpc);
+                }
+                if (dialogueNpc == null && oldStep.startNpc != null) {
+                    dialogueNpc = NpcRegistry.byId(oldStep.startNpc);
+                }
+                BookGuiManager.showDialogueBook(player, dialogueNpc, quest, oldStep, oldStep.successDialogues);
+            }
 
             for (IQuestObjective objective : oldStep.objectives) {
                 if (objective instanceof FetchObjective fetchObj) {
@@ -198,7 +207,7 @@ public final class QuestManager {
         if (!newStep.delay.isZero() && newStepIndex > 0) {
             long timeSinceLastStep = System.currentTimeMillis() - progress.stepStartTime;
             if (timeSinceLastStep < newStep.delay.toMillis()) {
-                BookGuiManager.showDialogueBook(player, NpcRegistry.byId(newStep.startNpc), newStep.delayDialogues);
+                BookGuiManager.showDialogueBook(player, NpcRegistry.byId(newStep.startNpc), quest, newStep, newStep.delayDialogues);
                 return false;
             }
         }
@@ -224,7 +233,7 @@ public final class QuestManager {
 
     private static void handleQuestFailure(Player player, PlayerData data, Quest quest, QuestProgress progress) {
         QuestStep currentStep = quest.steps.get(progress.stepIndex);
-        BookGuiManager.showDialogueBook(player, NpcRegistry.byId(currentStep.startNpc), currentStep.failureDialogues);
+        BookGuiManager.showDialogueBook(player, NpcRegistry.byId(currentStep.startNpc), quest, currentStep, currentStep.failureDialogues);
         progress.attempts++;
 
         if (currentStep.attemptLimit > 0 && progress.attempts >= currentStep.attemptLimit) {

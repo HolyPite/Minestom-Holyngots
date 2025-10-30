@@ -50,6 +50,11 @@ public final class BookGuiManager {
     private static final TextColor COLOR_RETURN_START = TextColor.color(0x1F2F6A);
     private static final TextColor COLOR_RETURN_END = TextColor.color(0x4A63C9);
 
+    private static final TextColor COLOR_QUEST_TITLE_START = TextColor.color(0xF4E3A1);
+    private static final TextColor COLOR_QUEST_TITLE_END = TextColor.color(0xC99A34);
+    private static final TextColor COLOR_STEP_TITLE_START = TextColor.color(0xCBD8F8);
+    private static final TextColor COLOR_STEP_TITLE_END = TextColor.color(0x7E94D9);
+
     private BookGuiManager() {
     }
 
@@ -162,20 +167,58 @@ public final class BookGuiManager {
             }
         }
 
-        ItemStack book = createBook(List.of(page));
+        String bookTitle = TKit.extractPlainText(npc.name());
+        ItemStack book = createBook(bookTitle.isBlank() ? "Dialogue" : bookTitle, List.of(page));
         openBookUI(player, book);
     }
 
     public static void showDialogueBook(Player player, NPC npc, List<Component> dialogue) {
+        showDialogueBook(player, npc, null, null, dialogue);
+    }
+
+    public static void showDialogueBook(Player player, NPC npc, Quest quest, QuestStep step, List<Component> dialogue) {
+        if (dialogue == null || dialogue.isEmpty()) {
+            return;
+        }
+
         Component page = Component.empty();
 
-        Component header = TKit.createGradientText(
-                "--- " + TKit.extractPlainText(npc.name()) + " ---",
-                COLOR_HEADER_START,
-                COLOR_HEADER_END
-        ).decorate(TextDecoration.BOLD);
+        boolean headerAdded = false;
 
-        page = page.append(header).append(Component.newline()).append(Component.newline());
+        if (npc != null) {
+            String npcName = TKit.extractPlainText(npc.name());
+            if (!npcName.isBlank()) {
+                Component npcHeader = TKit.createGradientText(npcName, COLOR_HEADER_START, COLOR_HEADER_END)
+                        .decorate(TextDecoration.BOLD);
+                page = page.append(npcHeader).append(Component.newline());
+                headerAdded = true;
+            }
+        }
+
+        String questTitle = quest != null && quest.name != null ? TKit.extractPlainText(quest.name) : null;
+        if (questTitle != null && !questTitle.isBlank()) {
+            Component questHeader = TKit.createGradientText(questTitle, COLOR_QUEST_TITLE_START, COLOR_QUEST_TITLE_END)
+                    .decorate(TextDecoration.BOLD);
+            page = page.append(questHeader).append(Component.newline());
+            headerAdded = true;
+        }
+
+        String stepTitle = null;
+        if (step != null && step.name != null) {
+            stepTitle = TKit.extractPlainText(step.name);
+        }
+
+        if (stepTitle != null && !stepTitle.isBlank() && (questTitle == null || !stepTitle.equals(questTitle))) {
+            Component stepHeader = TKit.createGradientText(stepTitle, COLOR_STEP_TITLE_START, COLOR_STEP_TITLE_END)
+                    .decorate(TextDecoration.BOLD)
+                    .decorate(TextDecoration.ITALIC);
+            page = page.append(stepHeader).append(Component.newline());
+            headerAdded = true;
+        }
+
+        if (headerAdded) {
+            page = page.append(Component.newline());
+        }
 
         for (Component line : dialogue) {
             page = page
@@ -185,18 +228,30 @@ public final class BookGuiManager {
 
         page = page.append(Component.newline());
 
-        String returnCommand = "/npc_interact book " + npc.id();
-        Component backBtn = TKit.createGradientText("[Retour]", COLOR_RETURN_START, COLOR_RETURN_END)
-                .decorate(TextDecoration.UNDERLINED)
-                .clickEvent(ClickEvent.runCommand(returnCommand))
-                .hoverEvent(HoverEvent.showText(
-                        Component.text("Retourner au menu principal")
-                                .color(NamedTextColor.GRAY)
-                ));
+        if (npc != null) {
+            String returnCommand = "/npc_interact book " + npc.id();
+            Component backBtn = TKit.createGradientText("[Retour]", COLOR_RETURN_START, COLOR_RETURN_END)
+                    .decorate(TextDecoration.UNDERLINED)
+                    .clickEvent(ClickEvent.runCommand(returnCommand))
+                    .hoverEvent(HoverEvent.showText(
+                            Component.text("Retourner au menu principal")
+                                    .color(NamedTextColor.GRAY)
+                    ));
 
-        page = page.append(backBtn);
+            page = page.append(backBtn);
+        }
 
-        ItemStack book = createBook(List.of(page));
+        String bookTitle;
+        if (questTitle != null && !questTitle.isBlank()) {
+            bookTitle = questTitle;
+        } else if (npc != null) {
+            String npcName = TKit.extractPlainText(npc.name());
+            bookTitle = npcName.isBlank() ? "Dialogue" : npcName;
+        } else {
+            bookTitle = "Dialogue";
+        }
+
+        ItemStack book = createBook(bookTitle, List.of(page));
         openBookUI(player, book);
     }
 
@@ -240,8 +295,8 @@ public final class BookGuiManager {
         return first + "\n  " + rest;
     }
 
-    private static ItemStack createBook(List<Component> pages) {
-        var ftTitle = new FilteredText<>("Dialogue", null);
+    private static ItemStack createBook(String title, List<Component> pages) {
+        var ftTitle = new FilteredText<>(title, null);
         List<FilteredText<Component>> ftPages = pages.stream()
                 .map(c -> new FilteredText<>(c, null))
                 .toList();

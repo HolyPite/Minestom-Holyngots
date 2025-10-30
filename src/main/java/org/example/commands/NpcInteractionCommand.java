@@ -101,7 +101,7 @@ public class NpcInteractionCommand extends Command {
                         QuestStep currentStep = quest.steps.get(progress.stepIndex);
                         for (IQuestObjective objective : currentStep.objectives) {
                             if (objective instanceof TalkObjective talkObj && talkObj.getNpcId().equals(npcId) && !progress.isObjectiveCompleted(objective)) {
-                                BookGuiManager.showDialogueBook(player, NpcRegistry.byId(npcId), talkObj.getDialogues());
+                                BookGuiManager.showDialogueBook(player, NpcRegistry.byId(npcId), quest, currentStep, talkObj.getDialogues());
                                 progress.setObjectiveCompleted(objective, true);
                                 QuestManager.getEventNode().call(new QuestObjectiveCompleteEvent(player, progress, currentStep, talkObj));
                                 break;
