@@ -73,14 +73,10 @@ public final class QuestManager {
         String npcId = event.getTarget().getTag(NPC_ID_TAG);
         if (npcId == null || npcId.isEmpty()) return;
 
-        PlayerData data = NodesManagement.getDataService().get(player);
-        if (data == null) return;
-
         NPC npc = NpcRegistry.byId(npcId);
         if (npc == null) return;
 
         player.playSound(npc.soundEffect(), player.getPosition());
-
         BookGuiManager.openNpcBook(player, npc);
     }
 
@@ -97,8 +93,7 @@ public final class QuestManager {
             if (cooldownTime != null) {
                 long timeSinceCompletion = System.currentTimeMillis() - cooldownTime;
                 if (timeSinceCompletion < quest.cooldown.toMillis()) {
-                    long remainingSeconds = (quest.cooldown.toMillis() - timeSinceCompletion) / 1000;
-                    player.sendMessage(Component.text("Vous devez encore attendre " + TKit.formatTime((int) remainingSeconds) + " minutes.", NamedTextColor.YELLOW));
+                    ToastManager.showToast(player, Component.text("Vous devez encore attendre " + TKit.formatTime((int) ((quest.cooldown.toMillis() - timeSinceCompletion) / 1000)) + " minutes."), Material.CLOCK, FrameType.TASK);
                     return;
                 }
             }
@@ -107,7 +102,7 @@ public final class QuestManager {
         }
 
         if (data.level < quest.requiredLevel) {
-            player.sendMessage(Component.text("Vous n'avez pas le niveau requis.", NamedTextColor.RED));
+            ToastManager.showToast(player, Component.text("Niveau requis : " + quest.requiredLevel), Material.BARRIER, FrameType.TASK);
             return;
         }
 
@@ -156,7 +151,7 @@ public final class QuestManager {
         if (currentStep.objectives.stream().allMatch(obj -> progress.isObjectiveCompleted(obj))) {
             advanceToStep(player, data, quest, progress, progress.stepIndex + 1);
         } else {
-            currentStep.waitingDialogues.forEach(player::sendMessage);
+            BookGuiManager.showDialogueBook(player, NpcRegistry.byId(npcId), currentStep.waitingDialogues);
         }
     }
 
@@ -197,13 +192,13 @@ public final class QuestManager {
 
         QuestStep newStep = quest.steps.get(newStepIndex);
         if (!checkPrerequisites(data, newStep)) {
-            player.sendMessage(Component.text("Vous ne remplissez pas les conditions.", NamedTextColor.RED));
+            ToastManager.showToast(player, Component.text("Vous ne remplissez pas les conditions."), Material.BARRIER, FrameType.TASK);
             return false;
         }
         if (!newStep.delay.isZero() && newStepIndex > 0) {
             long timeSinceLastStep = System.currentTimeMillis() - progress.stepStartTime;
             if (timeSinceLastStep < newStep.delay.toMillis()) {
-                newStep.delayDialogues.forEach(player::sendMessage);
+                BookGuiManager.showDialogueBook(player, NpcRegistry.byId(newStep.startNpc), newStep.delayDialogues);
                 return false;
             }
         }
@@ -229,18 +224,16 @@ public final class QuestManager {
 
     private static void handleQuestFailure(Player player, PlayerData data, Quest quest, QuestProgress progress) {
         QuestStep currentStep = quest.steps.get(progress.stepIndex);
-        currentStep.failureDialogues.forEach(player::sendMessage);
+        BookGuiManager.showDialogueBook(player, NpcRegistry.byId(currentStep.startNpc), currentStep.failureDialogues);
         progress.attempts++;
 
         if (currentStep.attemptLimit > 0 && progress.attempts >= currentStep.attemptLimit) {
-            player.sendMessage(Component.text("Vous avez échoué la quête définitivement.", NamedTextColor.DARK_RED));
             data.quests.remove(progress);
             data.failedQuests.add(quest.id);
             playersWithLocationObjectives.remove(player.getUuid());
             currentStep.objectives.forEach(obj -> obj.onComplete(player, data));
             EVENT_NODE.call(new QuestFailEvent(player, quest));
         } else {
-            player.sendMessage(Component.text("Vous pouvez réessayer.", NamedTextColor.YELLOW));
             currentStep.objectives.forEach(obj -> obj.onReset(player, data));
             progress.stepStartTime = System.currentTimeMillis();
             progress.resetObjectiveCompletionStatus();
@@ -332,11 +325,10 @@ public final class QuestManager {
         if (progress.isObjectiveCompleted(objective)) return false;
 
         data.incrementQuestCounter(progressId, 1);
-        int currentCount = data.getQuestCounter(progressId);
 
         player.playSound(Sound.sound(Key.key("entity.experience_orb.pickup"), Sound.Source.NEUTRAL, 0.5f, 1.2f), player.getPosition());
 
-        boolean isNowComplete = currentCount >= requiredCount;
+        boolean isNowComplete = data.getQuestCounter(progressId) >= requiredCount;
         if (isNowComplete) {
             progress.setObjectiveCompleted(objective, true);
         }
@@ -386,10 +378,8 @@ public final class QuestManager {
                 Quest quest = QuestRegistry.byId(event.getQuestProgress().questId);
                 advanceToStep(player, data, quest, event.getQuestProgress(), event.getQuestProgress().stepIndex + 1);
             } else {
-                NPC endNpc = NpcRegistry.byId(completedStep.endNpc);
-                if (endNpc != null) {
-                    player.sendMessage(Component.text("Tous les objectifs sont remplis. Retournez voir ", NamedTextColor.YELLOW).append(endNpc.name()));
-                }
+                // This message is fine as it's a direct instruction after completing all objectives.
+                player.sendMessage(Component.text("Tous les objectifs sont remplis. Retournez voir ", NamedTextColor.YELLOW).append(NpcRegistry.byId(completedStep.endNpc).name()));
             }
         }
     }

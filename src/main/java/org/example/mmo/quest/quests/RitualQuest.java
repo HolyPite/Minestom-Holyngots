@@ -40,6 +40,4 @@ public final class RitualQuest {
 
         QuestRegistry.register(QUEST);
     }
-
-    private RitualQuest() {}
 }

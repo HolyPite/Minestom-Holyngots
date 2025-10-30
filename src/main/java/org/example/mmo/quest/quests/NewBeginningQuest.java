@@ -29,6 +29,4 @@ public final class NewBeginningQuest {
 
         QuestRegistry.register(QUEST);
     }
-
-    private NewBeginningQuest() {}
 }

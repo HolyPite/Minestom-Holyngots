@@ -56,6 +56,4 @@ public final class Try {
 
         QuestRegistry.register(QUEST);
     }
-
-    private Try() {}
 }
