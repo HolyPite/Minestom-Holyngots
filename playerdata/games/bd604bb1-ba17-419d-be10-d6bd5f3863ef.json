@@ -14,42 +14,31 @@
       "slot": 1
     },
     {
+      "itemId": "admin_slayer",
+      "amount": 1,
+      "slot": 2
+    },
+    {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
     }
   ],
-  "quests": [
-    {
-      "questId": "speed_trial",
-      "stepIndex": 1,
-      "acceptedTime": 1761845890974,
-      "stepStartTime": 1761845893326,
-      "attempts": 1,
-      "objectiveCompletionStatus": {
-        "TextComponentImpl{content\u003d\"Atteignez le cercle au sommet de la colline\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
-        "TextComponentImpl{content\u003d\"Atteignez le cercle dans la vallée\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
-      }
-    },
-    {
-      "questId": "new_beginning",
-      "stepIndex": 0,
-      "acceptedTime": 1761845890979,
-      "stepStartTime": 1761845890979,
-      "attempts": 1,
-      "objectiveCompletionStatus": {}
-    }
+  "quests": [],
+  "completedQuests": [
+    "monster_plague",
+    "grand_tour",
+    "new_beginning"
   ],
-  "completedQuests": [],
   "failedQuests": [],
   "position": {
-    "x": -17.843325081388517,
+    "x": -2.1610052798174886,
     "y": 40.0,
-    "z": -16.18153533381277,
-    "yaw": -31.106262,
-    "pitch": -6.2647643
+    "z": 1.6610856773697793,
+    "yaw": 152.64062,
+    "pitch": 18.473738
   },
-  "lastInstance": "game1",
+  "lastInstance": "game2",
   "questCounters": {},
   "questCooldowns": {}
 }

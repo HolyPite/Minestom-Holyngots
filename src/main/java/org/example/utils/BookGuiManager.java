@@ -3,7 +3,6 @@ package org.example.utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.MinecraftServer;
@@ -31,29 +30,13 @@ import java.util.List;
 
 public final class BookGuiManager {
 
-    private static final TextColor COLOR_HEADER_START = TextColor.color(0xC9A441);
-    private static final TextColor COLOR_HEADER_END = TextColor.color(0x8A6B1F);
-
-    private static final TextColor COLOR_SECTION_START = TextColor.color(0xE8D27C);
-    private static final TextColor COLOR_SECTION_END = TextColor.color(0xB8A24F);
-
-    private static final TextColor COLOR_DIALOGUE_LINE = TextColor.color(0x4A4A4A);
-
-    private static final TextColor COLOR_TALK_START = TextColor.color(0x4A4A4A);
-    private static final TextColor COLOR_TALK_END = TextColor.color(0x8A8A8A);
-    private static final TextColor COLOR_OBJECTIVE_START = TextColor.color(0x2F3E7A);
-    private static final TextColor COLOR_OBJECTIVE_END = TextColor.color(0x6A74C9);
-    private static final TextColor COLOR_VALIDATE_START = TextColor.color(0x2F5A2F);
-    private static final TextColor COLOR_VALIDATE_END = TextColor.color(0x6FC16F);
-    private static final TextColor COLOR_AVAILABLE_START = TextColor.color(0x2E5E5E);
-    private static final TextColor COLOR_AVAILABLE_END = TextColor.color(0x6EDBDB);
-    private static final TextColor COLOR_RETURN_START = TextColor.color(0x1F2F6A);
-    private static final TextColor COLOR_RETURN_END = TextColor.color(0x4A63C9);
-
-    private static final TextColor COLOR_QUEST_TITLE_START = TextColor.color(0xF4E3A1);
-    private static final TextColor COLOR_QUEST_TITLE_END = TextColor.color(0xC99A34);
-    private static final TextColor COLOR_STEP_TITLE_START = TextColor.color(0xCBD8F8);
-    private static final TextColor COLOR_STEP_TITLE_END = TextColor.color(0x7E94D9);
+    private static final TextColor COLOR_PRIMARY_START = TextColor.color(0xc69432);
+    private static final TextColor COLOR_PRIMARY_END = TextColor.color(0xc8297b);
+    private static final TextColor COLOR_SECONDARY_START = TextColor.color(0x7D8FDF);
+    private static final TextColor COLOR_SECONDARY_END = TextColor.color(0x4555A5);
+    private static final TextColor COLOR_HIGHLIGHT_START = TextColor.color(0x7ACFA5);
+    private static final TextColor COLOR_HIGHLIGHT_END = TextColor.color(0x3D8F6C);
+    private static final TextColor COLOR_MUTED = TextColor.color(0x000000);
 
     private BookGuiManager() {
     }
@@ -69,18 +52,23 @@ public final class BookGuiManager {
 
         Component page = Component.empty();
 
-        Component header = npc.name().decorate(TextDecoration.BOLD);
+        Component header = TKit.createGradientText(
+                        TKit.extractPlainText(npc.name()),
+                        COLOR_PRIMARY_START,
+                        COLOR_PRIMARY_END
+                )
+                .decorate(TextDecoration.BOLD);
 
         page = page.append(header).append(Component.newline());
 
         if (!npc.randomDialogues().isEmpty()) {
             String cmdTalk = "/npc_interact talk " + npc.id();
-            Component talkComponent = TKit.createGradientText("[Parler]", COLOR_TALK_START, COLOR_TALK_END)
+            Component talkComponent = TKit.createGradientText("[Parler]", COLOR_SECONDARY_START, COLOR_SECONDARY_END)
                     .decorate(TextDecoration.UNDERLINED)
                     .clickEvent(ClickEvent.runCommand(cmdTalk))
                     .hoverEvent(HoverEvent.showText(
                             Component.text("Discuter avec ")
-                                    .append(npc.name().color(NamedTextColor.GOLD))
+                                    .append(npc.name().color(COLOR_PRIMARY_END))
                     ));
             page = page.append(talkComponent).append(Component.newline());
         }
@@ -107,9 +95,8 @@ public final class BookGuiManager {
                 Component questLine = questEntryLine(
                         questNameWrapped,
                         cmdObj,
-                        Component.text("Continuer la quête : ").append(quest.name.color(NamedTextColor.GOLD)),
-                        COLOR_OBJECTIVE_START,
-                        COLOR_OBJECTIVE_END
+                        Component.text("Continuer la quête : ").append(quest.name.color(COLOR_PRIMARY_END)),
+                        QuestEntryStyle.OBJECTIVE
                 );
 
                 page = page.append(questLine).append(Component.newline());
@@ -134,9 +121,8 @@ public final class BookGuiManager {
                 Component questLine = questEntryLine(
                         questNameWrapped,
                         cmdValidate,
-                        Component.text("Valider la quête : ").append(quest.name.color(NamedTextColor.GOLD)),
-                        COLOR_VALIDATE_START,
-                        COLOR_VALIDATE_END
+                        Component.text("Valider la quête : ").append(quest.name.color(COLOR_PRIMARY_END)),
+                        QuestEntryStyle.TURN_IN
                 );
 
                 page = page.append(questLine).append(Component.newline());
@@ -161,9 +147,8 @@ public final class BookGuiManager {
                 Component questLine = questEntryLine(
                         questNameWrapped,
                         cmdStart,
-                        Component.text("Commencer la quête : ").append(quest.name.color(NamedTextColor.GOLD)),
-                        COLOR_AVAILABLE_START,
-                        COLOR_AVAILABLE_END
+                        Component.text("Commencer la quête : ").append(quest.name.color(COLOR_PRIMARY_END)),
+                        QuestEntryStyle.AVAILABLE
                 );
 
                 page = page.append(questLine).append(Component.newline());
@@ -191,7 +176,7 @@ public final class BookGuiManager {
         if (npc != null) {
             String npcName = TKit.extractPlainText(npc.name());
             if (!npcName.isBlank()) {
-                Component npcHeader = TKit.createGradientText(npcName, COLOR_HEADER_START, COLOR_HEADER_END)
+                Component npcHeader = TKit.createGradientText(npcName, COLOR_PRIMARY_START, COLOR_PRIMARY_END)
                         .decorate(TextDecoration.BOLD);
                 page = page.append(npcHeader).append(Component.newline());
                 headerAdded = true;
@@ -200,7 +185,7 @@ public final class BookGuiManager {
 
         String questTitle = quest != null && quest.name != null ? TKit.extractPlainText(quest.name) : null;
         if (questTitle != null && !questTitle.isBlank()) {
-            Component questHeader = TKit.createGradientText(questTitle, COLOR_QUEST_TITLE_START, COLOR_QUEST_TITLE_END)
+            Component questHeader = TKit.createGradientText(questTitle, COLOR_PRIMARY_START, COLOR_PRIMARY_END)
                     .decorate(TextDecoration.BOLD);
             page = page.append(questHeader).append(Component.newline());
             headerAdded = true;
@@ -212,7 +197,7 @@ public final class BookGuiManager {
         }
 
         if (stepTitle != null && !stepTitle.isBlank() && (questTitle == null || !stepTitle.equals(questTitle))) {
-            Component stepHeader = TKit.createGradientText(stepTitle, COLOR_STEP_TITLE_START, COLOR_STEP_TITLE_END)
+            Component stepHeader = TKit.createGradientText(stepTitle, COLOR_SECONDARY_START, COLOR_SECONDARY_END)
                     .decorate(TextDecoration.BOLD)
                     .decorate(TextDecoration.ITALIC);
             page = page.append(stepHeader).append(Component.newline());
@@ -225,7 +210,7 @@ public final class BookGuiManager {
 
         for (Component line : dialogue) {
             page = page
-                    .append(line.color(COLOR_DIALOGUE_LINE))
+                    .append(line.color(COLOR_MUTED))
                     .append(Component.newline());
         }
 
@@ -233,12 +218,12 @@ public final class BookGuiManager {
 
         if (npc != null) {
             String returnCommand = "/npc_interact book " + npc.id();
-            Component backBtn = TKit.createGradientText("[Retour]", COLOR_RETURN_START, COLOR_RETURN_END)
+            Component backBtn = TKit.createGradientText("[Retour]", COLOR_SECONDARY_START, COLOR_SECONDARY_END)
                     .decorate(TextDecoration.UNDERLINED)
                     .clickEvent(ClickEvent.runCommand(returnCommand))
                     .hoverEvent(HoverEvent.showText(
                             Component.text("Retourner au menu principal")
-                                    .color(NamedTextColor.GRAY)
+                                    .color(COLOR_MUTED)
                     ));
 
             page = page.append(backBtn);
@@ -259,23 +244,41 @@ public final class BookGuiManager {
     }
 
     private static Component gradientSectionTitle(String raw) {
-        return TKit.createGradientText(raw, COLOR_SECTION_START, COLOR_SECTION_END)
+        return TKit.createGradientText(raw, COLOR_PRIMARY_START, COLOR_PRIMARY_END)
                 .decorate(TextDecoration.BOLD);
+    }
+
+    private enum QuestEntryStyle {
+        OBJECTIVE(COLOR_SECONDARY_START, COLOR_SECONDARY_END, false, false),
+        TURN_IN(COLOR_HIGHLIGHT_START, COLOR_HIGHLIGHT_END, true, false),
+        AVAILABLE(COLOR_SECONDARY_START, COLOR_SECONDARY_END, false, true);
+
+        final TextColor startColor;
+        final TextColor endColor;
+        final boolean bold;
+        final boolean italic;
+
+        QuestEntryStyle(TextColor startColor, TextColor endColor, boolean bold, boolean italic) {
+            this.startColor = startColor;
+            this.endColor = endColor;
+            this.bold = bold;
+            this.italic = italic;
+        }
     }
 
     private static Component questEntryLine(String questNameWrapped,
                                             String clickCommand,
                                             Component hoverText,
-                                            TextColor startColor,
-                                            TextColor endColor) {
+                                            QuestEntryStyle style) {
 
-        Component bullet = Component.text(" · ", NamedTextColor.DARK_GRAY)
+        Component bullet = Component.text(" · ", COLOR_MUTED)
                 .decoration(TextDecoration.UNDERLINED, false)
                 .decoration(TextDecoration.ITALIC, false);
 
-        Component clickable = TKit.createGradientText(questNameWrapped, startColor, endColor)
+        Component clickable = TKit.createGradientText(questNameWrapped, style.startColor, style.endColor)
                 .decorate(TextDecoration.UNDERLINED)
-                .decoration(TextDecoration.ITALIC, false)
+                .decoration(TextDecoration.BOLD, style.bold)
+                .decoration(TextDecoration.ITALIC, style.italic)
                 .clickEvent(ClickEvent.runCommand(clickCommand))
                 .hoverEvent(HoverEvent.showText(hoverText));
 
