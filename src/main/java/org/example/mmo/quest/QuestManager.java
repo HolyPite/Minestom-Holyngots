@@ -3,10 +3,7 @@ package org.example.mmo.quest;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.advancements.FrameType;
 import net.minestom.server.entity.LivingEntity;
@@ -189,7 +186,7 @@ public final class QuestManager {
                 data.completedQuests.add(quest.id);
             }
             EVENT_NODE.call(new QuestStepAdvanceEvent(player, quest, newStepIndex));
-            QuestRegistry.all().values().forEach(q -> tryAutoStartQuest(player, data, q));
+            QuestRegistry.autoStartQuests().forEach(q -> tryAutoStartQuest(player, data, q));
             return true;
         }
 
@@ -221,7 +218,7 @@ public final class QuestManager {
         });
 
         EVENT_NODE.call(new QuestStepAdvanceEvent(player, quest, newStepIndex));
-        QuestRegistry.all().values().forEach(q -> tryAutoStartQuest(player, data, q));
+        QuestRegistry.autoStartQuests().forEach(q -> tryAutoStartQuest(player, data, q));
         return true;
     }
 

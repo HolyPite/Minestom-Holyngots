@@ -31,45 +31,40 @@ import java.util.List;
 
 public final class BookGuiManager {
 
-    // Palette. On reste dans des tons chauds / lisibles sur fond parchemin Minecraft.
-    private static final TextColor COLOR_HEADER_START = TextColor.color(0xC9A441);   // doré chaud
-    private static final TextColor COLOR_HEADER_END   = TextColor.color(0x8A6B1F);   // brun or
+    private static final TextColor COLOR_HEADER_START = TextColor.color(0xC9A441);
+    private static final TextColor COLOR_HEADER_END = TextColor.color(0x8A6B1F);
 
-    private static final TextColor COLOR_SECTION_START = TextColor.color(0xE8D27C);  // or pâle
-    private static final TextColor COLOR_SECTION_END   = TextColor.color(0xB8A24F);  // or moyen
+    private static final TextColor COLOR_SECTION_START = TextColor.color(0xE8D27C);
+    private static final TextColor COLOR_SECTION_END = TextColor.color(0xB8A24F);
 
-    private static final TextColor COLOR_DIALOGUE_LINE = TextColor.color(0x4A4A4A);  // gris chaud lisible
+    private static final TextColor COLOR_DIALOGUE_LINE = TextColor.color(0x4A4A4A);
 
-    // Actions interactives par type
-    private static final TextColor COLOR_TALK_START      = TextColor.color(0x4A4A4A); // gris foncé neutre
-    private static final TextColor COLOR_TALK_END        = TextColor.color(0x8A8A8A); // gris clair
-    private static final TextColor COLOR_OBJECTIVE_START = TextColor.color(0x2F3E7A); // bleu désaturé
-    private static final TextColor COLOR_OBJECTIVE_END   = TextColor.color(0x6A74C9); // bleu lavande
-    private static final TextColor COLOR_VALIDATE_START  = TextColor.color(0x2F5A2F); // vert mousse
-    private static final TextColor COLOR_VALIDATE_END    = TextColor.color(0x6FC16F); // vert clair
-    private static final TextColor COLOR_AVAILABLE_START = TextColor.color(0x2E5E5E); // cyan sombre
-    private static final TextColor COLOR_AVAILABLE_END   = TextColor.color(0x6EDBDB); // cyan clair
-    private static final TextColor COLOR_RETURN_START    = TextColor.color(0x1F2F6A); // bleu nuit
-    private static final TextColor COLOR_RETURN_END      = TextColor.color(0x4A63C9); // bleu doux
+    private static final TextColor COLOR_TALK_START = TextColor.color(0x4A4A4A);
+    private static final TextColor COLOR_TALK_END = TextColor.color(0x8A8A8A);
+    private static final TextColor COLOR_OBJECTIVE_START = TextColor.color(0x2F3E7A);
+    private static final TextColor COLOR_OBJECTIVE_END = TextColor.color(0x6A74C9);
+    private static final TextColor COLOR_VALIDATE_START = TextColor.color(0x2F5A2F);
+    private static final TextColor COLOR_VALIDATE_END = TextColor.color(0x6FC16F);
+    private static final TextColor COLOR_AVAILABLE_START = TextColor.color(0x2E5E5E);
+    private static final TextColor COLOR_AVAILABLE_END = TextColor.color(0x6EDBDB);
+    private static final TextColor COLOR_RETURN_START = TextColor.color(0x1F2F6A);
+    private static final TextColor COLOR_RETURN_END = TextColor.color(0x4A63C9);
 
-    private BookGuiManager() {}
-
-    /* -------------------------------------------------
-     * Public API
-     * ------------------------------------------------- */
+    private BookGuiManager() {
+    }
 
     public static void openNpcBook(Player player, NPC npc) {
         PlayerData data = NodesManagement.getDataService().get(player);
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
 
         Component page = Component.empty();
 
-        // --- En-tête PNJ en gradient doré ---
         Component header = npc.name().decorate(TextDecoration.BOLD);
 
         page = page.append(header).append(Component.newline());
 
-        // --- Bouton "Parler" gris neutre ---
         if (!npc.randomDialogues().isEmpty()) {
             String cmdTalk = "/npc_interact talk " + npc.id();
             Component talkComponent = TKit.createGradientText("[Parler]", COLOR_TALK_START, COLOR_TALK_END)
@@ -82,7 +77,6 @@ public final class BookGuiManager {
             page = page.append(talkComponent).append(Component.newline());
         }
 
-        // --- Bloc "Dialogue de quêtes" ---
         List<QuestProgress> talkObjectives = getTalkObjectives(data, npc.id());
         if (!talkObjectives.isEmpty()) {
             page = page
@@ -92,7 +86,9 @@ public final class BookGuiManager {
 
             for (QuestProgress progress : talkObjectives) {
                 Quest quest = QuestRegistry.byId(progress.questId);
-                if (quest == null) continue;
+                if (quest == null) {
+                    continue;
+                }
 
                 String questNameWrapped = wrapQuestTitleForBook(
                         TKit.extractPlainText(quest.name),
@@ -112,7 +108,6 @@ public final class BookGuiManager {
             }
         }
 
-        // --- Bloc "Quêtes à valider" ---
         List<Quest> questsToAdvance = getQuestsToAdvance(data, npc.id());
         if (!questsToAdvance.isEmpty()) {
             page = page
@@ -140,7 +135,6 @@ public final class BookGuiManager {
             }
         }
 
-        // --- Bloc "Quêtes disponibles" ---
         List<Quest> availableQuests = getAvailableQuests(data, npc.id());
         if (!availableQuests.isEmpty()) {
             page = page
@@ -175,7 +169,6 @@ public final class BookGuiManager {
     public static void showDialogueBook(Player player, NPC npc, List<Component> dialogue) {
         Component page = Component.empty();
 
-        // header PNJ encore en gradient doré
         Component header = TKit.createGradientText(
                 "--- " + TKit.extractPlainText(npc.name()) + " ---",
                 COLOR_HEADER_START,
@@ -184,7 +177,6 @@ public final class BookGuiManager {
 
         page = page.append(header).append(Component.newline()).append(Component.newline());
 
-        // corps du dialogue en gris chaud homogène
         for (Component line : dialogue) {
             page = page
                     .append(line.color(COLOR_DIALOGUE_LINE))
@@ -193,7 +185,6 @@ public final class BookGuiManager {
 
         page = page.append(Component.newline());
 
-        // bouton retour en gradient bleu calme
         String returnCommand = "/npc_interact book " + npc.id();
         Component backBtn = TKit.createGradientText("[Retour]", COLOR_RETURN_START, COLOR_RETURN_END)
                 .decorate(TextDecoration.UNDERLINED)
@@ -209,29 +200,21 @@ public final class BookGuiManager {
         openBookUI(player, book);
     }
 
-    /* -------------------------------------------------
-     * Helpers d'affichage
-     * ------------------------------------------------- */
-
-    // Titre de section uniforme
     private static Component gradientSectionTitle(String raw) {
         return TKit.createGradientText(raw, COLOR_SECTION_START, COLOR_SECTION_END)
                 .decorate(TextDecoration.BOLD);
     }
 
-    // Ligne de quête avec bullet neutre + lien cliquable gradienté
     private static Component questEntryLine(String questNameWrapped,
                                             String clickCommand,
                                             Component hoverText,
                                             TextColor startColor,
                                             TextColor endColor) {
 
-        // bullet non souligné, gris sombre
         Component bullet = Component.text(" · ", NamedTextColor.DARK_GRAY)
                 .decoration(TextDecoration.UNDERLINED, false)
                 .decoration(TextDecoration.ITALIC, false);
 
-        // texte cliquable (souligné uniquement sur le titre)
         Component clickable = TKit.createGradientText(questNameWrapped, startColor, endColor)
                 .decorate(TextDecoration.UNDERLINED)
                 .decoration(TextDecoration.ITALIC, false)
@@ -241,13 +224,15 @@ public final class BookGuiManager {
         return bullet.append(clickable);
     }
 
-    // Wrap du nom de quête pour éviter que ça touche la marge droite du livre
-    // Coupe à maxLen chars. Seconde ligne indentée "  "
     private static String wrapQuestTitleForBook(String raw, int maxLen) {
-        if (raw.length() <= maxLen) return raw;
+        if (raw.length() <= maxLen) {
+            return raw;
+        }
 
         int cut = raw.lastIndexOf(' ', maxLen);
-        if (cut <= 0) cut = maxLen;
+        if (cut <= 0) {
+            cut = maxLen;
+        }
 
         String first = raw.substring(0, cut).trim();
         String rest = raw.substring(cut).trim();
@@ -255,7 +240,6 @@ public final class BookGuiManager {
         return first + "\n  " + rest;
     }
 
-    // Construction du livre écrit
     private static ItemStack createBook(List<Component> pages) {
         var ftTitle = new FilteredText<>("Dialogue", null);
         List<FilteredText<Component>> ftPages = pages.stream()
@@ -274,17 +258,12 @@ public final class BookGuiManager {
                 .with(DataComponents.WRITTEN_BOOK_CONTENT, content);
     }
 
-    // Ouverture du livre: on le met en offhand le temps d'un tick
     private static void openBookUI(Player player, ItemStack book) {
         ItemStack prev = player.getItemInOffHand();
         player.setItemInOffHand(book);
         player.sendPacket(new OpenBookPacket(PlayerHand.OFF));
         MinecraftServer.getSchedulerManager().scheduleNextTick(() -> player.setItemInOffHand(prev));
     }
-
-    /* -------------------------------------------------
-     * Logique quêtes
-     * ------------------------------------------------- */
 
     private static List<QuestProgress> getTalkObjectives(PlayerData data, String npcId) {
         List<QuestProgress> result = new ArrayList<>();
@@ -322,19 +301,24 @@ public final class BookGuiManager {
 
     private static List<Quest> getAvailableQuests(PlayerData data, String npcId) {
         List<Quest> result = new ArrayList<>();
-        QuestRegistry.all().forEach((questId, quest) -> {
-            boolean hasQuest = data.quests.stream().anyMatch(p -> p.questId.equals(questId));
-            boolean hasCompleted = data.hasCompletedQuest(questId);
-            boolean hasFailed = data.hasFailedQuest(questId);
+        for (Quest quest : QuestRegistry.byStartNpc(npcId)) {
+            if (quest.steps.isEmpty()) {
+                continue;
+            }
 
-            if (!hasQuest && !hasCompleted && !hasFailed && !quest.steps.isEmpty()) {
+            boolean hasQuest = data.quests.stream().anyMatch(p -> p.questId.equals(quest.id));
+            boolean hasCompleted = data.hasCompletedQuest(quest.id);
+            boolean hasFailed = data.hasFailedQuest(quest.id);
+
+            if (!hasQuest && !hasCompleted && !hasFailed) {
                 QuestStep firstStep = quest.steps.getFirst();
-                if (npcId.equals(firstStep.startNpc)
-                        && QuestManager.checkPrerequisites(data, firstStep)) {
+                if (QuestManager.checkPrerequisites(data, firstStep)) {
                     result.add(quest);
                 }
             }
-        });
+        }
         return result;
     }
 }
+
+

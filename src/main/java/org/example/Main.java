@@ -75,7 +75,7 @@ public class Main {
                         }
                     }
 
-                    QuestRegistry.all().values().forEach(quest -> {
+                    QuestRegistry.autoStartQuests().forEach(quest -> {
                         QuestManager.tryAutoStartQuest(player, data, quest);
                     });
                 }
