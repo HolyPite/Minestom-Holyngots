@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.compile.JavaCompile
+
 plugins {
     id("java")
     id("com.gradleup.shadow") version "8.3.0"
@@ -19,7 +21,7 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(25)) // Minestom requires Java 25 for 1.21.10 snapshots
+        languageVersion.set(JavaLanguageVersion.of(25)) // Align compilation target with available runtime (class file version 68)
     }
 }
 

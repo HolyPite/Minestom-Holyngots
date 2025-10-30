@@ -6,7 +6,7 @@ import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
-import net.minestom.server.extras.MojangAuth;
+//import net.minestom.server.extras.MojangAuth;
 import org.example.data.PlayerDataUtils;
 import org.example.data.data_class.PlayerData;
 import org.example.data.teleport.TeleportUtils;

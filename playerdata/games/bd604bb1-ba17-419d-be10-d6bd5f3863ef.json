@@ -4,39 +4,35 @@
   "experience": 0,
   "inventory": [
     {
-      "itemId": "admin_slayer",
-      "amount": 1,
-      "slot": 0
-    },
-    {
-      "itemId": "admin_slayer",
-      "amount": 1,
-      "slot": 1
-    },
-    {
-      "itemId": "admin_slayer",
-      "amount": 1,
-      "slot": 2
-    },
-    {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
     }
   ],
-  "quests": [],
+  "quests": [
+    {
+      "questId": "ritual_quest",
+      "stepIndex": 0,
+      "acceptedTime": 1761857668202,
+      "stepStartTime": 1761857668202,
+      "attempts": 1,
+      "objectiveCompletionStatus": {}
+    }
+  ],
   "completedQuests": [
     "monster_plague",
     "grand_tour",
-    "new_beginning"
+    "new_beginning",
+    "try",
+    "speed_trial"
   ],
   "failedQuests": [],
   "position": {
-    "x": -2.1610052798174886,
+    "x": -6.9622707226879275,
     "y": 40.0,
-    "z": 1.6610856773697793,
-    "yaw": 152.64062,
-    "pitch": 18.473738
+    "z": 17.07112561268644,
+    "yaw": 159.3877,
+    "pitch": 34.65163
   },
   "lastInstance": "game2",
   "questCounters": {},
