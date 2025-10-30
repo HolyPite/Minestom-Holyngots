@@ -60,6 +60,33 @@ public final class QuestManager {
         return EVENT_NODE;
     }
 
+    public static void trackLocationObjective(Player player) {
+        playersWithLocationObjectives.add(player.getUuid());
+    }
+
+    public static void refreshLocationObjectiveTracking(Player player, PlayerData data) {
+        UUID uuid = player.getUuid();
+        if (data == null) {
+            playersWithLocationObjectives.remove(uuid);
+            return;
+        }
+
+        for (QuestProgress progress : data.quests) {
+            Quest quest = QuestRegistry.byId(progress.questId);
+            if (quest == null || progress.stepIndex >= quest.steps.size()) continue;
+
+            QuestStep currentStep = quest.steps.get(progress.stepIndex);
+            for (IQuestObjective objective : currentStep.objectives) {
+                if (objective instanceof LocationObjective && !progress.isObjectiveCompleted(objective)) {
+                    playersWithLocationObjectives.add(uuid);
+                    return;
+                }
+            }
+        }
+
+        playersWithLocationObjectives.remove(uuid);
+    }
+
     private static void handleNpcInteraction(PlayerEntityInteractEvent event) {
         Player player = event.getPlayer();
         long now = System.currentTimeMillis();
@@ -221,10 +248,8 @@ public final class QuestManager {
         }
         player.sendMessage(newStep.description.color(NamedTextColor.WHITE));
 
-        newStep.objectives.forEach(obj -> {
-            obj.onStart(player, data);
-            if (obj instanceof LocationObjective) playersWithLocationObjectives.add(player.getUuid());
-        });
+        newStep.objectives.forEach(obj -> obj.onStart(player, data));
+        refreshLocationObjectiveTracking(player, data);
 
         EVENT_NODE.call(new QuestStepAdvanceEvent(player, quest, newStepIndex));
         QuestRegistry.autoStartQuests().forEach(q -> tryAutoStartQuest(player, data, q));
@@ -246,6 +271,7 @@ public final class QuestManager {
             currentStep.objectives.forEach(obj -> obj.onReset(player, data));
             progress.stepStartTime = System.currentTimeMillis();
             progress.resetObjectiveCompletionStatus();
+            refreshLocationObjectiveTracking(player, data);
         }
     }
 

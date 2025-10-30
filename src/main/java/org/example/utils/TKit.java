@@ -30,6 +30,9 @@ public class TKit {
     public static void playSound(Instance inst, Pos Pos,
                                  String soundName, Sound.Source source,         // Sound.Source.MASTER …
                                  float volume, float pitch) {
+        if (inst == null) {
+            return;
+        }
 
         inst.playSound(Sound.sound(Key.key(soundName), source, volume, pitch), Pos.x(), Pos.y(), Pos.z());
     }
@@ -37,6 +40,9 @@ public class TKit {
     public static void spawnParticles(Instance inst, Particle particle, Pos Pos,
                                       float offsetX, float offsetY, float offsetZ,
                                       float maxSpeed, int number) {
+        if (inst == null) {
+            return;
+        }
 
         inst.sendGroupedPacket(new ParticlePacket(particle, Pos.x(), Pos.y(), Pos.z(), offsetX, offsetY, offsetZ, maxSpeed, number));
     }

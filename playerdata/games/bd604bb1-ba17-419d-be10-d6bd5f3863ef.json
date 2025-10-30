@@ -21,60 +21,35 @@
   ],
   "quests": [
     {
-      "questId": "new_beginning",
-      "stepIndex": 0,
-      "acceptedTime": 1761830840793,
-      "stepStartTime": 1761830840793,
-      "attempts": 1,
-      "objectiveCompletionStatus": {}
-    },
-    {
-      "questId": "fire_purge",
-      "stepIndex": 0,
-      "acceptedTime": 1761830917035,
-      "stepStartTime": 1761830917035,
-      "attempts": 1,
-      "objectiveCompletionStatus": {}
-    },
-    {
-      "questId": "monster_plague",
-      "stepIndex": 0,
-      "acceptedTime": 1761830933784,
-      "stepStartTime": 1761830933784,
-      "attempts": 1,
-      "objectiveCompletionStatus": {
-        "TextComponentImpl{content\u003d\"Tuer 2 araignées\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
-        "TextComponentImpl{content\u003d\"Tuer 5 squelettes\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
-      }
-    },
-    {
       "questId": "speed_trial",
       "stepIndex": 1,
-      "acceptedTime": 1761831078949,
-      "stepStartTime": 1761831081699,
+      "acceptedTime": 1761845890974,
+      "stepStartTime": 1761845893326,
       "attempts": 1,
       "objectiveCompletionStatus": {
-        "TextComponentImpl{content\u003d\"Atteignez le cercle au sommet de la colline\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
+        "TextComponentImpl{content\u003d\"Atteignez le cercle au sommet de la colline\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
+        "TextComponentImpl{content\u003d\"Atteignez le cercle dans la vallée\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
       }
+    },
+    {
+      "questId": "new_beginning",
+      "stepIndex": 0,
+      "acceptedTime": 1761845890979,
+      "stepStartTime": 1761845890979,
+      "attempts": 1,
+      "objectiveCompletionStatus": {}
     }
   ],
-  "completedQuests": [
-    "grand_tour"
-  ],
+  "completedQuests": [],
   "failedQuests": [],
   "position": {
-    "x": 2.522109632574729,
+    "x": -17.843325081388517,
     "y": 40.0,
-    "z": 5.528430590533449,
-    "yaw": -120.57739,
-    "pitch": -1.0298054
+    "z": -16.18153533381277,
+    "yaw": -31.106262,
+    "pitch": -6.2647643
   },
   "lastInstance": "game1",
-  "questCounters": {
-    "fire_purge_zombies": 0,
-    "monster_plague_zombies": 0,
-    "monster_plague_skeletons": 5,
-    "monster_plague_spiders": 2
-  },
+  "questCounters": {},
   "questCooldowns": {}
 }

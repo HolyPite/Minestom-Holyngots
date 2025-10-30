@@ -59,6 +59,9 @@ public final class BookGuiManager {
     }
 
     public static void openNpcBook(Player player, NPC npc) {
+        if (npc == null) {
+            return;
+        }
         PlayerData data = NodesManagement.getDataService().get(player);
         if (data == null) {
             return;
