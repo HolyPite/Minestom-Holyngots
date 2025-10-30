@@ -21,60 +21,27 @@
   ],
   "quests": [
     {
-      "questId": "new_beginning",
-      "stepIndex": 0,
-      "acceptedTime": 1761830840793,
-      "stepStartTime": 1761830840793,
+      "questId": "try",
+      "stepIndex": 2,
+      "acceptedTime": 1761842596900,
+      "stepStartTime": 1761842630101,
       "attempts": 1,
       "objectiveCompletionStatus": {}
-    },
-    {
-      "questId": "fire_purge",
-      "stepIndex": 0,
-      "acceptedTime": 1761830917035,
-      "stepStartTime": 1761830917035,
-      "attempts": 1,
-      "objectiveCompletionStatus": {}
-    },
-    {
-      "questId": "monster_plague",
-      "stepIndex": 0,
-      "acceptedTime": 1761830933784,
-      "stepStartTime": 1761830933784,
-      "attempts": 1,
-      "objectiveCompletionStatus": {
-        "TextComponentImpl{content\u003d\"Tuer 2 araignées\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
-        "TextComponentImpl{content\u003d\"Tuer 5 squelettes\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
-      }
-    },
-    {
-      "questId": "speed_trial",
-      "stepIndex": 1,
-      "acceptedTime": 1761831078949,
-      "stepStartTime": 1761831081699,
-      "attempts": 1,
-      "objectiveCompletionStatus": {
-        "TextComponentImpl{content\u003d\"Atteignez le cercle au sommet de la colline\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
-      }
     }
   ],
   "completedQuests": [
-    "grand_tour"
+    "speed_trial",
+    "new_beginning"
   ],
   "failedQuests": [],
   "position": {
-    "x": 2.522109632574729,
+    "x": -0.3435101804789815,
     "y": 40.0,
-    "z": 5.528430590533449,
-    "yaw": -120.57739,
-    "pitch": -1.0298054
+    "z": 2.3091196282006514,
+    "yaw": 131.6278,
+    "pitch": 31.252274
   },
-  "lastInstance": "game1",
-  "questCounters": {
-    "fire_purge_zombies": 0,
-    "monster_plague_zombies": 0,
-    "monster_plague_skeletons": 5,
-    "monster_plague_spiders": 2
-  },
+  "lastInstance": "game2",
+  "questCounters": {},
   "questCooldowns": {}
 }
