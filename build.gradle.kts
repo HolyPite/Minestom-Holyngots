@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.minestom:minestom-snapshots:1_21_5-c974e54f44")
+    implementation("net.minestom:minestom:2025.10.18-1.21.10")
     implementation("org.slf4j:slf4j-simple:2.0.14")
     implementation("io.github.classgraph:classgraph:4.8.163")
     implementation("com.google.code.gson:gson:2.10.1")
@@ -19,7 +19,7 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21)) // Minestom has a minimum Java version of 21
+        languageVersion.set(JavaLanguageVersion.of(25)) // Minestom requires Java 25 for 1.21.10 snapshots
     }
 }
 
