@@ -3,10 +3,7 @@ package org.example.mmo.quest;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.advancements.FrameType;
 import net.minestom.server.entity.LivingEntity;
@@ -33,6 +30,7 @@ import org.example.mmo.quest.registry.QuestRegistry;
 import org.example.mmo.quest.structure.Quest;
 import org.example.mmo.quest.structure.QuestProgress;
 import org.example.mmo.quest.structure.QuestStep;
+import org.example.utils.BookGuiManager;
 import org.example.utils.TKit;
 import org.example.utils.ToastManager;
 
@@ -83,97 +81,7 @@ public final class QuestManager {
 
         player.playSound(npc.soundEffect(), player.getPosition());
 
-        player.sendMessage(Component.text("--- " + TKit.extractPlainText(npc.name()) + " ---", NamedTextColor.GOLD));
-
-        if (!npc.randomDialogues().isEmpty()) {
-            String command = String.format("/npc_interact talk %s", npcId);
-            Component hoverText = Component.text("Clique pour parler avec ", NamedTextColor.GRAY).append(npc.name());
-            player.sendMessage(Component.text("[Parler]", NamedTextColor.WHITE, TextDecoration.UNDERLINED)
-                    .clickEvent(ClickEvent.runCommand(command))
-                    .hoverEvent(HoverEvent.showText(hoverText)));
-        }
-
-        List<QuestProgress> talkObjectivesToComplete = new ArrayList<>();
-        for (QuestProgress progress : data.quests) {
-            Quest quest = QuestRegistry.byId(progress.questId);
-            if (quest != null && progress.stepIndex < quest.steps.size()) {
-                QuestStep currentStep = quest.steps.get(progress.stepIndex);
-                for (IQuestObjective objective : currentStep.objectives) {
-                    if (objective instanceof TalkObjective talkObj && talkObj.getNpcId().equals(npcId) && !progress.isObjectiveCompleted(objective)) {
-                        talkObjectivesToComplete.add(progress);
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!talkObjectivesToComplete.isEmpty()) {
-            player.sendMessage(Component.text("Dialogue de quêtes :", NamedTextColor.YELLOW));
-            for (QuestProgress progress : talkObjectivesToComplete) {
-                Quest quest = QuestRegistry.byId(progress.questId);
-                if (quest == null) continue;
-                QuestStep currentStep = quest.steps.get(progress.stepIndex);
-                TalkObjective talkObj = (TalkObjective) currentStep.objectives.stream()
-                        .filter(o -> o instanceof TalkObjective && ((TalkObjective) o).getNpcId().equals(npcId))
-                        .findFirst().orElse(null);
-                if (talkObj == null) continue;
-
-                String command = String.format("/npc_interact talk_objective %s %s", npcId, quest.id);
-                Component hoverText = talkObj.getDescription().color(NamedTextColor.GRAY);
-                player.sendMessage(Component.text("  - " + TKit.extractPlainText(quest.name) + " (Dialogue)", NamedTextColor.LIGHT_PURPLE, TextDecoration.UNDERLINED)
-                        .clickEvent(ClickEvent.runCommand(command))
-                        .hoverEvent(HoverEvent.showText(hoverText)));
-            }
-        }
-
-        List<Quest> questsToAdvance = new ArrayList<>();
-        for (QuestProgress progress : data.quests) {
-            Quest quest = QuestRegistry.byId(progress.questId);
-            if (quest != null && progress.stepIndex < quest.steps.size()) {
-                QuestStep currentStep = quest.steps.get(progress.stepIndex);
-                if (npcId.equals(currentStep.endNpc)) {
-                    if (currentStep.objectives.stream().allMatch(obj -> progress.isObjectiveCompleted(obj))) {
-                        questsToAdvance.add(quest);
-                    }
-                }
-            }
-        }
-
-        if (!questsToAdvance.isEmpty()) {
-            player.sendMessage(Component.text("Quêtes à valider :", NamedTextColor.YELLOW));
-            for (Quest quest : questsToAdvance) {
-                String command = String.format("/npc_interact advance_quest %s %s", npcId, quest.id);
-                QuestStep currentStep = quest.steps.get(data.quests.stream().filter(p -> p.questId.equals(quest.id)).findFirst().get().stepIndex);
-                Component hoverText = currentStep.description.color(NamedTextColor.GRAY);
-                player.sendMessage(Component.text("  - " + TKit.extractPlainText(quest.name), NamedTextColor.GREEN, TextDecoration.UNDERLINED)
-                        .clickEvent(ClickEvent.runCommand(command))
-                        .hoverEvent(HoverEvent.showText(hoverText)));
-            }
-        }
-
-        List<Quest> availableQuests = new ArrayList<>();
-        for (Quest quest : QuestRegistry.byStartNpc(npcId)) {
-            boolean hasQuest = data.quests.stream().anyMatch(p -> p.questId.equals(quest.id));
-            boolean hasCompleted = data.hasCompletedQuest(quest.id);
-            boolean hasFailed = data.hasFailedQuest(quest.id);
-
-            if (!hasQuest && !hasCompleted && !hasFailed && !quest.steps.isEmpty()) {
-                if (checkPrerequisites(data, quest.steps.getFirst())) {
-                    availableQuests.add(quest);
-                }
-            }
-        }
-
-        if (!availableQuests.isEmpty()) {
-            player.sendMessage(Component.text("Quêtes disponibles :", NamedTextColor.YELLOW));
-            for (Quest quest : availableQuests) {
-                String command = String.format("/npc_interact start_quest %s %s", npcId, quest.id);
-                Component hoverText = quest.steps.getFirst().description.color(NamedTextColor.GRAY);
-                player.sendMessage(Component.text("  - " + TKit.extractPlainText(quest.name), NamedTextColor.AQUA, TextDecoration.UNDERLINED)
-                        .clickEvent(ClickEvent.runCommand(command))
-                        .hoverEvent(HoverEvent.showText(hoverText)));
-            }
-        }
+        BookGuiManager.openNpcBook(player, npc);
     }
 
     public static void tryStartQuest(Player player, PlayerData data, Quest quest, String npcId) {
@@ -362,7 +270,7 @@ public final class QuestManager {
         }
     }
 
-    private static boolean checkPrerequisites(PlayerData data, QuestStep step) {
+    public static boolean checkPrerequisites(PlayerData data, QuestStep step) {
         if (step.prerequisites == null || step.prerequisites.isEmpty()) return true;
         for (String prereq : step.prerequisites) {
             String[] parts = prereq.split(":");
