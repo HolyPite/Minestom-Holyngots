@@ -12,7 +12,15 @@ public final class NpcRegistry {
     }
 
     public static NPC byId(String id) {
-        return MAP.get(id);
+        if (id == null) {
+            return null;
+        }
+
+        NPC npc = MAP.get(id);
+        if (npc == null) {
+            System.err.println("[NpcRegistry] Unknown NPC id requested: " + id);
+        }
+        return npc;
     }
 
     public static Map<String, NPC> all() {

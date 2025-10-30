@@ -54,6 +54,9 @@ public final class BookGuiManager {
     }
 
     public static void openNpcBook(Player player, NPC npc) {
+        if (npc == null) {
+            return;
+        }
         PlayerData data = NodesManagement.getDataService().get(player);
         if (data == null) {
             return;
@@ -167,6 +170,9 @@ public final class BookGuiManager {
     }
 
     public static void showDialogueBook(Player player, NPC npc, List<Component> dialogue) {
+        if (npc == null) {
+            return;
+        }
         Component page = Component.empty();
 
         Component header = TKit.createGradientText(
