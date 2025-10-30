@@ -41,6 +41,4 @@ public final class SpeedTrial {
 
         QuestRegistry.register(QUEST);
     }
-
-    private SpeedTrial() {}
 }

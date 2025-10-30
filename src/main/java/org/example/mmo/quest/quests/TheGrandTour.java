@@ -46,6 +46,4 @@ public final class TheGrandTour {
 
         QuestRegistry.register(QUEST);
     }
-
-    private TheGrandTour() {}
 }

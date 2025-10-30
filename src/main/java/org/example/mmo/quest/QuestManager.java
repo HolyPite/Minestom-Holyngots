@@ -33,6 +33,7 @@ import org.example.mmo.quest.registry.QuestRegistry;
 import org.example.mmo.quest.structure.Quest;
 import org.example.mmo.quest.structure.QuestProgress;
 import org.example.mmo.quest.structure.QuestStep;
+import org.example.utils.BookGuiManager;
 import org.example.utils.TKit;
 import org.example.utils.ToastManager;
 
@@ -75,105 +76,11 @@ public final class QuestManager {
         String npcId = event.getTarget().getTag(NPC_ID_TAG);
         if (npcId == null || npcId.isEmpty()) return;
 
-        PlayerData data = NodesManagement.getDataService().get(player);
-        if (data == null) return;
-
         NPC npc = NpcRegistry.byId(npcId);
         if (npc == null) return;
 
         player.playSound(npc.soundEffect(), player.getPosition());
-
-        player.sendMessage(Component.text("--- " + TKit.extractPlainText(npc.name()) + " ---", NamedTextColor.GOLD));
-
-        if (!npc.randomDialogues().isEmpty()) {
-            String command = String.format("/npc_interact talk %s", npcId);
-            Component hoverText = Component.text("Clique pour parler avec ", NamedTextColor.GRAY).append(npc.name());
-            player.sendMessage(Component.text("[Parler]", NamedTextColor.WHITE, TextDecoration.UNDERLINED)
-                    .clickEvent(ClickEvent.runCommand(command))
-                    .hoverEvent(HoverEvent.showText(hoverText)));
-        }
-
-        List<QuestProgress> talkObjectivesToComplete = new ArrayList<>();
-        for (QuestProgress progress : data.quests) {
-            Quest quest = QuestRegistry.byId(progress.questId);
-            if (quest != null && progress.stepIndex < quest.steps.size()) {
-                QuestStep currentStep = quest.steps.get(progress.stepIndex);
-                for (IQuestObjective objective : currentStep.objectives) {
-                    if (objective instanceof TalkObjective talkObj && talkObj.getNpcId().equals(npcId) && !progress.isObjectiveCompleted(objective)) {
-                        talkObjectivesToComplete.add(progress);
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!talkObjectivesToComplete.isEmpty()) {
-            player.sendMessage(Component.text("Dialogue de quêtes :", NamedTextColor.YELLOW));
-            for (QuestProgress progress : talkObjectivesToComplete) {
-                Quest quest = QuestRegistry.byId(progress.questId);
-                if (quest == null) continue;
-                QuestStep currentStep = quest.steps.get(progress.stepIndex);
-                TalkObjective talkObj = (TalkObjective) currentStep.objectives.stream()
-                        .filter(o -> o instanceof TalkObjective && ((TalkObjective) o).getNpcId().equals(npcId))
-                        .findFirst().orElse(null);
-                if (talkObj == null) continue;
-
-                String command = String.format("/npc_interact talk_objective %s %s", npcId, quest.id);
-                Component hoverText = talkObj.getDescription().color(NamedTextColor.GRAY);
-                player.sendMessage(Component.text("  - " + TKit.extractPlainText(quest.name) + " (Dialogue)", NamedTextColor.LIGHT_PURPLE, TextDecoration.UNDERLINED)
-                        .clickEvent(ClickEvent.runCommand(command))
-                        .hoverEvent(HoverEvent.showText(hoverText)));
-            }
-        }
-
-        List<Quest> questsToAdvance = new ArrayList<>();
-        for (QuestProgress progress : data.quests) {
-            Quest quest = QuestRegistry.byId(progress.questId);
-            if (quest != null && progress.stepIndex < quest.steps.size()) {
-                QuestStep currentStep = quest.steps.get(progress.stepIndex);
-                if (npcId.equals(currentStep.endNpc)) {
-                    if (currentStep.objectives.stream().allMatch(obj -> progress.isObjectiveCompleted(obj))) {
-                        questsToAdvance.add(quest);
-                    }
-                }
-            }
-        }
-
-        if (!questsToAdvance.isEmpty()) {
-            player.sendMessage(Component.text("Quêtes à valider :", NamedTextColor.YELLOW));
-            for (Quest quest : questsToAdvance) {
-                String command = String.format("/npc_interact advance_quest %s %s", npcId, quest.id);
-                QuestStep currentStep = quest.steps.get(data.quests.stream().filter(p -> p.questId.equals(quest.id)).findFirst().get().stepIndex);
-                Component hoverText = currentStep.description.color(NamedTextColor.GRAY);
-                player.sendMessage(Component.text("  - " + TKit.extractPlainText(quest.name), NamedTextColor.GREEN, TextDecoration.UNDERLINED)
-                        .clickEvent(ClickEvent.runCommand(command))
-                        .hoverEvent(HoverEvent.showText(hoverText)));
-            }
-        }
-
-        List<Quest> availableQuests = new ArrayList<>();
-        QuestRegistry.all().forEach((questId, quest) -> {
-            boolean hasQuest = data.quests.stream().anyMatch(p -> p.questId.equals(questId));
-            boolean hasCompleted = data.hasCompletedQuest(questId);
-            boolean hasFailed = data.hasFailedQuest(questId);
-
-            if (!hasQuest && !hasCompleted && !hasFailed && !quest.steps.isEmpty()) {
-                if (npcId.equals(quest.steps.getFirst().startNpc) && checkPrerequisites(data, quest.steps.getFirst())) {
-                    availableQuests.add(quest);
-                }
-            }
-        });
-
-        if (!availableQuests.isEmpty()) {
-            player.sendMessage(Component.text("Quêtes disponibles :", NamedTextColor.YELLOW));
-            for (Quest quest : availableQuests) {
-                String command = String.format("/npc_interact start_quest %s %s", npcId, quest.id);
-                Component hoverText = quest.steps.getFirst().description.color(NamedTextColor.GRAY);
-                player.sendMessage(Component.text("  - " + TKit.extractPlainText(quest.name), NamedTextColor.AQUA, TextDecoration.UNDERLINED)
-                        .clickEvent(ClickEvent.runCommand(command))
-                        .hoverEvent(HoverEvent.showText(hoverText)));
-            }
-        }
+        BookGuiManager.openNpcBook(player, npc);
     }
 
     public static void tryStartQuest(Player player, PlayerData data, Quest quest, String npcId) {
@@ -189,8 +96,7 @@ public final class QuestManager {
             if (cooldownTime != null) {
                 long timeSinceCompletion = System.currentTimeMillis() - cooldownTime;
                 if (timeSinceCompletion < quest.cooldown.toMillis()) {
-                    long remainingSeconds = (quest.cooldown.toMillis() - timeSinceCompletion) / 1000;
-                    player.sendMessage(Component.text("Vous devez encore attendre " + TKit.formatTime((int) remainingSeconds) + " minutes.", NamedTextColor.YELLOW));
+                    ToastManager.showToast(player, Component.text("Vous devez encore attendre " + TKit.formatTime((int) ((quest.cooldown.toMillis() - timeSinceCompletion) / 1000)) + " minutes."), Material.CLOCK, FrameType.TASK);
                     return;
                 }
             }
@@ -199,7 +105,7 @@ public final class QuestManager {
         }
 
         if (data.level < quest.requiredLevel) {
-            player.sendMessage(Component.text("Vous n'avez pas le niveau requis.", NamedTextColor.RED));
+            ToastManager.showToast(player, Component.text("Niveau requis : " + quest.requiredLevel), Material.BARRIER, FrameType.TASK);
             return;
         }
 
@@ -248,7 +154,7 @@ public final class QuestManager {
         if (currentStep.objectives.stream().allMatch(obj -> progress.isObjectiveCompleted(obj))) {
             advanceToStep(player, data, quest, progress, progress.stepIndex + 1);
         } else {
-            currentStep.waitingDialogues.forEach(player::sendMessage);
+            BookGuiManager.showDialogueBook(player, NpcRegistry.byId(npcId), currentStep.waitingDialogues);
         }
     }
 
@@ -289,13 +195,13 @@ public final class QuestManager {
 
         QuestStep newStep = quest.steps.get(newStepIndex);
         if (!checkPrerequisites(data, newStep)) {
-            player.sendMessage(Component.text("Vous ne remplissez pas les conditions.", NamedTextColor.RED));
+            ToastManager.showToast(player, Component.text("Vous ne remplissez pas les conditions."), Material.BARRIER, FrameType.TASK);
             return false;
         }
         if (!newStep.delay.isZero() && newStepIndex > 0) {
             long timeSinceLastStep = System.currentTimeMillis() - progress.stepStartTime;
             if (timeSinceLastStep < newStep.delay.toMillis()) {
-                newStep.delayDialogues.forEach(player::sendMessage);
+                BookGuiManager.showDialogueBook(player, NpcRegistry.byId(newStep.startNpc), newStep.delayDialogues);
                 return false;
             }
         }
@@ -321,18 +227,16 @@ public final class QuestManager {
 
     private static void handleQuestFailure(Player player, PlayerData data, Quest quest, QuestProgress progress) {
         QuestStep currentStep = quest.steps.get(progress.stepIndex);
-        currentStep.failureDialogues.forEach(player::sendMessage);
+        BookGuiManager.showDialogueBook(player, NpcRegistry.byId(currentStep.startNpc), currentStep.failureDialogues);
         progress.attempts++;
 
         if (currentStep.attemptLimit > 0 && progress.attempts >= currentStep.attemptLimit) {
-            player.sendMessage(Component.text("Vous avez échoué la quête définitivement.", NamedTextColor.DARK_RED));
             data.quests.remove(progress);
             data.failedQuests.add(quest.id);
             playersWithLocationObjectives.remove(player.getUuid());
             currentStep.objectives.forEach(obj -> obj.onComplete(player, data));
             EVENT_NODE.call(new QuestFailEvent(player, quest));
         } else {
-            player.sendMessage(Component.text("Vous pouvez réessayer.", NamedTextColor.YELLOW));
             currentStep.objectives.forEach(obj -> obj.onReset(player, data));
             progress.stepStartTime = System.currentTimeMillis();
             progress.resetObjectiveCompletionStatus();
@@ -362,7 +266,7 @@ public final class QuestManager {
         }
     }
 
-    private static boolean checkPrerequisites(PlayerData data, QuestStep step) {
+    public static boolean checkPrerequisites(PlayerData data, QuestStep step) {
         if (step.prerequisites == null || step.prerequisites.isEmpty()) return true;
         for (String prereq : step.prerequisites) {
             String[] parts = prereq.split(":");
@@ -424,11 +328,10 @@ public final class QuestManager {
         if (progress.isObjectiveCompleted(objective)) return false;
 
         data.incrementQuestCounter(progressId, 1);
-        int currentCount = data.getQuestCounter(progressId);
 
         player.playSound(Sound.sound(Key.key("entity.experience_orb.pickup"), Sound.Source.NEUTRAL, 0.5f, 1.2f), player.getPosition());
 
-        boolean isNowComplete = currentCount >= requiredCount;
+        boolean isNowComplete = data.getQuestCounter(progressId) >= requiredCount;
         if (isNowComplete) {
             progress.setObjectiveCompleted(objective, true);
         }
@@ -478,10 +381,8 @@ public final class QuestManager {
                 Quest quest = QuestRegistry.byId(event.getQuestProgress().questId);
                 advanceToStep(player, data, quest, event.getQuestProgress(), event.getQuestProgress().stepIndex + 1);
             } else {
-                NPC endNpc = NpcRegistry.byId(completedStep.endNpc);
-                if (endNpc != null) {
-                    player.sendMessage(Component.text("Tous les objectifs sont remplis. Retournez voir ", NamedTextColor.YELLOW).append(endNpc.name()));
-                }
+                // This message is fine as it's a direct instruction after completing all objectives.
+                player.sendMessage(Component.text("Tous les objectifs sont remplis. Retournez voir ", NamedTextColor.YELLOW).append(NpcRegistry.byId(completedStep.endNpc).name()));
             }
         }
     }

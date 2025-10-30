@@ -4,6 +4,16 @@
   "experience": 0,
   "inventory": [
     {
+      "itemId": "admin_slayer",
+      "amount": 1,
+      "slot": 0
+    },
+    {
+      "itemId": "admin_slayer",
+      "amount": 1,
+      "slot": 1
+    },
+    {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
@@ -11,60 +21,60 @@
   ],
   "quests": [
     {
-      "questId": "grand_tour",
-      "stepIndex": 0,
-      "acceptedTime": 1761769196809,
-      "stepStartTime": 1761769196809,
-      "attempts": 1,
-      "objectiveCompletionStatus": {
-        "TextComponentImpl{content\u003d\"Trouvez le point de vue caché\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
-        "TextComponentImpl{content\u003d\"Rapportez 3 os\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": false,
-        "TextComponentImpl{content\u003d\"Consultez l\u0027Archimage\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
-      }
-    },
-    {
       "questId": "new_beginning",
       "stepIndex": 0,
-      "acceptedTime": 1761769196811,
-      "stepStartTime": 1761769196811,
+      "acceptedTime": 1761830840793,
+      "stepStartTime": 1761830840793,
       "attempts": 1,
       "objectiveCompletionStatus": {}
     },
     {
       "questId": "fire_purge",
       "stepIndex": 0,
-      "acceptedTime": 1761770570910,
-      "stepStartTime": 1761770570910,
+      "acceptedTime": 1761830917035,
+      "stepStartTime": 1761830917035,
       "attempts": 1,
       "objectiveCompletionStatus": {}
     },
     {
       "questId": "monster_plague",
       "stepIndex": 0,
-      "acceptedTime": 1761770575409,
-      "stepStartTime": 1761770575409,
+      "acceptedTime": 1761830933784,
+      "stepStartTime": 1761830933784,
       "attempts": 1,
-      "objectiveCompletionStatus": {}
+      "objectiveCompletionStatus": {
+        "TextComponentImpl{content\u003d\"Tuer 2 araignées\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
+        "TextComponentImpl{content\u003d\"Tuer 5 squelettes\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
+      }
+    },
+    {
+      "questId": "speed_trial",
+      "stepIndex": 1,
+      "acceptedTime": 1761831078949,
+      "stepStartTime": 1761831081699,
+      "attempts": 1,
+      "objectiveCompletionStatus": {
+        "TextComponentImpl{content\u003d\"Atteignez le cercle au sommet de la colline\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
+      }
     }
   ],
-  "completedQuests": [],
-  "failedQuests": [
-    "speed_trial"
+  "completedQuests": [
+    "grand_tour"
   ],
+  "failedQuests": [],
   "position": {
-    "x": 0.7785002382651935,
+    "x": 2.522109632574729,
     "y": 40.0,
-    "z": 1.5897612446628677,
-    "yaw": -98.59277,
-    "pitch": 32.208176
+    "z": 5.528430590533449,
+    "yaw": -120.57739,
+    "pitch": -1.0298054
   },
-  "lastInstance": "game2",
+  "lastInstance": "game1",
   "questCounters": {
-    "grand_tour_zombies": 0,
     "fire_purge_zombies": 0,
     "monster_plague_zombies": 0,
-    "monster_plague_skeletons": 0,
-    "monster_plague_spiders": 0
+    "monster_plague_skeletons": 5,
+    "monster_plague_spiders": 2
   },
   "questCooldowns": {}
 }

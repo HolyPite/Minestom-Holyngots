@@ -48,6 +48,4 @@ public final class FirePurge {
         // This quest will be automatically loaded by QuestBootstrap
         QuestRegistry.register(QUEST);
     }
-
-    private FirePurge() {}
 }

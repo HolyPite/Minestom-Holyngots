@@ -44,6 +44,4 @@ public final class MonsterPlague {
 
         QuestRegistry.register(QUEST);
     }
-
-    private MonsterPlague() {}
 }

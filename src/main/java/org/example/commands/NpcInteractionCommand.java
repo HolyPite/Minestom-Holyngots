@@ -15,7 +15,9 @@ import org.example.mmo.quest.registry.QuestRegistry;
 import org.example.mmo.quest.structure.Quest;
 import org.example.mmo.quest.structure.QuestProgress;
 import org.example.mmo.quest.structure.QuestStep;
+import org.example.utils.BookGuiManager;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class NpcInteractionCommand extends Command {
@@ -25,6 +27,7 @@ public class NpcInteractionCommand extends Command {
 
         setCondition((sender, context) -> sender instanceof Player);
 
+        var bookLiteral = ArgumentType.Literal("book");
         var talkLiteral = ArgumentType.Literal("talk");
         var startQuestLiteral = ArgumentType.Literal("start_quest");
         var advanceQuestLiteral = ArgumentType.Literal("advance_quest");
@@ -37,10 +40,18 @@ public class NpcInteractionCommand extends Command {
             Player player = (Player) sender;
             String npcId = context.get(npcIdArg);
             NPC npc = NpcRegistry.byId(npcId);
+            if (npc != null) {
+                BookGuiManager.openNpcBook(player, npc);
+            }
+        }, bookLiteral, npcIdArg);
+
+        addSyntax((sender, context) -> {
+            Player player = (Player) sender;
+            String npcId = context.get(npcIdArg);
+            NPC npc = NpcRegistry.byId(npcId);
             if (npc != null && !npc.randomDialogues().isEmpty()) {
                 int randomIndex = ThreadLocalRandom.current().nextInt(npc.randomDialogues().size());
-                // FIX: Use ActionBar for less intrusive dialogue
-                player.sendActionBar(npc.randomDialogues().get(randomIndex));
+                BookGuiManager.showDialogueBook(player, npc, List.of(npc.randomDialogues().get(randomIndex)));
             }
         }, talkLiteral, npcIdArg);
 
@@ -90,7 +101,7 @@ public class NpcInteractionCommand extends Command {
                         QuestStep currentStep = quest.steps.get(progress.stepIndex);
                         for (IQuestObjective objective : currentStep.objectives) {
                             if (objective instanceof TalkObjective talkObj && talkObj.getNpcId().equals(npcId) && !progress.isObjectiveCompleted(objective)) {
-                                talkObj.getDialogues().forEach(player::sendMessage);
+                                BookGuiManager.showDialogueBook(player, NpcRegistry.byId(npcId), talkObj.getDialogues());
                                 progress.setObjectiveCompleted(objective, true);
                                 QuestManager.getEventNode().call(new QuestObjectiveCompleteEvent(player, progress, currentStep, talkObj));
                                 break;
