@@ -12,6 +12,7 @@ import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.instance.Instance;
 import org.example.commands.CommandRegister;
 import org.example.commands.NpcInteractionCommand;
+import org.example.commands.NpcDialogCommand;
 import org.example.mmo.combat.CombatListener;
 import org.example.data.JsonPlayerDataRepository;
 import org.example.data.PlayerDataService;
@@ -22,6 +23,7 @@ import org.example.mmo.item.ItemBootstrap;
 import org.example.mmo.item.ItemEventsCustom;
 import org.example.mmo.item.ItemEventsGlobal;
 import org.example.mmo.npc.NpcBootstrap;
+import org.example.mmo.npc.dialog.NpcDialogService;
 import org.example.mmo.player.PlayerQuestListener;
 import org.example.mmo.quest.registry.QuestBootstrap;
 import org.example.mmo.quest.QuestManager;
@@ -61,11 +63,13 @@ public final class NodesManagement {
         ItemEventsGlobal.init(GAME_NODE);
         ItemEventsCustom.init(GAME_NODE);
         QuestManager.init(GAME_NODE);
+        NpcDialogService.init(PLAYER_NODE);
         PlayerQuestListener.init(PLAYER_NODE);
         InventoryListener.init(INVENTORY_NODE); // Initialize the InventoryListener
 
         CommandRegister.init();
         MinecraftServer.getCommandManager().register(new NpcInteractionCommand());
+        MinecraftServer.getCommandManager().register(new NpcDialogCommand());
 
         ItemBootstrap.init();
         QuestBootstrap.init();

@@ -1,5 +1,6 @@
 package org.example.commands;
 
+import net.kyori.adventure.text.Component;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Player;
@@ -15,7 +16,7 @@ import org.example.mmo.quest.registry.QuestRegistry;
 import org.example.mmo.quest.structure.Quest;
 import org.example.mmo.quest.structure.QuestProgress;
 import org.example.mmo.quest.structure.QuestStep;
-import org.example.utils.BookGuiManager;
+import org.example.mmo.npc.dialog.NpcDialogService;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -41,7 +42,7 @@ public class NpcInteractionCommand extends Command {
             String npcId = context.get(npcIdArg);
             NPC npc = NpcRegistry.byId(npcId);
             if (npc != null) {
-                BookGuiManager.openNpcBook(player, npc);
+                NpcDialogService.openMainDialog(player, npc);
             }
         }, bookLiteral, npcIdArg);
 
@@ -51,7 +52,7 @@ public class NpcInteractionCommand extends Command {
             NPC npc = NpcRegistry.byId(npcId);
             if (npc != null && !npc.randomDialogues().isEmpty()) {
                 int randomIndex = ThreadLocalRandom.current().nextInt(npc.randomDialogues().size());
-                BookGuiManager.showDialogueBook(player, npc, List.of(npc.randomDialogues().get(randomIndex)));
+                NpcDialogService.showNarration(player, npc.name(), List.of(npc.randomDialogues().get(randomIndex)));
             }
         }, talkLiteral, npcIdArg);
 
@@ -101,7 +102,9 @@ public class NpcInteractionCommand extends Command {
                         QuestStep currentStep = quest.steps.get(progress.stepIndex);
                         for (IQuestObjective objective : currentStep.objectives) {
                             if (objective instanceof TalkObjective talkObj && talkObj.getNpcId().equals(npcId) && !progress.isObjectiveCompleted(objective)) {
-                                BookGuiManager.showDialogueBook(player, NpcRegistry.byId(npcId), quest, currentStep, talkObj.getDialogues());
+                                NPC npc = NpcRegistry.byId(npcId);
+                                Component title = npc != null ? npc.name() : quest.name;
+                                NpcDialogService.showNarration(player, title, talkObj.getDialogues());
                                 progress.setObjectiveCompleted(objective, true);
                                 QuestManager.getEventNode().call(new QuestObjectiveCompleteEvent(player, progress, currentStep, talkObj));
                                 break;

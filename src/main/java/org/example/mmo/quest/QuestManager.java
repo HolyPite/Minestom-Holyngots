@@ -30,7 +30,7 @@ import org.example.mmo.quest.registry.QuestRegistry;
 import org.example.mmo.quest.structure.Quest;
 import org.example.mmo.quest.structure.QuestProgress;
 import org.example.mmo.quest.structure.QuestStep;
-import org.example.utils.BookGuiManager;
+import org.example.mmo.npc.dialog.NpcDialogService;
 import org.example.utils.TKit;
 import org.example.utils.ToastManager;
 
@@ -104,7 +104,7 @@ public final class QuestManager {
         if (npc == null) return;
 
         player.playSound(npc.soundEffect(), player.getPosition());
-        BookGuiManager.openNpcBook(player, npc);
+        NpcDialogService.openMainDialog(player, npc);
     }
 
     public static void tryStartQuest(Player player, PlayerData data, Quest quest, String npcId) {
@@ -178,7 +178,7 @@ public final class QuestManager {
         if (currentStep.objectives.stream().allMatch(obj -> progress.isObjectiveCompleted(obj))) {
             advanceToStep(player, data, quest, progress, progress.stepIndex + 1);
         } else {
-            BookGuiManager.showDialogueBook(player, NpcRegistry.byId(npcId), quest, currentStep, currentStep.waitingDialogues);
+            showNpcDialogue(player, npcId, quest, currentStep.waitingDialogues);
         }
     }
 
@@ -193,7 +193,8 @@ public final class QuestManager {
                 if (dialogueNpc == null && oldStep.startNpc != null) {
                     dialogueNpc = NpcRegistry.byId(oldStep.startNpc);
                 }
-                BookGuiManager.showDialogueBook(player, dialogueNpc, quest, oldStep, oldStep.successDialogues);
+                Component title = dialogueNpc != null ? dialogueNpc.name() : quest.name;
+                NpcDialogService.showNarration(player, title, oldStep.successDialogues);
             }
 
             for (IQuestObjective objective : oldStep.objectives) {
@@ -231,13 +232,13 @@ public final class QuestManager {
             ToastManager.showToast(player, Component.text("Vous ne remplissez pas les conditions."), Material.BARRIER, FrameType.TASK);
             return false;
         }
-        if (!newStep.delay.isZero() && newStepIndex > 0) {
-            long timeSinceLastStep = System.currentTimeMillis() - progress.stepStartTime;
-            if (timeSinceLastStep < newStep.delay.toMillis()) {
-                BookGuiManager.showDialogueBook(player, NpcRegistry.byId(newStep.startNpc), quest, newStep, newStep.delayDialogues);
-                return false;
+            if (!newStep.delay.isZero() && newStepIndex > 0) {
+                long timeSinceLastStep = System.currentTimeMillis() - progress.stepStartTime;
+                if (timeSinceLastStep < newStep.delay.toMillis()) {
+                    showNpcDialogue(player, newStep.startNpc, quest, newStep.delayDialogues);
+                    return false;
+                }
             }
-        }
 
         progress.stepIndex = newStepIndex;
         progress.stepStartTime = System.currentTimeMillis();
@@ -258,7 +259,7 @@ public final class QuestManager {
 
     private static void handleQuestFailure(Player player, PlayerData data, Quest quest, QuestProgress progress) {
         QuestStep currentStep = quest.steps.get(progress.stepIndex);
-        BookGuiManager.showDialogueBook(player, NpcRegistry.byId(currentStep.startNpc), quest, currentStep, currentStep.failureDialogues);
+        showNpcDialogue(player, currentStep.startNpc, quest, currentStep.failureDialogues);
         progress.attempts++;
 
         if (currentStep.attemptLimit > 0 && progress.attempts >= currentStep.attemptLimit) {
@@ -273,6 +274,14 @@ public final class QuestManager {
             progress.resetObjectiveCompletionStatus();
             refreshLocationObjectiveTracking(player, data);
         }
+    }
+
+    private static void showNpcDialogue(Player player, String npcId, Quest quest, List<Component> lines) {
+        NPC npc = npcId != null ? NpcRegistry.byId(npcId) : null;
+        Component title = npc != null ? npc.name()
+                : quest != null ? quest.name
+                : Component.text("Dialogue", NamedTextColor.GOLD);
+        NpcDialogService.showNarration(player, title, lines);
     }
 
     private static void checkQuestTimers() {
