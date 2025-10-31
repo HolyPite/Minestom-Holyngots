@@ -4,6 +4,11 @@
   "experience": 0,
   "inventory": [
     {
+      "itemId": "admin_slayer",
+      "amount": 1,
+      "slot": 0
+    },
+    {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
@@ -11,30 +16,48 @@
   ],
   "quests": [
     {
-      "questId": "ritual_quest",
+      "questId": "new_beginning",
       "stepIndex": 0,
-      "acceptedTime": 1761857668202,
-      "stepStartTime": 1761857668202,
+      "acceptedTime": 1761866404021,
+      "stepStartTime": 1761866404021,
+      "attempts": 1,
+      "objectiveCompletionStatus": {}
+    },
+    {
+      "questId": "grand_tour",
+      "stepIndex": 0,
+      "acceptedTime": 1761866461066,
+      "stepStartTime": 1761866461066,
+      "attempts": 1,
+      "objectiveCompletionStatus": {
+        "TextComponentImpl{content\u003d\"Trouvez le point de vue caché\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
+        "TextComponentImpl{content\u003d\"Consultez l\u0027Archimage\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
+      }
+    },
+    {
+      "questId": "ritual_quest",
+      "stepIndex": 1,
+      "acceptedTime": 1761866519467,
+      "stepStartTime": 1761866779482,
       "attempts": 1,
       "objectiveCompletionStatus": {}
     }
   ],
   "completedQuests": [
     "monster_plague",
-    "grand_tour",
-    "new_beginning",
-    "try",
     "speed_trial"
   ],
   "failedQuests": [],
   "position": {
-    "x": -6.9622707226879275,
+    "x": -0.7352744553047662,
     "y": 40.0,
-    "z": 17.07112561268644,
-    "yaw": 159.3877,
-    "pitch": 34.65163
+    "z": 1.4973407635623281,
+    "yaw": -171.36186,
+    "pitch": 4.2236032
   },
   "lastInstance": "game2",
-  "questCounters": {},
+  "questCounters": {
+    "grand_tour_zombies": 0
+  },
   "questCooldowns": {}
 }
