@@ -11,6 +11,8 @@ public class QuestProgress {
     public long acceptedTime;
     public long stepStartTime;
     public int attempts;
+    public long stepCompletionTime;
+    public boolean stepFinalized;
     public Map<String, Boolean> objectiveCompletionStatus = new HashMap<>();
 
     public QuestProgress() {}
@@ -21,6 +23,8 @@ public class QuestProgress {
         this.acceptedTime = System.currentTimeMillis();
         this.stepStartTime = System.currentTimeMillis();
         this.attempts = 1;
+        this.stepCompletionTime = 0L;
+        this.stepFinalized = false;
     }
 
     public boolean isObjectiveCompleted(IQuestObjective objective) {

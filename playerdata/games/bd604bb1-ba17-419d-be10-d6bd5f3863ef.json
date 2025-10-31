@@ -24,6 +24,11 @@
       "slot": 3
     },
     {
+      "itemId": "admin_slayer",
+      "amount": 1,
+      "slot": 4
+    },
+    {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
@@ -31,28 +36,72 @@
   ],
   "quests": [
     {
-      "questId": "try",
-      "stepIndex": 1,
-      "acceptedTime": 1761935924799,
-      "stepStartTime": 1761935926749,
+      "questId": "new_beginning",
+      "stepIndex": 0,
+      "acceptedTime": 1761942847473,
+      "stepStartTime": 1761942847473,
       "attempts": 1,
+      "stepCompletionTime": 0,
+      "stepFinalized": false,
+      "objectiveCompletionStatus": {}
+    },
+    {
+      "questId": "resilience_recovery",
+      "stepIndex": 0,
+      "acceptedTime": 1761942847474,
+      "stepStartTime": 1761942847474,
+      "attempts": 1,
+      "stepCompletionTime": 0,
+      "stepFinalized": false,
+      "objectiveCompletionStatus": {}
+    },
+    {
+      "questId": "grand_tour",
+      "stepIndex": 0,
+      "acceptedTime": 1761942850019,
+      "stepStartTime": 1761942850019,
+      "attempts": 1,
+      "stepCompletionTime": 0,
+      "stepFinalized": false,
       "objectiveCompletionStatus": {
-        "TextComponentImpl{content\u003d\"Le guide vous a parlé d\u0027une épée légendaire. Trouvez Excalibur.\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
+        "TextComponentImpl{content\u003d\"Éliminez 5 zombies\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
       }
+    },
+    {
+      "questId": "try",
+      "stepIndex": 0,
+      "acceptedTime": 1761942856219,
+      "stepStartTime": 1761942856219,
+      "attempts": 1,
+      "stepCompletionTime": 0,
+      "stepFinalized": false,
+      "objectiveCompletionStatus": {}
+    },
+    {
+      "questId": "speed_trial",
+      "stepIndex": 0,
+      "acceptedTime": 1761942862969,
+      "stepStartTime": 1761942862969,
+      "attempts": 1,
+      "stepCompletionTime": 0,
+      "stepFinalized": false,
+      "objectiveCompletionStatus": {}
     }
   ],
   "completedQuests": [
-    "new_beginning"
+    "monster_plague"
   ],
   "failedQuests": [],
   "position": {
-    "x": 6.560426253489787,
+    "x": 3.5867327596342595,
     "y": 40.0,
-    "z": 39.35894942890775,
-    "yaw": -1.0349121,
-    "pitch": 51.50177
+    "z": -0.15506735354385087,
+    "yaw": -143.18799,
+    "pitch": 39.287018
   },
-  "lastInstance": "game1",
-  "questCounters": {},
+  "lastInstance": "game2",
+  "questCounters": {
+    "grand_tour_zombies": 5
+  },
   "questCooldowns": {}
 }

@@ -36,52 +36,66 @@ public class QuestScoreboard {
             sidebar.removeLine(line.getId());
         }
 
-        int line = 0;
+        final int maxLines = 15;
+        boolean truncated = false;
+        java.util.List<Component> lines = new ArrayList<>(maxLines);
+
+        outer:
         for (QuestProgress progress : data.quests) {
             Quest quest = QuestRegistry.byId(progress.questId);
-            if (quest == null) continue;
+            if (quest == null) {
+                continue;
+            }
 
-            sidebar.createLine(new Sidebar.ScoreboardLine("quest_" + line++, Component.text(TKit.extractPlainText(quest.name), NamedTextColor.YELLOW), -line));
+            if (!addLine(lines, Component.text(TKit.extractPlainText(quest.name), NamedTextColor.YELLOW), maxLines)) {
+                truncated = true;
+                break;
+            }
 
-            if (progress.stepIndex < quest.steps.size()) {
-                QuestStep currentStep = quest.steps.get(progress.stepIndex);
+            if (progress.stepIndex >= quest.steps.size()) {
+                continue;
+            }
 
-                if (currentStep.objectives.isEmpty()) {
-                    NPC endNpc = NpcRegistry.byId(currentStep.endNpc);
-                    String npcName = (endNpc != null) ? TKit.extractPlainText(endNpc.name()) : "???";
-                    Component lineText = Component.text("  - Parler à " + npcName, NamedTextColor.GRAY);
-                    sidebar.createLine(new Sidebar.ScoreboardLine("obj_" + line++, lineText, -line));
-                } else {
-                    boolean allObjectivesCompleted = true;
-                    for (IQuestObjective objective : currentStep.objectives) {
-                        String progressText = "";
-                        if (objective instanceof KillObjective killObj) {
-                            progressText = String.format(" %d/%d", data.getQuestCounter(killObj.getProgressId()), killObj.getCount());
-                        } else if (objective instanceof SlayObjective slayObj) {
-                            progressText = String.format(" %d/%d", data.getQuestCounter(slayObj.getProgressId()), slayObj.getCount());
-                        } else if (objective instanceof LocationObjective locObj) {
-                            Pos target = locObj.getCenter();
-                            progressText = String.format(" (%d, %d, %d)", target.blockX(), target.blockY(), target.blockZ());
-                        } else if (objective instanceof FetchObjective fetchObj) {
-                            int currentAmount = TKit.countItems(player, fetchObj.getItemToFetch().toItemStack());
-                            progressText = String.format(" %d/%d", currentAmount, fetchObj.getRequiredAmount());
-                        }
+            QuestStep currentStep = quest.steps.get(progress.stepIndex);
 
-                        boolean isCompleted = progress.isObjectiveCompleted(objective);
-                        if (!isCompleted) allObjectivesCompleted = false;
+            if (currentStep.objectives.isEmpty()) {
+                if (!addLine(lines, describeNpcObjective(currentStep), maxLines)) {
+                    truncated = true;
+                    break;
+                }
+                continue;
+            }
 
-                        Component lineText = Component.text("  - " + TKit.extractPlainText(objective.getDescription()) + progressText, isCompleted ? NamedTextColor.GREEN : NamedTextColor.GRAY);
-                        sidebar.createLine(new Sidebar.ScoreboardLine("obj_" + line++, lineText, -line));
-                    }
+            boolean allObjectivesCompleted = true;
+            for (IQuestObjective objective : currentStep.objectives) {
+                Component lineText = describeObjective(progress, data, objective);
+                if (!addLine(lines, lineText, maxLines)) {
+                    truncated = true;
+                    break outer;
+                }
 
-                    if (allObjectivesCompleted && currentStep.endNpc != null && !currentStep.endNpc.isEmpty()) {
-                        NPC endNpc = NpcRegistry.byId(currentStep.endNpc);
-                        if (endNpc != null) {
-                            Component returnText = Component.text("  -> Retournez voir ", NamedTextColor.YELLOW).append(endNpc.name());
-                            sidebar.createLine(new Sidebar.ScoreboardLine("return_" + line++, returnText, -line));
-                        }
+                if (!progress.isObjectiveCompleted(objective)) {
+                    allObjectivesCompleted = false;
+                }
+            }
+
+            if (allObjectivesCompleted && currentStep.endNpc != null && !currentStep.endNpc.isEmpty()) {
+                NPC endNpc = NpcRegistry.byId(currentStep.endNpc);
+                if (endNpc != null) {
+                    Component returnText = Component.text("  -> Retournez voir ", NamedTextColor.YELLOW).append(endNpc.name());
+                    if (!addLine(lines, returnText, maxLines)) {
+                        truncated = true;
+                        break;
                     }
                 }
+            }
+        }
+
+        if (truncated) {
+            if (!lines.isEmpty()) {
+                lines.set(lines.size() - 1, Component.text("... (journal abrégé)", NamedTextColor.DARK_GRAY));
+            } else {
+                lines.add(Component.text("... (journal abrégé)", NamedTextColor.DARK_GRAY));
             }
         }
 
@@ -90,5 +104,43 @@ public class QuestScoreboard {
         } else {
             sidebar.removeViewer(player);
         }
+    }
+
+    private Component describeNpcObjective(QuestStep currentStep) {
+        NPC endNpc = NpcRegistry.byId(currentStep.endNpc);
+        String npcName = (endNpc != null) ? TKit.extractPlainText(endNpc.name()) : "???";
+        return Component.text("  - Parler à " + npcName, NamedTextColor.GRAY);
+    }
+
+    private Component describeObjective(QuestProgress progress, PlayerData data, IQuestObjective objective) {
+        String progressText = "";
+        if (objective instanceof KillObjective killObj) {
+            progressText = String.format(" %d/%d", data.getQuestCounter(killObj.getProgressId()), killObj.getCount());
+        } else if (objective instanceof SlayObjective slayObj) {
+            progressText = String.format(" %d/%d", data.getQuestCounter(slayObj.getProgressId()), slayObj.getCount());
+        } else if (objective instanceof LocationObjective locObj) {
+            Pos target = locObj.getCenter();
+            progressText = String.format(" (%d, %d, %d)", target.blockX(), target.blockY(), target.blockZ());
+        } else if (objective instanceof FetchObjective fetchObj) {
+            int currentAmount = TKit.countItems(player, fetchObj.getItemToFetch().toItemStack());
+            progressText = String.format(" %d/%d", currentAmount, fetchObj.getRequiredAmount());
+        }
+
+        boolean isCompleted = progress.isObjectiveCompleted(objective);
+        return Component.text("  - " + TKit.extractPlainText(objective.getDescription()) + progressText,
+                isCompleted ? NamedTextColor.GREEN : NamedTextColor.GRAY);
+    }
+
+    private boolean addLine(java.util.List<Component> lines, Component text, int maxLines) {
+        if (lines.size() >= maxLines) {
+            return false;
+        }
+        int index = lines.size();
+        lines.add(text);
+        // Rebuild sidebar line immediately to keep ordering without extra pass
+        String id = "line_" + index;
+        int score = maxLines - index;
+        sidebar.createLine(new Sidebar.ScoreboardLine(id, text, score));
+        return true;
     }
 }
