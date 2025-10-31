@@ -424,15 +424,7 @@ public final class QuestManager {
                 Quest quest = QuestRegistry.byId(event.getQuestProgress().questId);
                 advanceToStep(player, data, quest, event.getQuestProgress(), event.getQuestProgress().stepIndex + 1);
             } else {
-                Quest quest = QuestRegistry.byId(event.getQuestProgress().questId);
-                Component message = Component.text("Tous les objectifs sont remplis. Retournez voir ", NamedTextColor.YELLOW);
-                NPC npc = NpcRegistry.byId(completedStep.endNpc);
-                if (npc != null) {
-                    message = message.append(npc.name());
-                } else {
-                    message = message.append(Component.text(completedStep.endNpc, NamedTextColor.GOLD));
-                }
-                showNpcDialogue(player, completedStep.endNpc, quest, List.of(message));
+                // Scoreboard and toast already inform the player; avoid opening an extra dialog.
             }
         }
     }
