@@ -18,6 +18,7 @@ import org.example.mmo.player.data.JsonPlayerDataRepository;
 import org.example.mmo.player.data.PlayerDataService;
 import org.example.mmo.combat.CombatListener;
 import org.example.mmo.combat.history.DamageTracker;
+import org.example.mmo.combat.ui.CombatBossBarService;
 import org.example.mmo.dev.QuestEntitySpawner;
 import org.example.mmo.inventory.InventoryListener;
 import org.example.mmo.item.ItemBootstrap;
@@ -72,6 +73,7 @@ public final class GameLifecycle {
 
     private void registerGameplay(InstanceRegistry instances) {
         DamageTracker.init();
+        CombatBossBarService.init(gameNode, playerNode);
         CombatListener.init(gameNode);
         ItemEventsGlobal.init(gameNode);
         ItemEventsCustom.init(gameNode);

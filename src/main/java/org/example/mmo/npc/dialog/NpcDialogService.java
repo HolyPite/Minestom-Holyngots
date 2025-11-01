@@ -305,7 +305,7 @@ public final class NpcDialogService {
                 Component.empty(),
                 true,
                 false,
-                DialogAfterAction.NONE,
+                DialogAfterAction.CLOSE,
                 body,
                 Collections.emptyList()
         );

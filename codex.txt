@@ -1,0 +1,19 @@
+• Plan D’Action UI Combat
+
+  - BossBar ciblée : créer CombatBossBarService (org.example.mmo.combat.ui) qui écoute les dégâts/aggro,
+    mémorise le dernier mob touché par chaque joueur, affiche une BossBar auto-colorée (vert→jaune→rouge) avec
+    PV actuels/max, rafraîchit à chaque tick de dégâts/regen et se retire dès que la cible meurt, s’éloigne ou
+    après un timeout de 5 s sans contact.
+  - Action-bar enrichie : refondre CombatFeedback pour composer un message unique tenant compte des états (crit,
+    dodge, heal, absorption) avec codes couleurs cohérents, icônes ASCII ([], !!, ++) et suffixes indiquant le
+    type de dégâts ([Feu], [Poison]), plus un léger cooldown pour éviter le spam.
+  - Indicateurs flottants : ajouter FloatingCombatText (TextDisplay ou armor-stand miniature) généré sur chaque
+    DamageRecord, montant coloré selon type, animation montée/fondu, regroupement en cas de rafale afin d’éviter
+    la surcharge.
+  - Intégration : centraliser la publication via DamageTracker/CombatEvents, exposer une API CombatUiEvents pour
+    rester découplé, et nettoyer tous les artefacts (bossbar + floats) sur mort/déconnexion (EntityDeathEvent,
+    PlayerDisconnectEvent).
+  - Validation : ./gradlew build + tests manuels en jeu (melee + projectiles + effets DoT) pour vérifier synchro
+    des PV, disparition correcte de la barre et cohérence des valeurs affichées.
+
+codex resume 019a3cc3-bbec-7ae2-825f-c2c225bc3bf8

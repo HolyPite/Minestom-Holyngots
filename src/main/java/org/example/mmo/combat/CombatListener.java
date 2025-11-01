@@ -10,6 +10,7 @@ import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.event.trait.EntityEvent;
 import net.minestom.server.event.entity.EntityDamageEvent;
 import org.example.mmo.combat.history.DamageTracker;
+import org.example.mmo.combat.ui.FloatingCombatText;
 import org.example.mmo.combat.util.CombatFeedback;
 import org.example.mmo.combat.util.HealthUtils;
 import org.example.mmo.combat.util.StatUtils;
@@ -36,10 +37,6 @@ public class CombatListener {
 
             // --- 4. Apply Damage and Visual Feedback ---
             victim.damage(damage);
-            CombatFeedback.showHit(victim, damage.getAmount());
-            if (!(victim instanceof Player)) {
-                HealthUtils.updateHealthBar(victim);
-            }
         });
 
         entityNode.addListener(EntityDamageEvent.class, event -> {
@@ -51,8 +48,19 @@ public class CombatListener {
                 return;
             }
             DamageTracker.recordDamage(victim, damage);
-
             Entity attackerEntity = damage.getAttacker();
+
+            if (damage.getAmount() > 0f) {
+                float maxHealth = HealthUtils.resolveMaxHealth(victim);
+                float currentHealth = Math.max(0f, victim.getHealth());
+                LivingEntity livingAttacker = attackerEntity instanceof LivingEntity living ? living : null;
+                CombatFeedback.showHit(livingAttacker, victim, damage.getAmount(), currentHealth, maxHealth, damage.getType());
+                FloatingCombatText.showDamage(victim, damage.getAmount(), damage.getType());
+                if (!(victim instanceof Player)) {
+                    HealthUtils.updateHealthBar(victim);
+                }
+            }
+
             if (attackerEntity instanceof LivingEntity attacker) {
                 double lifesteal = StatUtils.getTotal(attacker, StatType.LIFESTEAL) / 100.0;
                 if (lifesteal > 0) {
@@ -60,6 +68,7 @@ public class CombatListener {
                     if (heal > 0) {
                         HealthUtils.heal(attacker, heal);
                         CombatFeedback.showHeal(attacker, heal);
+                        FloatingCombatText.showHeal(attacker, heal);
                     }
                 }
             }
