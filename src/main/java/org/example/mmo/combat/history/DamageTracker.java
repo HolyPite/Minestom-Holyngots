@@ -5,6 +5,8 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.damage.Damage;
+import net.minestom.server.entity.damage.DamageType;
+import net.minestom.server.entity.attribute.Attribute;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.timer.TaskSchedule;
 import org.example.bootstrap.GameContext;
@@ -36,8 +38,15 @@ public final class DamageTracker {
     }
 
     public static void recordDamage(LivingEntity victim, Damage damage) {
+        if (damage.getAmount() <= 0f) {
+            return;
+        }
+        var type = damage.getType();
+        if (type == null) {
+            type = DamageType.GENERIC;
+        }
         DamageHistory history = DAMAGE_HISTORY_MAP.computeIfAbsent(victim.getUuid(), k -> new DamageHistory());
-        DamageRecord record = new DamageRecord(damage, System.currentTimeMillis());
+        DamageRecord record = new DamageRecord(damage, type, System.currentTimeMillis());
         history.addRecord(record);
     }
 
@@ -67,10 +76,22 @@ public final class DamageTracker {
                 if (entity instanceof LivingEntity livingEntity && !(entity instanceof Player) && !livingEntity.isDead()) {
                     // Use StatUtils to get max health, consistent with the rest of the system
                     float maxHealth = StatUtils.getTotal(livingEntity, StatType.HEALTH);
-                    livingEntity.setHealth(maxHealth);
+                    if (maxHealth <= 0f) {
+                        var attribute = livingEntity.getAttribute(Attribute.MAX_HEALTH);
+                        if (attribute != null) {
+                            maxHealth = (float) attribute.getValue();
+                        } else {
+                            maxHealth = livingEntity.getHealth();
+                        }
+                    }
+                    livingEntity.setHealth(Math.max(1f, maxHealth));
                 }
             }
             return expired;
         });
+    }
+
+    public static void clear(Entity entity) {
+        DAMAGE_HISTORY_MAP.remove(entity.getUuid());
     }
 }

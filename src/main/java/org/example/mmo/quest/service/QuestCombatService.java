@@ -45,6 +45,7 @@ public final class QuestCombatService {
                     QuestManager.getEventNode().call(new PlayerKillEntityEvent(killer, deadEntity));
                 }
             }
+            DamageTracker.clear(deadEntity);
         }
     }
 

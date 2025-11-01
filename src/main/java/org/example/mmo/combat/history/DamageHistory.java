@@ -3,8 +3,9 @@ package org.example.mmo.combat.history;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -12,7 +13,9 @@ import java.util.List;
  */
 public class DamageHistory {
 
-    private final List<DamageRecord> records = new ArrayList<>();
+    private static final int MAX_RECORDS = 64;
+
+    private final Deque<DamageRecord> records = new ArrayDeque<>(MAX_RECORDS);
     private long lastDamageTimestamp;
 
     public DamageHistory() {
@@ -25,7 +28,10 @@ public class DamageHistory {
      */
     public void addRecord(DamageRecord record) {
         synchronized (records) {
-            records.add(record);
+            if (records.size() >= MAX_RECORDS) {
+                records.removeFirst();
+            }
+            records.addLast(record);
             this.lastDamageTimestamp = record.timestamp();
         }
     }
@@ -44,22 +50,20 @@ public class DamageHistory {
      */
     public DamageRecord getLastDamage() {
         synchronized (records) {
-            if (records.isEmpty()) {
-                return null;
-            }
-            return records.getLast();
+            return records.peekLast();
         }
     }
 
     /**
      * Utility method to find the player who was the last attacker in the history.
      * @return The last Player attacker, or null if none is found.
-     */
+    */
     public Player findLastPlayerAttacker() {
         synchronized (records) {
-            // Iterate backwards to find the most recent attacker
-            for (int i = records.size() - 1; i >= 0; i--) {
-                Entity attacker = records.get(i).damage().getAttacker();
+            Iterator<DamageRecord> iterator = records.descendingIterator();
+            while (iterator.hasNext()) {
+                DamageRecord record = iterator.next();
+                Entity attacker = record.damage().getAttacker();
                 if (attacker instanceof Player player) {
                     return player;
                 }
@@ -74,7 +78,7 @@ public class DamageHistory {
      */
     public List<DamageRecord> getRecords() {
         synchronized (records) {
-            return Collections.unmodifiableList(records);
+            return List.copyOf(records);
         }
     }
 }

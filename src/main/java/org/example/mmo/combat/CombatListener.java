@@ -8,6 +8,7 @@ import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.event.trait.EntityEvent;
+import net.minestom.server.event.entity.EntityDamageEvent;
 import org.example.mmo.combat.history.DamageTracker;
 import org.example.mmo.combat.util.CombatFeedback;
 import org.example.mmo.combat.util.HealthUtils;
@@ -31,25 +32,36 @@ public class CombatListener {
             }
 
             // --- 2. Calculate Damage ---
-            double damageAmount = CombatEngine.computeDamage(attacker, victim);
+            Damage damage = CombatEngine.buildDamage(attacker, victim);
 
-            // --- 3. Create and Record Damage (Fixes One-Shot Bug) ---
-            Damage damage = Damage.fromEntity(attacker, (float) damageAmount);
-            DamageTracker.recordDamage(victim, damage);
-
-            // --- 4. Apply Side Effects (Lifesteal, Stun, etc.) ---
-            double lifesteal = StatUtils.getTotal(attacker, StatType.LIFESTEAL) / 100.0;
-            if (lifesteal > 0) {
-                double heal = damageAmount * lifesteal;
-                HealthUtils.heal(attacker, heal);
-                CombatFeedback.showHeal(attacker, heal);
-            }
-
-            // --- 5. Apply Damage and Visual Feedback ---
+            // --- 4. Apply Damage and Visual Feedback ---
             victim.damage(damage);
-            CombatFeedback.showHit(victim);
+            CombatFeedback.showHit(victim, damage.getAmount());
             if (!(victim instanceof Player)) {
                 HealthUtils.updateHealthBar(victim);
+            }
+        });
+
+        entityNode.addListener(EntityDamageEvent.class, event -> {
+            if (!(event.getEntity() instanceof LivingEntity victim)) {
+                return;
+            }
+            Damage damage = event.getDamage();
+            if (damage == null || damage.getAmount() <= 0f || event.isCancelled()) {
+                return;
+            }
+            DamageTracker.recordDamage(victim, damage);
+
+            Entity attackerEntity = damage.getAttacker();
+            if (attackerEntity instanceof LivingEntity attacker) {
+                double lifesteal = StatUtils.getTotal(attacker, StatType.LIFESTEAL) / 100.0;
+                if (lifesteal > 0) {
+                    double heal = damage.getAmount() * lifesteal;
+                    if (heal > 0) {
+                        HealthUtils.heal(attacker, heal);
+                        CombatFeedback.showHeal(attacker, heal);
+                    }
+                }
             }
         });
     }

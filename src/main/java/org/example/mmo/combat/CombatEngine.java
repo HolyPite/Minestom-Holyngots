@@ -1,6 +1,7 @@
 package org.example.mmo.combat;
 
 import net.minestom.server.entity.LivingEntity;
+import net.minestom.server.entity.damage.Damage;
 import org.example.mmo.combat.mechanic.AttackSpeedManager;
 import org.example.mmo.combat.util.CombatFeedback;
 import org.example.mmo.combat.util.KnockbackUtils;
@@ -16,6 +17,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public final class CombatEngine {
 
     public static double computeDamage(LivingEntity attacker, LivingEntity victim) {
+        return computeDamage(attacker, victim, true);
+    }
+
+    public static double computeDamage(LivingEntity attacker, LivingEntity victim, boolean consumeCharge) {
 
         /* ---------- Stats ---------- */
         double atk        = StatUtils.getTotal(attacker, StatType.ATTACK);
@@ -28,9 +33,12 @@ public final class CombatEngine {
         double kbRes      = StatUtils.getTotal(victim  , StatType.KNOCKBACK_RES)/ 100.0;
 
         /* ---------- Attack Charge ---------- */
-        double charge   = AttackSpeedManager.getCharge(attacker);
-        double cdFactor = computeCDFactor(charge);
-        AttackSpeedManager.markAttack(attacker);
+        double cdFactor = 1.0;
+        if (consumeCharge) {
+            double charge = AttackSpeedManager.getCharge(attacker);
+            cdFactor = computeCDFactor(charge);
+            AttackSpeedManager.markAttack(attacker);
+        }
 
         ThreadLocalRandom rnd = ThreadLocalRandom.current();
 
@@ -45,16 +53,17 @@ public final class CombatEngine {
         double dmg      = Math.max(0, atk - effArmor / 2.0) * cdFactor;
 
         /* ---------- 3. Critical Hit ---------- */
-        if (rnd.nextDouble() < critChance * cdFactor) {
+        double critRollThreshold = critChance * (consumeCharge ? cdFactor : 1.0);
+        if (rnd.nextDouble() < critRollThreshold) {
             dmg *= critValue;
             CombatFeedback.showCrit(attacker, victim);
         }
 
         /* ---------- 4. Knockback ---------- */
-        double kbFactor = (1 + kbBonus) * (1 - kbRes) * cdFactor;
+        double kbFactor = (1 + kbBonus) * (1 - kbRes) * (consumeCharge ? cdFactor : 1.0);
         if (kbFactor > 0) KnockbackUtils.apply(attacker, victim, kbFactor);
 
-        // Lifesteal and Stun are now handled in the listener after the final damage is confirmed.
+        // Lifesteal and Stun are handled in the listener once the final damage is confirmed.
 
         return dmg;
     }
@@ -64,6 +73,14 @@ public final class CombatEngine {
         if (charge < 0.99)        return 0.70 * charge * charge;
         if (charge <= 1.01)       return 1.05;
         return 1.0;
+    }
+
+    public static Damage buildDamage(LivingEntity attacker, LivingEntity victim) {
+        return buildDamage(attacker, victim, true);
+    }
+
+    public static Damage buildDamage(LivingEntity attacker, LivingEntity victim, boolean consumeCharge) {
+        return Damage.fromEntity(attacker, (float) computeDamage(attacker, victim, consumeCharge));
     }
 
     private CombatEngine() {}
