@@ -17,6 +17,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.14")
     implementation("io.github.classgraph:classgraph:4.8.163")
     implementation("com.google.code.gson:gson:2.10.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
 }
 
 java {
@@ -34,6 +35,9 @@ tasks {
 
     build {
         dependsOn(shadowJar)
+    }
+    test {
+        useJUnitPlatform()
     }
     shadowJar {
         mergeServiceFiles()

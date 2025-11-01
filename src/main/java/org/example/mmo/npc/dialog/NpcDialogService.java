@@ -16,8 +16,8 @@ import net.minestom.server.dialog.DialogActionButton;
 import net.minestom.server.dialog.DialogAfterAction;
 import net.minestom.server.dialog.DialogBody;
 import net.minestom.server.dialog.DialogMetadata;
-import org.example.NodesManagement;
-import org.example.data.PlayerDataService;
+import org.example.bootstrap.GameContext;
+import org.example.mmo.player.data.PlayerDataService;
 import org.example.data.data_class.PlayerData;
 import org.example.mmo.npc.NPC;
 import org.example.mmo.npc.NpcRegistry;
@@ -789,7 +789,7 @@ public final class NpcDialogService {
     // endregion
 
     private static PlayerDataService dataService() {
-        return NodesManagement.getDataService();
+        return GameContext.get().playerDataService();
     }
 
     // region Internal types

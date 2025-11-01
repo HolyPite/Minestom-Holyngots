@@ -1,11 +1,11 @@
-package org.example.commands;
+package org.example.mmo.commands;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Player;
-import org.example.NodesManagement;
+import org.example.bootstrap.GameContext;
 import org.example.data.data_class.PlayerData;
 import org.example.mmo.quest.api.IQuestObjective;
 import org.example.mmo.quest.objectives.KillObjective;
@@ -16,28 +16,24 @@ import org.example.mmo.quest.structure.QuestProgress;
 import org.example.mmo.quest.structure.QuestStep;
 import org.example.utils.TKit;
 
-/**
- * Command for players to view their quest journal.
- * Usage: /quests [questId]
- */
 public class QuestsCommand extends Command {
 
     public QuestsCommand() {
         super("quests");
 
-        // Default executor: /quests
         setDefaultExecutor((sender, context) -> {
             if (!(sender instanceof Player player)) {
                 sender.sendMessage("Only players can check their quests.");
                 return;
             }
-            PlayerData data = NodesManagement.getDataService().get(player);
-            if (data == null) return;
+            PlayerData data = GameContext.get().playerDataService().get(player);
+            if (data == null) {
+                return;
+            }
 
-            player.sendMessage(Component.text("--- Journal de Quêtes ---", NamedTextColor.GOLD));
+            player.sendMessage(Component.text("--- Journal de quetes ---", NamedTextColor.GOLD));
+            player.sendMessage(Component.text("Quetes en cours :", NamedTextColor.YELLOW));
 
-            // Display active quests
-            player.sendMessage(Component.text("Quêtes en cours :", NamedTextColor.YELLOW));
             if (data.quests.isEmpty()) {
                 player.sendMessage(Component.text("  Aucune", NamedTextColor.GRAY));
             } else {
@@ -49,8 +45,7 @@ public class QuestsCommand extends Command {
                 }
             }
 
-            // Display completed quests
-            player.sendMessage(Component.text("Quêtes terminées :", NamedTextColor.YELLOW));
+            player.sendMessage(Component.text("Quetes terminees :", NamedTextColor.YELLOW));
             if (data.completedQuests.isEmpty()) {
                 player.sendMessage(Component.text("  Aucune", NamedTextColor.GRAY));
             } else {
@@ -63,41 +58,48 @@ public class QuestsCommand extends Command {
             }
         });
 
-        // Syntax with argument: /quests <questId>
         var questIdArg = ArgumentType.String("questId");
         addSyntax((sender, context) -> {
-            if (!(sender instanceof Player player)) return;
-            PlayerData data = NodesManagement.getDataService().get(player);
-            if (data == null) return;
+            if (!(sender instanceof Player player)) {
+                return;
+            }
+            PlayerData data = GameContext.get().playerDataService().get(player);
+            if (data == null) {
+                return;
+            }
 
             String questId = context.get(questIdArg);
             Quest quest = QuestRegistry.byId(questId);
             if (quest == null) {
-                player.sendMessage(Component.text("Quête inconnue : " + questId, NamedTextColor.RED));
+                player.sendMessage(Component.text("Quete inconnue : " + questId, NamedTextColor.RED));
                 return;
             }
 
-            QuestProgress progress = data.quests.stream().filter(p -> p.questId.equals(questId)).findFirst().orElse(null);
+            QuestProgress progress = data.quests.stream()
+                    .filter(p -> p.questId.equals(questId))
+                    .findFirst()
+                    .orElse(null);
 
             player.sendMessage(Component.text("--- " + TKit.extractPlainText(quest.name) + " ---", NamedTextColor.GOLD));
             player.sendMessage(quest.description.color(NamedTextColor.GRAY));
 
             if (progress == null) {
                 if (data.hasCompletedQuest(questId)) {
-                    player.sendMessage(Component.text("Statut : Terminé", NamedTextColor.GREEN));
+                    player.sendMessage(Component.text("Statut : Termine", NamedTextColor.GREEN));
                 } else {
-                    player.sendMessage(Component.text("Statut : Non commencée", NamedTextColor.GRAY));
+                    player.sendMessage(Component.text("Statut : Non commencee", NamedTextColor.GRAY));
                 }
                 return;
             }
 
-            if (progress.stepIndex >= quest.steps.size()) return;
+            if (progress.stepIndex >= quest.steps.size()) {
+                return;
+            }
 
             QuestStep currentStep = quest.steps.get(progress.stepIndex);
             player.sendMessage(Component.text("Étape actuelle : " + TKit.extractPlainText(currentStep.name), NamedTextColor.YELLOW));
             player.sendMessage(currentStep.description.color(NamedTextColor.WHITE));
 
-            // Display objective progress
             player.sendMessage(Component.text("Objectifs :", NamedTextColor.YELLOW));
             for (IQuestObjective objective : currentStep.objectives) {
                 String progressText = "";
@@ -111,7 +113,10 @@ public class QuestsCommand extends Command {
                     progressText = " (" + current + "/" + max + ")";
                 }
 
-                Component objectiveComponent = Component.text("  - " + TKit.extractPlainText(objective.getDescription()) + progressText, objective.isCompleted(player, data) ? NamedTextColor.GREEN : NamedTextColor.GRAY);
+                Component objectiveComponent = Component.text(
+                        "  - " + TKit.extractPlainText(objective.getDescription()) + progressText,
+                        objective.isCompleted(player, data) ? NamedTextColor.GREEN : NamedTextColor.GRAY
+                );
                 player.sendMessage(objectiveComponent);
             }
 

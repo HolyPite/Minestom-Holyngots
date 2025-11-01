@@ -7,9 +7,14 @@ import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 //import net.minestom.server.extras.MojangAuth;
-import org.example.data.PlayerDataUtils;
+import org.example.bootstrap.GameContext;
+import org.example.bootstrap.GameLifecycle;
+import org.example.bootstrap.InstanceBootstrap;
+import org.example.bootstrap.InstanceRegistry;
+import org.example.bootstrap.InstancesSaving;
+import org.example.mmo.player.data.PlayerDataUtils;
 import org.example.data.data_class.PlayerData;
-import org.example.data.teleport.TeleportUtils;
+import org.example.mmo.player.teleport.TeleportUtils;
 import org.example.mmo.item.datas.Stats;
 import org.example.mmo.quest.QuestManager;
 import org.example.mmo.quest.objectives.LocationObjective;
@@ -30,15 +35,16 @@ public class Main {
 
         GlobalEventHandler GLOBAL_EVENTS = MinecraftServer.getGlobalEventHandler();
 
-        // Initialize instances and all game systems
-        InstancesInit.init();
-        NodesManagement.init();
+        // Bootstrap the world instances and game systems
+        InstanceRegistry instanceRegistry = new InstanceBootstrap().createRegistry();
+        GameLifecycle lifecycle = new GameLifecycle(instanceRegistry);
+        GameContext.initialise(instanceRegistry, lifecycle);
 
         // --- Phase 1: Player Configuration ---
         GLOBAL_EVENTS.addListener(AsyncPlayerConfigurationEvent.class, event -> {
             Player player = event.getPlayer();
-            if (!InstancesInit.GAME_INSTANCES.isEmpty()) {
-                event.setSpawningInstance(InstancesInit.GAME_INSTANCES.iterator().next());
+            if (!instanceRegistry.gameInstances().isEmpty()) {
+                event.setSpawningInstance(instanceRegistry.gameInstances().iterator().next());
             }
         });
 
@@ -51,16 +57,16 @@ public class Main {
                 connectedPlayers.add(player.getUuid());
 
                 // --- General Logic (runs for any instance group) ---
-                PlayerDataUtils.loadLastData(player.getUuid(), InstancesInit.GAME_INSTANCES);
-                PlayerData data = NodesManagement.getDataService().get(player);
+                PlayerDataUtils.loadLastData(player.getUuid(), instanceRegistry.gameInstances());
+                PlayerData data = GameContext.get().playerDataService().get(player);
                 if (data == null) return;
 
-                TeleportUtils.Target target = TeleportUtils.lastPositionInInstanceGroup(player, InstancesInit.GAME_INSTANCES);
+                TeleportUtils.Target target = TeleportUtils.lastPositionInInstanceGroup(player, instanceRegistry.gameInstances());
                 player.teleport(target.pos());
                 player.setRespawnPoint(target.pos());
 
                 // --- Game-Specific Logic ---
-                if (InstancesInit.GAME_INSTANCES.contains(event.getSpawnInstance())) {
+                if (instanceRegistry.isGameInstance(event.getSpawnInstance())) {
                     Stats.refresh(player);
 
                     for (QuestProgress progress : data.quests) {

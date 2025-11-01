@@ -5,7 +5,7 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.trait.PlayerEvent;
-import org.example.NodesManagement;
+import org.example.bootstrap.GameContext;
 import org.example.data.data_class.PlayerData;
 import org.example.mmo.quest.event.*;
 
@@ -38,7 +38,7 @@ public class PlayerQuestListener {
 
     private static void updateScoreboard(Player player) {
         QuestScoreboard scoreboard = SCOREBOARDS.get(player.getUuid());
-        PlayerData data = NodesManagement.getDataService().get(player);
+        PlayerData data = GameContext.get().playerDataService().get(player);
         if (scoreboard != null && data != null) {
             scoreboard.update(data);
         }

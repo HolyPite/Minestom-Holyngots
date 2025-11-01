@@ -1,36 +1,36 @@
 // org.example.mmo.items.ItemBootstrap
 package org.example.mmo.item;
 
-import io.github.classgraph.*;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ScanResult;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ItemBootstrap {
 
-    public static void init() {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemBootstrap.class);
 
+    private ItemBootstrap() {
+    }
+
+    public static void init() {
         try (ScanResult scan = new ClassGraph()
                 .enableClassInfo()
                 .ignoreClassVisibility()
-                .acceptPackages("org.example.mmo.item.items")   // toute la hiérarchie
-                .scan())
-        {
+                .acceptPackages("org.example.mmo.item.items")
+                .scan()) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             List<ClassInfo> classes = scan.getAllStandardClasses();
-            //int ok = 0, ko = 0;
 
             for (ClassInfo info : classes) {
                 try {
-                    Class.forName(info.getName(), true, cl);   // initialise
-                    //ok++;
-                } catch (Throwable err) {                      // <- Saisit *tout*
-                    //ko++;
-                    System.err.println("[ItemBootstrap] init FAILED: " + info.getName());
-                    err.printStackTrace(System.err);
+                    Class.forName(info.getName(), true, cl);
+                } catch (Throwable err) {
+                    LOGGER.error("Failed to initialise item class {}", info.getName(), err);
                 }
             }
-            //System.out.printf("[ItemBootstrap] items OK=%d  ERR=%d%n", ok, ko);
         }
     }
-
-    private ItemBootstrap() {}
 }

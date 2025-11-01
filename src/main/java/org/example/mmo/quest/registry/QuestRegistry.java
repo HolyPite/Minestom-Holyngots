@@ -2,22 +2,28 @@ package org.example.mmo.quest.registry;
 
 import org.example.mmo.quest.structure.Quest;
 import org.example.mmo.quest.structure.QuestStep;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public final class QuestRegistry {
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuestRegistry.class);
     private static final Map<String, Quest> MAP = new HashMap<>();
     private static final Map<String, List<Quest>> QUESTS_BY_START_NPC = new HashMap<>();
     private static final List<Quest> AUTO_START_QUESTS = new ArrayList<>();
     private static final Map<String, Quest> READ_ONLY_MAP = Collections.unmodifiableMap(MAP);
     private static final List<Quest> READ_ONLY_AUTO_START = Collections.unmodifiableList(AUTO_START_QUESTS);
 
+    private QuestRegistry() {
+    }
+
     public static void register(Quest quest) {
         Quest previous = MAP.put(quest.id, quest);
         if (previous != null) {
             removeFromIndexes(previous);
         }
-        System.out.println("[QuestRegistry] +" + quest.id);
+        LOGGER.info("Registered quest {}", quest.id);
 
         if (quest.steps.isEmpty()) {
             return;

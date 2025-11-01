@@ -6,7 +6,7 @@ import net.minestom.server.event.inventory.InventoryItemChangeEvent;
 import net.minestom.server.event.trait.InventoryEvent;
 import net.minestom.server.inventory.PlayerInventory;
 import net.minestom.server.timer.TaskSchedule;
-import org.example.NodesManagement;
+import org.example.bootstrap.GameContext;
 import org.example.data.data_class.PlayerData;
 import org.example.mmo.quest.QuestManager;
 import org.example.mmo.quest.event.QuestObjectiveCompleteEvent;
@@ -27,7 +27,7 @@ public class InventoryListener {
             if (inv.getViewers().isEmpty()) return;
             Player player = inv.getViewers().iterator().next();
 
-            PlayerData data = NodesManagement.getDataService().get(player);
+            PlayerData data = GameContext.get().playerDataService().get(player);
             if (data == null) return;
 
             // Use a delayed task to check after the inventory has been updated

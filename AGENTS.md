@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- `src/main/java/org/example` hosts the server entry (`Main.java`), instance wiring (`InstancesInit.java`), and shared utilities; keep new services within this tree.
+- `src/main/java/org/example` hosts the server entry (`Main.java`), bootstrap wiring (`bootstrap/GameLifecycle`, `bootstrap/InstanceBootstrap`, `bootstrap/InstancesSaving`), and shared utilities; keep new services within this tree.
 - `org/example/mmo` groups gameplay modules: `combat`, `quest`, `npc`, `item`, `inventory`, `player`, and `dev`; respect those boundaries when expanding features.
 - Runtime assets live in `worlds/` for Anvil maps and `playerdata/` for JSON saves; treat both as hot-reloadable resources during development.
 

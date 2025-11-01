@@ -1,4 +1,4 @@
-package org.example.utils;
+package org.example.mmo.npc.dialog;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -14,7 +14,8 @@ import net.minestom.server.item.Material;
 import net.minestom.server.item.book.FilteredText;
 import net.minestom.server.item.component.WrittenBookContent;
 import net.minestom.server.network.packet.server.play.OpenBookPacket;
-import org.example.NodesManagement;
+import org.example.utils.TKit;
+import org.example.bootstrap.GameContext;
 import org.example.data.data_class.PlayerData;
 import org.example.mmo.npc.NPC;
 import org.example.mmo.quest.QuestManager;
@@ -45,7 +46,7 @@ public final class BookGuiManager {
         if (npc == null) {
             return;
         }
-        PlayerData data = NodesManagement.getDataService().get(player);
+        PlayerData data = GameContext.get().playerDataService().get(player);
         if (data == null) {
             return;
         }

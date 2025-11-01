@@ -1,9 +1,9 @@
-package org.example.data;
+package org.example.mmo.player.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minestom.server.instance.Instance;
-import org.example.InstancesInit;
+import org.example.bootstrap.GameContext;
 import org.example.data.data_class.PlayerData;
 
 import java.io.IOException;
@@ -15,9 +15,6 @@ import java.nio.file.Paths;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * Stores player data as one JSON file per player in the {@code playerdata} directory.
- */
 public class JsonPlayerDataRepository implements PlayerDataRepository {
     private final Path folder;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -36,15 +33,14 @@ public class JsonPlayerDataRepository implements PlayerDataRepository {
     }
 
     @Override
-    public PlayerData load(UUID playerId, Set<Instance> inst_type) {
-        Path file = folder.resolve( InstancesInit.instance_type_name_get(inst_type) + "/" + playerId.toString() + ".json");
+    public PlayerData load(UUID playerId, Set<Instance> instanceType) {
+        Path file = folder.resolve(GameContext.get().instances().nameOfGroup(instanceType) + "/" + playerId + ".json");
         if (!Files.exists(file)) {
             return new PlayerData(playerId);
         }
-        try (Reader r = Files.newBufferedReader(file)) {
-            PlayerData data = gson.fromJson(r, PlayerData.class);
-            if (data == null) data = new PlayerData(playerId);
-            return data;
+        try (Reader reader = Files.newBufferedReader(file)) {
+            PlayerData data = gson.fromJson(reader, PlayerData.class);
+            return data != null ? data : new PlayerData(playerId);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -52,16 +48,15 @@ public class JsonPlayerDataRepository implements PlayerDataRepository {
 
     @Override
     public void save(PlayerData data, Set<Instance> instanceType) {
-        String folderName = InstancesInit.instance_type_name_get(instanceType);
+        String folderName = GameContext.get().instances().nameOfGroup(instanceType);
         Path file = folder.resolve(folderName + "/" + data.uuid + ".json");
         try {
             Files.createDirectories(file.getParent());
-            try (Writer w = Files.newBufferedWriter(file)) {
-                gson.toJson(data, w);
+            try (Writer writer = Files.newBufferedWriter(file)) {
+                gson.toJson(data, writer);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-
 }

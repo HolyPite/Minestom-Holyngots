@@ -18,6 +18,8 @@ import net.minestom.server.potion.Potion;
 import net.minestom.server.potion.PotionEffect;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.example.mmo.item.ItemUtils;
 
 import java.time.Duration;
@@ -26,6 +28,8 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TKit {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TKit.class);
 
     public static void playSound(Instance inst, Pos Pos,
                                  String soundName, Sound.Source source,         // Sound.Source.MASTER …
@@ -353,7 +357,7 @@ public class TKit {
         if (!hasItems(player, reference, amount)) {
             return false; // Not enough items, do nothing
         }
-        System.out.println("T'as assez d'items");
+        LOGGER.debug("Sufficient items found for removal");
 
         var inv = player.getInventory();
         int amountToRemove = amount;

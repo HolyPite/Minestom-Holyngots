@@ -1,13 +1,14 @@
-package org.example.commands;
+package org.example.mmo.commands;
 
 import net.kyori.adventure.text.Component;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Player;
-import org.example.NodesManagement;
+import org.example.bootstrap.GameContext;
 import org.example.data.data_class.PlayerData;
 import org.example.mmo.npc.NPC;
 import org.example.mmo.npc.NpcRegistry;
+import org.example.mmo.npc.dialog.NpcDialogService;
 import org.example.mmo.quest.QuestManager;
 import org.example.mmo.quest.api.IQuestObjective;
 import org.example.mmo.quest.event.QuestObjectiveCompleteEvent;
@@ -16,7 +17,6 @@ import org.example.mmo.quest.registry.QuestRegistry;
 import org.example.mmo.quest.structure.Quest;
 import org.example.mmo.quest.structure.QuestProgress;
 import org.example.mmo.quest.structure.QuestStep;
-import org.example.mmo.npc.dialog.NpcDialogService;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -60,8 +60,10 @@ public class NpcInteractionCommand extends Command {
             Player player = (Player) sender;
             String npcId = context.get(npcIdArg);
             String questId = context.get(questIdArg);
-            PlayerData data = NodesManagement.getDataService().get(player);
-            if (data == null) return;
+            PlayerData data = GameContext.get().playerDataService().get(player);
+            if (data == null) {
+                return;
+            }
 
             Quest quest = QuestRegistry.byId(questId);
             if (quest != null) {
@@ -73,8 +75,10 @@ public class NpcInteractionCommand extends Command {
             Player player = (Player) sender;
             String npcId = context.get(npcIdArg);
             String questId = context.get(questIdArg);
-            PlayerData data = NodesManagement.getDataService().get(player);
-            if (data == null) return;
+            PlayerData data = GameContext.get().playerDataService().get(player);
+            if (data == null) {
+                return;
+            }
 
             Quest quest = QuestRegistry.byId(questId);
             if (quest != null) {
@@ -89,11 +93,15 @@ public class NpcInteractionCommand extends Command {
             Player player = (Player) sender;
             String npcId = context.get(npcIdArg);
             String questId = context.get(questIdArg);
-            PlayerData data = NodesManagement.getDataService().get(player);
-            if (data == null) return;
+            PlayerData data = GameContext.get().playerDataService().get(player);
+            if (data == null) {
+                return;
+            }
 
             Quest quest = QuestRegistry.byId(questId);
-            if (quest == null) return;
+            if (quest == null) {
+                return;
+            }
 
             data.quests.stream()
                     .filter(p -> p.questId.equals(questId))
@@ -101,7 +109,9 @@ public class NpcInteractionCommand extends Command {
                     .ifPresent(progress -> {
                         QuestStep currentStep = quest.steps.get(progress.stepIndex);
                         for (IQuestObjective objective : currentStep.objectives) {
-                            if (objective instanceof TalkObjective talkObj && talkObj.getNpcId().equals(npcId) && !progress.isObjectiveCompleted(objective)) {
+                            if (objective instanceof TalkObjective talkObj
+                                    && talkObj.getNpcId().equals(npcId)
+                                    && !progress.isObjectiveCompleted(objective)) {
                                 NPC npc = NpcRegistry.byId(npcId);
                                 Component title = npc != null ? npc.name() : quest.name;
                                 NpcDialogService.showNarration(player, title, talkObj.getDialogues());

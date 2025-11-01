@@ -6,7 +6,7 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerChangeHeldSlotEvent;
 import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.timer.TaskSchedule;
-import org.example.InstancesInit;
+import org.example.bootstrap.GameContext;
 import org.example.mmo.item.datas.Stats;
 
 import java.util.Objects;
@@ -24,7 +24,7 @@ public class ItemEventsGlobal {
         playerNode.addListener(PlayerChangeHeldSlotEvent.class, e -> {
             Player p = e.getEntity();
             p.scheduler().buildTask(() -> {
-                if (Objects.equals(InstancesInit.instance_type_name_get(InstancesInit.instance_type_get(p.getInstance())), "games"))   {
+                if (Objects.equals(GameContext.get().instances().nameOfGroup(GameContext.get().instances().groupFor(p.getInstance())), "games"))   {
                     Stats.refresh(p);
                 }
             }).delay(TaskSchedule.tick(1)).schedule();

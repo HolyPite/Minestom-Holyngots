@@ -5,7 +5,7 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.EntityCreature;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.instance.Instance;
-import org.example.InstancesInit;
+import org.example.bootstrap.InstanceRegistry;
 import org.example.mmo.npc.NPC;
 import org.example.mmo.npc.NpcRegistry;
 import org.example.mmo.quest.QuestManager;
@@ -16,8 +16,8 @@ public class QuestEntitySpawner {
 
     private static final Pos HUNTING_GROUND_CENTER = new Pos(0, 42, 15);
 
-    public static void spawnPersistentEntities() {
-        for (Instance instance : InstancesInit.GAME_INSTANCES) {
+    public static void spawnPersistentEntities(InstanceRegistry instances) {
+        for (Instance instance : instances.gameInstances()) {
             spawnNpcsForInstance(instance);
             spawnMonstersForInstance(instance);
         }

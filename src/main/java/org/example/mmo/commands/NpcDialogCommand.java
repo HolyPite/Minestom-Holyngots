@@ -1,4 +1,4 @@
-package org.example.commands;
+package org.example.mmo.commands;
 
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;

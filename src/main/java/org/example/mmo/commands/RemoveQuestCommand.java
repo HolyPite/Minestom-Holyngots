@@ -1,4 +1,4 @@
-package org.example.commands;
+package org.example.mmo.commands;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -7,36 +7,23 @@ import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import net.minestom.server.entity.Player;
-import org.example.NodesManagement;
+import org.example.bootstrap.GameContext;
 import org.example.data.data_class.PlayerData;
 
-/**
- * Admin command to remove quests from a player.
- * Usage: /removequest <questId|all> [player]
- */
 public class RemoveQuestCommand extends Command {
 
     public RemoveQuestCommand() {
         super("removequest");
 
-        // setCondition(sender -> sender.hasPermission("command.removequest"));
-
         var questIdArg = ArgumentType.String("questId");
         var playerArg = ArgumentType.String("player");
 
-        // Set up dynamic suggestions for player names
-        playerArg.setSuggestionCallback(
-            (sender, context, suggestion) -> {
-            for (Player onlinePlayer : MinecraftServer.getConnectionManager().getOnlinePlayers()) {
-                suggestion.addEntry(new SuggestionEntry(onlinePlayer.getUsername()));
-            }
-        });
-
+        playerArg.setSuggestionCallback((sender, context, suggestion) ->
+                MinecraftServer.getConnectionManager().getOnlinePlayers()
+                        .forEach(p -> suggestion.addEntry(new SuggestionEntry(p.getUsername()))));
         playerArg.isOptional();
 
-        setDefaultExecutor((sender, context) -> {
-            sender.sendMessage("Usage: /removequest <questId|all> [player]");
-        });
+        setDefaultExecutor((sender, context) -> sender.sendMessage("Usage: /removequest <questId|all> [player]"));
 
         addSyntax((sender, context) -> {
             Player target;
@@ -55,14 +42,13 @@ public class RemoveQuestCommand extends Command {
             }
 
             String questId = context.get(questIdArg);
-            PlayerData data = NodesManagement.getDataService().get(target);
+            PlayerData data = GameContext.get().playerDataService().get(target);
             if (data == null) {
                 sender.sendMessage(Component.text("Player data not loaded.", NamedTextColor.RED));
                 return;
             }
 
-            if (questId.equalsIgnoreCase("all")) {
-                // Remove all quest data
+            if ("all".equalsIgnoreCase(questId)) {
                 data.quests.clear();
                 data.completedQuests.clear();
                 data.failedQuests.clear();
@@ -70,19 +56,17 @@ public class RemoveQuestCommand extends Command {
                 data.questCounters.clear();
                 sender.sendMessage(Component.text("All quests removed for player " + target.getUsername() + ".", NamedTextColor.GREEN));
             } else {
-                // Remove a specific quest
                 boolean removedInProgress = data.quests.removeIf(p -> p.questId.equals(questId));
                 boolean removedCompleted = data.completedQuests.remove(questId);
                 boolean removedFailed = data.failedQuests.remove(questId);
                 boolean removedCooldown = data.questCooldowns.remove(questId) != null;
 
                 if (removedInProgress || removedCompleted || removedFailed || removedCooldown) {
-                    sender.sendMessage(Component.text("Quest '" + questId + "' removed from all records for player " + target.getUsername() + ".", NamedTextColor.GREEN));
+                    sender.sendMessage(Component.text("Quest '" + questId + "' removed for player " + target.getUsername() + ".", NamedTextColor.GREEN));
                 } else {
-                    sender.sendMessage(Component.text("Player " + target.getUsername() + " did not have quest '" + questId + "' in their records.", NamedTextColor.YELLOW));
+                    sender.sendMessage(Component.text("Player " + target.getUsername() + " did not have quest '" + questId + "'.", NamedTextColor.YELLOW));
                 }
             }
-
         }, questIdArg, playerArg);
     }
 }

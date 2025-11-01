@@ -7,7 +7,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.entity.damage.Damage;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.timer.TaskSchedule;
-import org.example.InstancesInit;
+import org.example.bootstrap.GameContext;
 import org.example.mmo.combat.util.StatUtils;
 import org.example.mmo.item.datas.StatType;
 
@@ -54,7 +54,7 @@ public final class DamageTracker {
             if (expired) {
                 // Find the entity across all game instances
                 Entity entity = null;
-                for (Instance instance : InstancesInit.GAME_INSTANCES) {
+                for (Instance instance : GameContext.get().instances().gameInstances()) {
                     for (Entity entInInstance : instance.getEntities()) {
                         if (entInInstance.getUuid().equals(entry.getKey())) {
                             entity = entInInstance;

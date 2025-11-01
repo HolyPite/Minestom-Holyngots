@@ -1,4 +1,4 @@
-package org.example.commands;
+package org.example.mmo.commands;
 
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
@@ -9,13 +9,11 @@ public class GamemodeCommand extends Command {
     public GamemodeCommand() {
         super("gamemode");
 
-        setDefaultExecutor((sender, context) -> {
-            sender.sendMessage("Usage: /gamemode <creative|survival|adventure|spectator>");
-        });
+        setDefaultExecutor((sender, context) -> sender.sendMessage("Usage: /gamemode <creative|survival|adventure|spectator>"));
 
         var gamemodeArg = ArgumentType.String("gamemode");
         addSyntax((sender, context) -> {
-            var gamemode = context.get(gamemodeArg);
+            String gamemode = context.get(gamemodeArg);
             if (sender instanceof Player player) {
                 switch (gamemode) {
                     case "creative" -> player.setGameMode(GameMode.CREATIVE);
