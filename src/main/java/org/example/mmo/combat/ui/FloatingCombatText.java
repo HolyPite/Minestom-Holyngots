@@ -7,7 +7,7 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.LivingEntity;
-import net.minestom.server.entity.metadata.other.ArmorStandMeta;
+import net.minestom.server.entity.metadata.display.TextDisplayMeta;
 import net.minestom.server.entity.damage.DamageType;
 import net.minestom.server.registry.RegistryKey;
 import net.minestom.server.timer.TaskSchedule;
@@ -45,17 +45,15 @@ public final class FloatingCombatText {
             return;
         }
 
-        Entity indicator = new Entity(EntityType.ARMOR_STAND);
+        Entity indicator = new Entity(EntityType.TEXT_DISPLAY);
+        TextDisplayMeta meta = (TextDisplayMeta) indicator.getEntityMeta();
+        meta.setText(text);
+        // Optional: Add a shadow for better visibility
+        meta.setShadow(true);
+
         indicator.setNoGravity(true);
         indicator.setInstance(target.getInstance(), randomOffset(target));
-        indicator.setCustomName(text);
-        indicator.setCustomNameVisible(true);
 
-        ArmorStandMeta meta = (ArmorStandMeta) indicator.getEntityMeta();
-        meta.setInvisible(true);
-        meta.setMarker(true);
-        meta.setHasNoBasePlate(true);
-        meta.setSmall(true);
 
         var scheduler = MinecraftServer.getSchedulerManager();
         scheduler.buildTask(() -> {
