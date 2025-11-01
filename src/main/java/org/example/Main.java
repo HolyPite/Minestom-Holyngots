@@ -1,12 +1,13 @@
 package org.example;
 
+import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
-//import net.minestom.server.extras.MojangAuth;
+import net.minestom.server.utils.mojang.MojangUtils;
 import org.example.bootstrap.GameContext;
 import org.example.bootstrap.GameLifecycle;
 import org.example.bootstrap.InstanceBootstrap;
@@ -32,7 +33,7 @@ public class Main {
     private static final Set<UUID> connectedPlayers = new HashSet<>();
 
     public static void main(String[] args) {
-        MinecraftServer server = MinecraftServer.init();
+        MinecraftServer server = MinecraftServer.init(new Auth.Online());
 
         GlobalEventHandler GLOBAL_EVENTS = MinecraftServer.getGlobalEventHandler();
 
@@ -99,7 +100,6 @@ public class Main {
         InstancesSaving.init();
 
         // Start the server
-        //MojangAuth.init();
         server.start("0.0.0.0", 25565);
     }
 }
