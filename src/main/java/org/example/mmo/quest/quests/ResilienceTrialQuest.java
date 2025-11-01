@@ -10,6 +10,7 @@ import org.example.mmo.quest.objectives.TalkObjective;
 import org.example.mmo.quest.registry.QuestRegistry;
 import org.example.mmo.quest.structure.Quest;
 import org.example.mmo.quest.structure.QuestStep;
+import org.example.mmo.quest.rewards.ExperienceReward;
 
 import java.time.Duration;
 import java.util.List;
@@ -28,6 +29,7 @@ public final class ResilienceTrialQuest {
         audience.startNpc = "guide";
         audience.endNpc = "guide";
         audience.prerequisites = List.of("new_beginning");
+        audience.requiredLevel = 2;
         audience.objectives = List.of(
                 new TalkObjective(
                         "guide",
@@ -50,6 +52,7 @@ public final class ResilienceTrialQuest {
         meditation.delayDialogues = List.of(
                 Component.text("Ne sois pas pressǸ. Inspire, expire... Reviens me voir quand ton esprit sera apaisǸ.", NamedTextColor.GRAY)
         );
+        meditation.requiredLevel = 2;
         meditation.objectives = List.of(
                 new LocationObjective(
                         new Pos(6.5, 42, -4.5),
@@ -70,6 +73,7 @@ public final class ResilienceTrialQuest {
         hunt.attemptLimit = 2;
         hunt.failureRedirection = true;
         hunt.failureRedirectionQuest = "resilience_recovery";
+        hunt.requiredLevel = 2;
         hunt.objectives = List.of(
                 new KillObjective(
                         EntityType.SKELETON,
@@ -87,13 +91,13 @@ public final class ResilienceTrialQuest {
         hunt.successDialogues = List.of(
                 Component.text("Belle maitrise ! Reste sur cette voie et tu deviendras un chasseur accompli.", NamedTextColor.GREEN)
         );
+        hunt.rewards = List.of(new ExperienceReward(250));
 
         QUEST = new Quest(
                 "resilience_trial",
                 Component.text("Ǹpreuve de RǸsilience"),
                 Component.text("Une suite d��tapes pour tester patience, discipline et contr��le du stress."),
                 List.of(audience, meditation, hunt),
-                2,
                 false,
                 Duration.ZERO
         );

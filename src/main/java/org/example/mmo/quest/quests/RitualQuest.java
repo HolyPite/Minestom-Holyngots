@@ -19,7 +19,7 @@ public final class RitualQuest {
         step1.description = Component.text("Maintenant que vous avez prouvé votre vitesse, l'archimage vous confie une tâche importante.");
         step1.startNpc = "wizard";
         step1.endNpc = "wizard";
-        step1.prerequisites = List.of("speed_trial");
+        step1.prerequisites = List.of("speed_trial:2");
         step1.delay = Duration.ofMinutes(1);
         step1.delayDialogues = List.of(Component.text("Je dois préparer le rituel. Revenez dans un instant."));
 

@@ -609,7 +609,8 @@ public final class NpcDialogService {
         }
 
         body.add(new DialogBody.PlainMessage(summaryLine("Étapes : ", quest.steps.size()), DialogBody.PlainMessage.DEFAULT_WIDTH));
-        body.add(new DialogBody.PlainMessage(summaryLine("Niveau requis : ", quest.requiredLevel), DialogBody.PlainMessage.DEFAULT_WIDTH));
+        int requiredLevel = quest.steps.stream().mapToInt(step -> step.requiredLevel).max().orElse(0);
+        body.add(new DialogBody.PlainMessage(summaryLine("Niveau requis : ", requiredLevel), DialogBody.PlainMessage.DEFAULT_WIDTH));
         body.add(new DialogBody.PlainMessage(summaryStatus("Répétable : ", quest.repeatable), DialogBody.PlainMessage.DEFAULT_WIDTH));
         if (quest.repeatable) {
             body.add(new DialogBody.PlainMessage(summaryLine("Cooldown : ", cooldownValue(quest.cooldown)), DialogBody.PlainMessage.DEFAULT_WIDTH));
@@ -778,7 +779,7 @@ public final class NpcDialogService {
             boolean failed = data.hasFailedQuest(quest.id);
             if (!hasQuest && !completed && !failed) {
                 QuestStep firstStep = quest.steps.getFirst();
-                if (QuestManager.checkPrerequisites(data, firstStep)) {
+                if (data.level >= firstStep.requiredLevel && QuestManager.checkPrerequisites(data, firstStep)) {
                     result.add(quest);
                 }
             }

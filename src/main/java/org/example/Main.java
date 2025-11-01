@@ -12,6 +12,7 @@ import org.example.bootstrap.GameLifecycle;
 import org.example.bootstrap.InstanceBootstrap;
 import org.example.bootstrap.InstanceRegistry;
 import org.example.bootstrap.InstancesSaving;
+import org.example.bootstrap.motd.MotdService;
 import org.example.mmo.player.data.PlayerDataUtils;
 import org.example.data.data_class.PlayerData;
 import org.example.mmo.player.teleport.TeleportUtils;
@@ -39,6 +40,7 @@ public class Main {
         InstanceRegistry instanceRegistry = new InstanceBootstrap().createRegistry();
         GameLifecycle lifecycle = new GameLifecycle(instanceRegistry);
         GameContext.initialise(instanceRegistry, lifecycle);
+        MotdService.register(GLOBAL_EVENTS);
 
         // --- Phase 1: Player Configuration ---
         GLOBAL_EVENTS.addListener(AsyncPlayerConfigurationEvent.class, event -> {

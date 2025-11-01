@@ -15,22 +15,20 @@ public class Quest {
     public final Component description;
 
     // New properties for more modularity
-    public final int requiredLevel;
     public final boolean repeatable;
     public final Duration cooldown;
 
-    public Quest(String id, Component name, Component description, List<QuestStep> steps, int requiredLevel, boolean repeatable, Duration cooldown) {
+    public Quest(String id, Component name, Component description, List<QuestStep> steps, boolean repeatable, Duration cooldown) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.steps = List.copyOf(steps);
-        this.requiredLevel = requiredLevel;
         this.repeatable = repeatable;
         this.cooldown = cooldown;
     }
 
     // Overloaded constructor for simpler quests
     public Quest(String id, Component name, Component description, List<QuestStep> steps) {
-        this(id, name, description, steps, 0, false, Duration.ZERO);
+        this(id, name, description, steps, false, Duration.ZERO);
     }
 }

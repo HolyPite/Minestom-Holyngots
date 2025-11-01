@@ -41,7 +41,6 @@ public final class ResilienceRecoveryQuest {
                 Component.text("Rebondir après l'Ǹchec"),
                 Component.text("Une discussion rapide pour transformer l'Ǹchec en apprentissage."),
                 List.of(debrief),
-                0,
                 true,
                 Duration.ofSeconds(10)
         );

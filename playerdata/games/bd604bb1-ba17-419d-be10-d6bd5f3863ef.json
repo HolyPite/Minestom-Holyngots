@@ -4,7 +4,7 @@
   "experience": 0,
   "inventory": [
     {
-      "itemId": "admin_slayer",
+      "itemId": "excalibur",
       "amount": 1,
       "slot": 0
     },
@@ -14,21 +14,6 @@
       "slot": 1
     },
     {
-      "itemId": "excalibur",
-      "amount": 1,
-      "slot": 2
-    },
-    {
-      "itemId": "excalibur",
-      "amount": 1,
-      "slot": 3
-    },
-    {
-      "itemId": "admin_slayer",
-      "amount": 1,
-      "slot": 4
-    },
-    {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
@@ -36,52 +21,10 @@
   ],
   "quests": [
     {
-      "questId": "new_beginning",
+      "questId": "fire_purge",
       "stepIndex": 0,
-      "acceptedTime": 1761942847473,
-      "stepStartTime": 1761942847473,
-      "attempts": 1,
-      "stepCompletionTime": 0,
-      "stepFinalized": false,
-      "objectiveCompletionStatus": {}
-    },
-    {
-      "questId": "resilience_recovery",
-      "stepIndex": 0,
-      "acceptedTime": 1761942847474,
-      "stepStartTime": 1761942847474,
-      "attempts": 1,
-      "stepCompletionTime": 0,
-      "stepFinalized": false,
-      "objectiveCompletionStatus": {}
-    },
-    {
-      "questId": "grand_tour",
-      "stepIndex": 0,
-      "acceptedTime": 1761942850019,
-      "stepStartTime": 1761942850019,
-      "attempts": 1,
-      "stepCompletionTime": 0,
-      "stepFinalized": false,
-      "objectiveCompletionStatus": {
-        "TextComponentImpl{content\u003d\"Éliminez 5 zombies\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
-      }
-    },
-    {
-      "questId": "try",
-      "stepIndex": 0,
-      "acceptedTime": 1761942856219,
-      "stepStartTime": 1761942856219,
-      "attempts": 1,
-      "stepCompletionTime": 0,
-      "stepFinalized": false,
-      "objectiveCompletionStatus": {}
-    },
-    {
-      "questId": "speed_trial",
-      "stepIndex": 0,
-      "acceptedTime": 1761942862969,
-      "stepStartTime": 1761942862969,
+      "acceptedTime": 1761959210446,
+      "stepStartTime": 1761959210446,
       "attempts": 1,
       "stepCompletionTime": 0,
       "stepFinalized": false,
@@ -89,19 +32,26 @@
     }
   ],
   "completedQuests": [
-    "monster_plague"
+    "speed_trial",
+    "ritual_quest",
+    "new_beginning",
+    "monster_plague",
+    "try",
+    "grand_tour"
   ],
   "failedQuests": [],
   "position": {
-    "x": 3.5867327596342595,
+    "x": -3.9997130376839816,
     "y": 40.0,
-    "z": -0.15506735354385087,
-    "yaw": -143.18799,
-    "pitch": 39.287018
+    "z": 3.600863893999359,
+    "yaw": 142.48372,
+    "pitch": 29.835045
   },
   "lastInstance": "game2",
   "questCounters": {
-    "grand_tour_zombies": 5
+    "fire_purge_zombies": 0
   },
-  "questCooldowns": {}
+  "questCooldowns": {
+    "resilience_recovery": 1761959217796
+  }
 }

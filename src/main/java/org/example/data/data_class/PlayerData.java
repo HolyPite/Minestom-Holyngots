@@ -15,6 +15,9 @@ import java.util.UUID;
 public class PlayerData {
     public UUID uuid;
     public int level;
+    /**
+     * Experience accumulated toward the next level.
+     */
     public int experience;
     public List<ItemData> inventory = new ArrayList<>();
     public List<QuestProgress> quests = new ArrayList<>();
@@ -60,9 +63,18 @@ public class PlayerData {
         return failedQuests.contains(questId);
     }
 
-    public boolean hasReachedQuestStep(String questId, int stepIndex) {
+    public boolean hasReachedQuestStep(String questId, int stepNumber) {
+        if (hasCompletedQuest(questId)) {
+            return true;
+        }
+
+        if (stepNumber <= 0) {
+            return hasCompletedQuest(questId);
+        }
+
+        int targetIndex = stepNumber - 1;
         return quests.stream()
                 .filter(p -> p.questId.equals(questId))
-                .anyMatch(p -> p.stepIndex >= stepIndex);
+                .anyMatch(p -> p.stepIndex >= targetIndex);
     }
 }

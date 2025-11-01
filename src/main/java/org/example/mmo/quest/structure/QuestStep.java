@@ -35,11 +35,14 @@ public class QuestStep {
     /** List of rewards given to the player for completing the step. */
     public List<IQuestReward> rewards = Collections.emptyList();
 
-    /** List of prerequisite IDs (e.g., "questId:stepIndex") the player must have completed to unlock this step. */
+    /** List of prerequisite IDs (e.g., "questId:stepNumber") the player must have completed to unlock this step. */
     public List<String> prerequisites = Collections.emptyList();
 
     /** Time the player must wait since the end of the previous step to accept this one. */
     public Duration delay = Duration.ZERO;
+
+    /** Minimum player level required to access this step. */
+    public int requiredLevel = 0;
 
     /** Time limit within which the player must complete the step, otherwise they fail. */
     public Duration duration = Duration.ZERO;

@@ -64,7 +64,10 @@ public final class QuestManager {
             return;
         }
 
-        if (quest.steps.isEmpty() || !npcId.equals(quest.steps.getFirst().startNpc)) return;
+        if (quest.steps.isEmpty()) return;
+
+        QuestStep firstStep = quest.steps.getFirst();
+        if (!npcId.equals(firstStep.startNpc)) return;
         if (data.hasFailedQuest(quest.id)) return;
 
         if (quest.repeatable) {
@@ -80,8 +83,8 @@ public final class QuestManager {
             return;
         }
 
-        if (data.level < quest.requiredLevel) {
-            ToastManager.showToast(player, Component.text("Niveau requis : " + quest.requiredLevel), Material.BARRIER, FrameType.TASK);
+        if (data.level < firstStep.requiredLevel) {
+            ToastManager.showToast(player, Component.text("Niveau requis : " + firstStep.requiredLevel), Material.BARRIER, FrameType.TASK);
             return;
         }
 
@@ -93,15 +96,19 @@ public final class QuestManager {
     }
 
     public static boolean tryAutoStartQuest(Player player, PlayerData data, Quest quest) {
-        if (quest.steps.isEmpty() || (quest.steps.getFirst().startNpc != null && !quest.steps.getFirst().startNpc.isEmpty())) {
+        if (quest.steps.isEmpty()) {
+            return false;
+        }
+        QuestStep firstStep = quest.steps.getFirst();
+        if (firstStep.startNpc != null && !firstStep.startNpc.isEmpty()) {
             return false;
         }
 
         if (data.quests.stream().anyMatch(p -> p.questId.equals(quest.id))) return false;
         if (data.hasFailedQuest(quest.id)) return false;
         if (data.hasCompletedQuest(quest.id) && !quest.repeatable) return false;
-        if (data.level < quest.requiredLevel) return false;
-        if (!checkPrerequisites(data, quest.steps.getFirst())) return false;
+        if (data.level < firstStep.requiredLevel) return false;
+        if (!checkPrerequisites(data, firstStep)) return false;
 
         if (quest.repeatable) {
             Long cooldownTime = data.questCooldowns.get(quest.id);
@@ -169,6 +176,10 @@ public final class QuestManager {
         QuestStep newStep = quest.steps.get(newStepIndex);
         if (oldStep != null) {
             finalizeCompletedStep(player, data, quest, progress, oldStep);
+        }
+        if (data.level < newStep.requiredLevel) {
+            ToastManager.showToast(player, Component.text("Niveau requis : " + newStep.requiredLevel), Material.BARRIER, FrameType.TASK);
+            return false;
         }
         if (!checkPrerequisites(data, newStep)) {
             ToastManager.showToast(player, Component.text("Vous ne remplissez pas les conditions."), Material.BARRIER, FrameType.TASK);
@@ -277,14 +288,25 @@ public final class QuestManager {
     public static boolean checkPrerequisites(PlayerData data, QuestStep step) {
         if (step.prerequisites == null || step.prerequisites.isEmpty()) return true;
         for (String prereq : step.prerequisites) {
-            String[] parts = prereq.split(":");
-            String requiredQuestId = parts[0];
-            if (parts.length > 1) {
+            if (prereq == null || prereq.isBlank()) {
+                return false;
+            }
+
+            String[] parts = prereq.split(":", 2);
+            String requiredQuestId = parts[0].trim();
+            if (requiredQuestId.isEmpty()) {
+                return false;
+            }
+
+            if (parts.length > 1 && !parts[1].isBlank()) {
                 try {
-                    if (!data.hasReachedQuestStep(requiredQuestId, Integer.parseInt(parts[1]))) return false;
-                } catch (NumberFormatException e) { return false; }
-            } else {
-                if (!data.hasCompletedQuest(requiredQuestId)) return false;
+                    int requiredStepNumber = Integer.parseInt(parts[1].trim());
+                    if (!data.hasReachedQuestStep(requiredQuestId, requiredStepNumber)) return false;
+                } catch (NumberFormatException e) {
+                    return false;
+                }
+            } else if (!data.hasCompletedQuest(requiredQuestId)) {
+                return false;
             }
         }
         return true;

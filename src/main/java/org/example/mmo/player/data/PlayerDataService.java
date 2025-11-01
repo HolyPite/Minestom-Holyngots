@@ -1,5 +1,9 @@
 package org.example.mmo.player.data;
 
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
@@ -14,6 +18,7 @@ import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.inventory.PlayerInventory;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import net.minestom.server.advancements.FrameType;
 import net.minestom.server.timer.TaskSchedule;
 import org.example.bootstrap.InstanceRegistry;
 import org.example.data.data_class.ItemData;
@@ -21,6 +26,7 @@ import org.example.data.data_class.PlayerData;
 import org.example.mmo.item.GameItem;
 import org.example.mmo.item.ItemRegistry;
 import org.example.mmo.item.ItemUtils;
+import org.example.utils.ToastManager;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -38,6 +44,8 @@ public class PlayerDataService {
     private final Map<UUID, Set<Instance>> currentGroup = new HashMap<>();
 
     private static final long DEFAULT_AUTOSAVE_MINUTES = 1;
+    private static final int BASE_EXPERIENCE_PER_LEVEL = 100;
+    private static final int EXPERIENCE_GROWTH_PER_LEVEL = 50;
 
     public PlayerDataService(PlayerDataRepository repository, InstanceRegistry instances) {
         this.repository = repository;
@@ -215,5 +223,52 @@ public class PlayerDataService {
             }
         }
         return null;
+    }
+
+    public void grantExperience(Player player, int amount) {
+        if (player == null || amount <= 0) {
+            return;
+        }
+
+        PlayerData data = cache.get(player.getUuid());
+        if (data == null) {
+            return;
+        }
+
+        int remaining = amount;
+        int levelsGained = 0;
+
+        while (remaining > 0) {
+            int levelRequirement = experienceRequiredForLevel(data.level);
+            int xpNeeded = Math.max(levelRequirement - data.experience, 0);
+            if (xpNeeded == 0) {
+                xpNeeded = levelRequirement;
+                data.experience = 0;
+            }
+
+            if (remaining >= xpNeeded) {
+                remaining -= xpNeeded;
+                data.experience = 0;
+                data.level++;
+                levelsGained++;
+            } else {
+                data.experience += remaining;
+                remaining = 0;
+            }
+        }
+
+        Component gained = Component.text("+" + amount + " EXP", NamedTextColor.GREEN);
+        ToastManager.showToast(player, gained, Material.EXPERIENCE_BOTTLE, FrameType.GOAL);
+
+        if (levelsGained > 0) {
+            Component levelUp = Component.text("Niveau " + data.level, NamedTextColor.GOLD);
+            ToastManager.showToast(player, levelUp, Material.NETHER_STAR, FrameType.CHALLENGE);
+            player.playSound(Sound.sound(Key.key("minecraft:entity.player.levelup"), Sound.Source.MASTER, 0.9f, 1.1f), player.getPosition());
+        }
+    }
+
+    private int experienceRequiredForLevel(int level) {
+        int clampedLevel = Math.max(level, 1);
+        return BASE_EXPERIENCE_PER_LEVEL + (clampedLevel - 1) * EXPERIENCE_GROWTH_PER_LEVEL;
     }
 }
