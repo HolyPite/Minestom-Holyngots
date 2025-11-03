@@ -25,6 +25,8 @@ import org.example.mmo.item.ItemBootstrap;
 import org.example.mmo.item.ItemEventsCustom;
 import org.example.mmo.item.ItemEventsGlobal;
 import org.example.mmo.npc.NpcBootstrap;
+import org.example.mmo.npc.mob.MobAiService;
+import org.example.mmo.npc.mob.MobSpawnService;
 import org.example.mmo.npc.dialog.NpcDialogService;
 import org.example.mmo.player.PlayerQuestListener;
 import org.example.mmo.quest.QuestManager;
@@ -42,6 +44,7 @@ public final class GameLifecycle {
     private final EventNode<EntityEvent> entityNode;
     private final EventNode<InventoryEvent> inventoryNode;
     private final PlayerDataService playerDataService;
+    private final MobSpawnService mobSpawnService = new MobSpawnService();
 
     public GameLifecycle(InstanceRegistry instances) {
         this.playerDataService = new PlayerDataService(new JsonPlayerDataRepository(), instances);
@@ -73,6 +76,7 @@ public final class GameLifecycle {
 
     private void registerGameplay(InstanceRegistry instances) {
         DamageTracker.init();
+        MobAiService.init(entityNode);
         CombatBossBarService.init(gameNode, playerNode);
         CombatListener.init(gameNode);
         ItemEventsGlobal.init(gameNode);
@@ -108,5 +112,9 @@ public final class GameLifecycle {
 
     public PlayerDataService playerDataService() {
         return playerDataService;
+    }
+
+    public MobSpawnService mobSpawnService() {
+        return mobSpawnService;
     }
 }

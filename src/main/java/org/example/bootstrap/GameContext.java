@@ -7,6 +7,7 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.event.trait.InventoryEvent;
 import org.example.mmo.player.data.PlayerDataService;
+import org.example.mmo.npc.mob.MobSpawnService;
 
 /**
  * Holds shared singletons that represent the running game context.
@@ -54,5 +55,9 @@ public final class GameContext {
 
     public EventNode<InventoryEvent> inventoryNode() {
         return lifecycle.inventoryNode();
+    }
+
+    public MobSpawnService mobSpawnService() {
+        return lifecycle.mobSpawnService();
     }
 }
