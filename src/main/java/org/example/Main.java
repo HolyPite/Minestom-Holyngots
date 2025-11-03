@@ -7,7 +7,6 @@ import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
-import net.minestom.server.utils.mojang.MojangUtils;
 import org.example.bootstrap.GameContext;
 import org.example.bootstrap.GameLifecycle;
 import org.example.bootstrap.InstanceBootstrap;
