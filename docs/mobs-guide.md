@@ -1,150 +1,141 @@
-# Guide de création d’un mob personnalisée
+# Mob Creation & Spawning Zones Guide
 
-Ce document décrit le flux recommandé pour définir un nouveau mob, lui associer une IA personnalisée puis le faire apparaître dans une instance de jeu avec le système `org.example.mmo.npc.mob`.
+This note explains how to introduce a new mob, attach an AI behaviour, and populate it inside the world using the spawning-zone system.
 
-## 1. Définir l’IA (behaviour)
+## 1. Create behaviours
 
-Les comportements propres au gameplay se programment en implémentant l’interface `MobBehaviour`.  
-Chaque instance reçoit les événements de cycle de vie (`onSpawn`, `onTick`, `onDamaged`, `onDeath`, etc.).
+Gameplay logic lives inside implementations of `MobBehaviour`. Extend `MobBehaviourAdapter` when you only need a few hooks:
 
 ```java
 package org.example.mmo.npc.mob.behaviour.impl;
 
 import net.minestom.server.entity.Entity;
-import net.minestom.server.entity.LivingEntity;
+import net.minestom.server.entity.Player;
+import org.example.mmo.npc.mob.MobBehaviourAdapter;
 import org.example.mmo.npc.mob.MobInstance;
-import org.example.mmo.npc.mob.behaviour.MobBehaviour;
 
-public final class BerserkerBehaviour implements MobBehaviour {
-
-    private final LivingEntity entity;
-
-    public BerserkerBehaviour(LivingEntity entity) {
-        this.entity = entity;
-    }
+public final class BerserkShoutBehaviour extends MobBehaviourAdapter {
 
     @Override
     public void onAggro(MobInstance instance, Entity target) {
-        entity.setSprinting(true); // Exemple : effet visuel
-    }
-
-    @Override
-    public void onDamaged(MobInstance instance, net.minestom.server.entity.damage.Damage damage) {
-        entity.setVelocity(entity.getVelocity().mul(1.05)); // boost simple
-    }
-
-    @Override
-    public void onDeath(MobInstance instance, Entity killer) {
-        entity.setCustomNameVisible(false);
+        if (target instanceof Player player) {
+            player.sendMessage("Le berserker fonce sur vous !");
+        }
     }
 }
 ```
 
-Pour raccorder ce comportement à un archétype, exposez un `MobBehaviourFactory` :
+Factory assignment happens through `MobBehaviourFactory`:  
+`MobBehaviourFactory berserkShout = (archetype, entity) -> new BerserkShoutBehaviour();`
+
+## 2. Define the mob archetype
+
+`MobArchetype` captures ID, quest-friendly name, entity type, stats, equipment, loot, AI and behaviours.  
+You can refer to the demo archetypes in `org.example.mmo.npc.mob.demo` (`ForestWolfMob`, `BanditSkirmisherMob`, `BanditArcherMob`) for real examples.
 
 ```java
-MobBehaviourFactory berserker = (archetype, entity) -> new BerserkerBehaviour(entity);
-```
-
-## 2. Créer l’archétype
-
-Un archétype (`MobArchetype`) encapsule l’entité Minestom, les stats, l’équipement, le loot et la liste de comportements.
-Utilisez le builder statique fourni :
-
-```java
+import net.kyori.adventure.text.Component;
+import net.minestom.server.entity.EntityCreature;
 import net.minestom.server.entity.EntityType;
-import net.minestom.server.entity.ai.EntityAIGroupBuilder;
-import net.minestom.server.entity.ai.goal.MeleeAttackGoal;
-import net.minestom.server.entity.ai.goal.RandomStrollGoal;
-import net.minestom.server.entity.ai.target.ClosestEntityTarget;
-import net.minestom.server.entity.ai.target.LastEntityDamagerTarget;
-import net.minestom.server.utils.time.TimeUnit;
+import org.example.mmo.item.datas.StatType;
 import org.example.mmo.npc.mob.MobArchetype;
-import org.example.mmo.npc.mob.MobEquipment;
 import org.example.mmo.npc.mob.MobRegistry;
 import org.example.mmo.npc.mob.MobTag;
-import org.example.mmo.npc.mob.behaviour.MobBehaviourFactory;
-import org.example.mmo.npc.mob.loot.MobLootEntry;
+import org.example.mmo.npc.mob.ai.MobAiFactories;
+import org.example.mmo.npc.mob.behaviour.impl.BerserkShoutBehaviour;
 import org.example.mmo.npc.mob.loot.MobLootTable;
-import org.example.mmo.item.datas.StatType;
 
-MobBehaviourFactory berserker = (archetype, entity) -> new BerserkerBehaviour(entity);
-
-MobEquipment equipment = MobEquipment.builder()
-        .equip(net.minestom.server.entity.EquipmentSlot.MAIN_HAND, "iron_sword")
-        .build();
-
-var aiGroup = new EntityAIGroupBuilder()
-        .addGoalSelector(new RandomStrollGoal(null, 20))            // null remplacé lors de l'appel build()
-        .addGoalSelector(new MeleeAttackGoal(null, 1.6, 20, TimeUnit.SERVER_TICK))
-        .addTargetSelector(new LastEntityDamagerTarget(null, 32))
-        .addTargetSelector(new ClosestEntityTarget(null, 32, e -> e instanceof net.minestom.server.entity.Player))
-        .build();
-
-MobArchetype berserkerZombie = MobArchetype.builder("berserker_zombie", EntityType.ZOMBIE)
-        .entityFactory(net.minestom.server.entity.type.monster.EntityZombie::new)
+MobArchetype berserker = MobArchetype.builder("berserker_raider", "Pillard berserker", EntityType.ZOMBIE)
+        .entityFactory(() -> new EntityCreature(EntityType.ZOMBIE))
+        .aiFactory(MobAiFactories.meleeCharger(10, 1.3, 25))
         .stat(StatType.HEALTH, 40)
-        .equipment(equipment)
-        .lootTable(new MobLootTable(List.of(
-                new MobLootEntry("rotten_flesh", 0.75, 1, 3, MobLootCondition.ALWAYS_TRUE),
-                new MobLootEntry("iron_ingot", 0.05, 1, 1, context -> context.killer().isPresent())
-        )))
         .tag(MobTag.AGGRESSIVE)
-        .baseAiGroup(aiGroup)
-        .behaviourFactory(berserker)
+        .displayName(Component.text("Pillard berserker"))
+        .behaviourFactory((archetype, entity) -> new BerserkShoutBehaviour())
+        .lootTable(MobLootTable.EMPTY)
         .build();
 
-MobRegistry.register(berserkerZombie);
+MobRegistry.register(berserker);
 ```
 
-> 🔁 Note : si vous définissez un `EntityAIGroup`, remplacez les `null` par l’entité réelle avant d’appeler `build()`. Une option est d’instancier l’AI dans le `MobBehaviourFactory` ou via un helper qui injecte l’entité.
+Key points:
+- `id` is the code reference (use it for quests/objectives); `name` is the human-readable label.
+- `entityFactory` should return a `LivingEntity` (often `new EntityCreature(EntityType.XXX)`).
+- Use `MobAiFactories` for common pathing/attack combos or provide your custom `MobAiFactory`.
+- Behaviours are optional; provide as many factories as needed.
 
-## 3. Faire apparaître l’entité dans le monde
+The demonstration mobs are registered in `MobBootstrap.init()`.
 
-Le `MobSpawnService` centralise l’instanciation et se récupère via `GameContext`.
+## 3. Spawn on demand
+
+To spawn an archetype manually:
 
 ```java
 import net.minestom.server.coordinate.Pos;
 import org.example.bootstrap.GameContext;
-import org.example.mmo.npc.mob.MobSpawnService;
 import org.example.mmo.npc.mob.MobRegistry;
 
-MobSpawnService spawner = GameContext.get().mobSpawnService();
-var archetype = MobRegistry.get("berserker_zombie");
+var archetype = MobRegistry.get("berserker_raider");
 if (archetype != null) {
-    spawner.spawn(archetype, instance, new Pos(10, 65, -5));
+    GameContext.get().mobSpawnService().spawn(archetype, instance, new Pos(12, 65, -8));
 }
 ```
 
-Le service :
+`MobSpawnService` applies stats, equipment, AI, behaviours and adds the tracking tag `mmo:mob_archetype`.
 
-- instancie l’entité en utilisant `entityFactory`;
-- applique les stats, l’équipement et la `customName`;
-- étiquette l’entité avec `Tag.String("mmo:mob_archetype")` pour faciliter l’identification ;
-- crée les comportements (`MobBehaviourFactory`) et enregistre l’instance auprès de `MobAiService`.
+## 4. Configure spawning zones
 
-## 4. Drop de loot et extensions
+Spawning zones keep hunting areas populated. Define a zone and register it with `MobSpawningZoneService`.  
+See `org.example.mmo.npc.mob.zone.demo` (`WolfGroveZone`, `BanditCampZone`) for ready-made hunting grounds.
 
-- Les drops sont gérés par `MobLootTable` + `MobLootRoller`. Attachez un listener sur `EntityDeathEvent` pour appeler :
+```java
+import java.time.Duration;
+import java.util.List;
+import net.minestom.server.coordinate.Pos;
+import org.example.bootstrap.GameContext;
+import org.example.mmo.npc.mob.zone.MobSpawningZone;
 
-  ```java
-  var mobInstance = GameContext.get().mobSpawnService().get(entityUuid);
-  var context = MobLootContext.of(mobInstance, killer, looter, lastDamager);
-  List<ItemStack> drops = MobLootRoller.generateLoot(mobInstance.archetype(), context, new Random());
-  ```
+MobSpawningZone wolves = MobSpawningZone.create(
+        "wolves_grove",
+        "Clairière des loups",
+        instance,
+        new Pos(48, 64, -32),
+        12.0,
+        List.of("forest_wolf", "bandit_skirmisher"),
+        List.of(4, 2),
+        Duration.ofSeconds(30)
+);
 
-- Pour la persistance ou des spawns scriptés, ajoutez un service dédié (ex : `MobSpawnScheduler`) qui orchestre `MobSpawnService`.
+GameContext.get().mobSpawningZoneService().registerZone(wolves);
+```
 
-## 5. Tests et validations
+- `mobIds` and `maxAlive` lists must have the same length.
+- Each slot keeps up to the specified number of mobs alive at any time; when one dies, a respawn token is queued after the configured delay.
+- Zones automatically spawn their initial population and re-populate as long as the zone stays registered.
 
-- Compilez (`./gradlew build`), puis chargez une instance de dev et invoquez le mob (commande à venir).
-- Vérifiez que la boss-bar et l’action-bar réagissent correctement lorsque vous combattez le mob.
-- Inspectez la présence du tag `mmo:mob_archetype` (via un outil d’administration ou une commande de debug).
+To remove a zone: `GameContext.get().mobSpawningZoneService().unregisterZone("wolves_grove");`
 
-## 6. Bonnes pratiques
+## 5. Loot generation
 
-- Rassemblez les archetypes standards dans un module dédié (ex : `MobBootstrap`) pour un initialisation unique.
-- Réutilisez des `MobBehaviourFactory` composables (ex : `new AggroBroadcastBehaviour(...)`) afin de mutualiser les patterns d’IA.
-- Prévoyez des tests unitaires pour la génération de loot et les règles d’aggro complexes.
+Attach loot entries to the archetype and use `MobLootRoller` (usually inside an `EntityDeathEvent` listener) to materialise drops:
 
-En suivant ces étapes, vous pouvez créer rapidement de nouveaux ennemis avec un comportement cohérent, tout en conservant une architecture propre et extensible. Bon développement !
+```java
+var mobInstance = GameContext.get().mobSpawnService().get(entity.getUuid());
+mobInstance.ifPresent(instance -> {
+    var context = MobLootContext.of(instance, killer, killer instanceof Player ? (Player) killer : null, null);
+    var drops = MobLootRoller.generateLoot(instance.archetype(), context, RANDOM);
+    drops.forEach(stack -> instance.instance().dropItem(stack, entity.getPosition()));
+});
+```
+
+## 6. Validation checklist
+
+- Run `./gradlew build` once write access is available.
+- Spawn the new archetype via command or zone, verify:
+  * custom name matches expectations,
+  * behaviours trigger (logs/messages/effects),
+  * AI chases intended targets.
+- Kill the mob and ensure the spawning zone replenishes the population after the respawn delay.
+- Check the entity carries the `mmo:mob_archetype` tag with the correct ID.
+
+With these pieces you can script quêtes, hunting grounds, and reactive mobs while keeping the implementation modular and testable.

@@ -8,6 +8,7 @@ import net.minestom.server.event.entity.EntityDamageEvent;
 import net.minestom.server.event.entity.EntityDeathEvent;
 import net.minestom.server.event.entity.EntityTickEvent;
 import net.minestom.server.event.trait.EntityEvent;
+import org.example.bootstrap.GameContext;
 import org.example.mmo.npc.mob.behaviour.MobBehaviour;
 
 import java.util.List;
@@ -54,7 +55,8 @@ public final class MobAiService {
         });
 
         entityNode.addListener(EntityDeathEvent.class, event -> {
-            MobInstance instance = ACTIVE.remove(event.getEntity().getUuid());
+            UUID uuid = event.getEntity().getUuid();
+            MobInstance instance = ACTIVE.remove(uuid);
             if (instance == null) {
                 return;
             }
@@ -66,6 +68,7 @@ public final class MobAiService {
             Entity killer = lastDamage != null ? lastDamage.getAttacker() : null;
             invoke(instance.behaviours(), behaviour -> behaviour.onDeath(instance, killer));
             invoke(instance.behaviours(), behaviour -> behaviour.onCleanup(instance));
+            GameContext.get().mobSpawnService().remove(uuid);
         });
     }
 

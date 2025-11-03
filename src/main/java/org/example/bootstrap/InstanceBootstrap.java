@@ -28,6 +28,7 @@ public final class InstanceBootstrap {
         instance.setGenerator(u -> u.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
         instance.setChunkSupplier(LightingChunk::new);
         instance.setExplosionSupplier(ExplosionSupplierUtils.DEFAULT);
+        instance.enableAutoChunkLoad(true);
 
         return instance;
     }

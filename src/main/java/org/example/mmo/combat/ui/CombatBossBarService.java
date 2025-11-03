@@ -2,7 +2,6 @@ package org.example.mmo.combat.ui;
 
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.LivingEntity;
@@ -39,7 +38,7 @@ public final class CombatBossBarService {
 
         MinecraftServer.getSchedulerManager()
                 .buildTask(CombatBossBarService::tick)
-                .repeat(TaskSchedule.seconds(1))
+                .repeat(TaskSchedule.tick(2))
                 .schedule();
     }
 
@@ -87,7 +86,7 @@ public final class CombatBossBarService {
         float health = Math.max(0f, target.getHealth());
         float progress = Math.max(0f, Math.min(1f, maxHealth > 0f ? health / maxHealth : 0f));
         BossBar.Color color = chooseColor(progress);
-        Component title = buildTitle(target, health, maxHealth);
+        Component title = HealthUtils.buildHealthComponent(target, health, maxHealth);
 
         BossBarContext context = BARS.computeIfAbsent(player.getUuid(), uuid -> {
             BossBar bar = BossBar.bossBar(title, progress, color, BossBar.Overlay.PROGRESS);
@@ -129,7 +128,7 @@ public final class CombatBossBarService {
                 float progress = Math.max(0f, Math.min(1f, maxHealth > 0f ? health / maxHealth : 0f));
                 context.bossBar.progress(progress);
                 context.bossBar.color(chooseColor(progress));
-                context.bossBar.name(buildTitle(context.target, health, maxHealth));
+                context.bossBar.name(HealthUtils.buildHealthComponent(context.target, health, maxHealth));
             }
             return expired;
         });
@@ -140,19 +139,6 @@ public final class CombatBossBarService {
         if (context != null) {
             player.hideBossBar(context.bossBar);
         }
-    }
-
-    private static Component buildTitle(LivingEntity target, float health, float maxHealth) {
-        int roundedHealth = Math.round(health);
-        int roundedMax = Math.round(maxHealth);
-        Component name = target.getCustomName() != null
-                ? target.getCustomName()
-                : Component.text(target.getEntityType().name().replace('_', ' '), NamedTextColor.WHITE);
-        return Component.text()
-                .append(name)
-                .append(Component.text(" ", NamedTextColor.WHITE))
-                .append(Component.text(roundedHealth + "/" + roundedMax + " PV", NamedTextColor.GRAY))
-                .build();
     }
 
     private static BossBar.Color chooseColor(float progress) {

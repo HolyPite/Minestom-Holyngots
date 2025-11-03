@@ -1,10 +1,11 @@
 package org.example.mmo.npc.mob;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.minestom.server.entity.EntityType;
-import net.minestom.server.entity.ai.EntityAIGroup;
+import org.example.mmo.item.datas.StatType;
 import org.example.mmo.npc.mob.behaviour.MobBehaviourFactory;
 import org.example.mmo.npc.mob.loot.MobLootTable;
-import org.example.mmo.item.datas.StatType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -22,6 +24,8 @@ import java.util.Set;
 public final class MobArchetype {
 
     private final String id;
+    private final String name;
+    private final Component displayName;
     private final EntityType entityType;
     private final Map<StatType, Double> stats;
     private final MobEquipment equipment;
@@ -29,11 +33,13 @@ public final class MobArchetype {
     private final Optional<MobRiderConfig> riderConfig;
     private final Set<MobTag> tags;
     private final List<MobBehaviourFactory> behaviourFactories;
-    private final EntityAIGroup baseAiGroup;
+    private final MobAiFactory aiFactory;
     private final MobEntityFactory entityFactory;
 
     private MobArchetype(Builder builder) {
         this.id = builder.id;
+        this.name = builder.name;
+        this.displayName = builder.displayName != null ? builder.displayName : Component.text(builder.name);
         this.entityType = builder.entityType;
         this.stats = Collections.unmodifiableMap(new EnumMap<>(builder.stats));
         this.equipment = builder.equipment != null ? builder.equipment : MobEquipment.EMPTY;
@@ -41,12 +47,20 @@ public final class MobArchetype {
         this.riderConfig = Optional.ofNullable(builder.riderConfig);
         this.tags = Set.copyOf(builder.tags);
         this.behaviourFactories = List.copyOf(builder.behaviourFactories);
-        this.baseAiGroup = builder.baseAiGroup;
+        this.aiFactory = builder.aiFactory;
         this.entityFactory = builder.entityFactory;
     }
 
     public String id() {
         return id;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public Component displayName() {
+        return displayName;
     }
 
     public EntityType entityType() {
@@ -77,21 +91,22 @@ public final class MobArchetype {
         return behaviourFactories;
     }
 
-    public Optional<EntityAIGroup> baseAiGroup() {
-        return Optional.ofNullable(baseAiGroup);
+    public Optional<MobAiFactory> aiFactory() {
+        return Optional.ofNullable(aiFactory);
     }
 
     public MobEntityFactory entityFactory() {
         return entityFactory;
     }
 
-    public static Builder builder(String id, EntityType entityType) {
-        return new Builder(id, entityType);
+    public static Builder builder(String id, String name, EntityType entityType) {
+        return new Builder(id, name, entityType);
     }
 
     public static final class Builder {
 
         private final String id;
+        private final String name;
         private final EntityType entityType;
         private final EnumMap<StatType, Double> stats = new EnumMap<>(StatType.class);
         private MobEquipment equipment;
@@ -99,10 +114,12 @@ public final class MobArchetype {
         private MobRiderConfig riderConfig;
         private final Set<MobTag> tags = EnumSet.noneOf(MobTag.class);
         private final List<MobBehaviourFactory> behaviourFactories = new ArrayList<>();
-        private EntityAIGroup baseAiGroup;
+        private Component displayName;
+        private MobAiFactory aiFactory;
         private MobEntityFactory entityFactory;
 
-        private Builder(String id, EntityType entityType) {
+        private Builder(String id, String name, EntityType entityType) {
+            this.name = Objects.requireNonNull(name, "name");
             this.id = id;
             this.entityType = entityType;
         }
@@ -147,8 +164,13 @@ public final class MobArchetype {
             return this;
         }
 
-        public Builder baseAiGroup(EntityAIGroup baseAiGroup) {
-            this.baseAiGroup = baseAiGroup;
+        public Builder displayName(Component displayName) {
+            this.displayName = displayName;
+            return this;
+        }
+
+        public Builder aiFactory(MobAiFactory aiFactory) {
+            this.aiFactory = aiFactory;
             return this;
         }
 

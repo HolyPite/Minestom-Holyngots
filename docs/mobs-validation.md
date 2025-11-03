@@ -14,6 +14,7 @@ Manual
   - metadata tag `mmo:mob_archetype` is present on the entity.
 - Kill the mob to confirm loot drops once the drop hook is wired.
 - Verify boss bar/action bar integrations still function while attacking the mob.
+- Register a `MobSpawningZone` (e.g. `WolfGroveZone`, `BanditCampZone`), watch it fill to the configured population, then confirm respawn timing once mobs are cleared.
 
 Follow-ups
 ----------

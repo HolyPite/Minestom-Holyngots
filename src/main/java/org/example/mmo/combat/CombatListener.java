@@ -27,6 +27,10 @@ public class CombatListener {
 
             if (!(damager instanceof LivingEntity attacker) || !(target instanceof LivingEntity victim)) return;
 
+            if (!(attacker instanceof Player) && !(victim instanceof Player)) {
+                return;
+            }
+
             // --- 1. Invulnerability Check (Fixes NPC health bar bug) ---
             if (victim.isInvulnerable()) {
                 return; // Do not process combat logic for invulnerable entities
