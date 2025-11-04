@@ -35,6 +35,7 @@ public final class MobArchetype {
     private final List<MobBehaviourFactory> behaviourFactories;
     private final MobAiFactory aiFactory;
     private final MobEntityFactory entityFactory;
+    private final double lootContributionThreshold;
 
     private MobArchetype(Builder builder) {
         this.id = builder.id;
@@ -49,6 +50,7 @@ public final class MobArchetype {
         this.behaviourFactories = List.copyOf(builder.behaviourFactories);
         this.aiFactory = builder.aiFactory;
         this.entityFactory = builder.entityFactory;
+        this.lootContributionThreshold = clampThreshold(builder.lootContributionThreshold);
     }
 
     public String id() {
@@ -99,6 +101,17 @@ public final class MobArchetype {
         return entityFactory;
     }
 
+    public double lootContributionThreshold() {
+        return lootContributionThreshold;
+    }
+
+    private double clampThreshold(double value) {
+        if (Double.isNaN(value) || Double.isInfinite(value)) {
+            return 0.1d;
+        }
+        return Math.max(0d, Math.min(1d, value));
+    }
+
     public static Builder builder(String id, String name, EntityType entityType) {
         return new Builder(id, name, entityType);
     }
@@ -117,6 +130,7 @@ public final class MobArchetype {
         private Component displayName;
         private MobAiFactory aiFactory;
         private MobEntityFactory entityFactory;
+        private double lootContributionThreshold = 0.1d;
 
         private Builder(String id, String name, EntityType entityType) {
             this.name = Objects.requireNonNull(name, "name");
@@ -176,6 +190,11 @@ public final class MobArchetype {
 
         public Builder entityFactory(MobEntityFactory factory) {
             this.entityFactory = factory;
+            return this;
+        }
+
+        public Builder lootContributionThreshold(double threshold) {
+            this.lootContributionThreshold = threshold;
             return this;
         }
 

@@ -41,6 +41,7 @@ public final class SunkenGuardianMob {
                 .stat(StatType.HEALTH, 60)
                 .stat(StatType.ARMOR, 18)
                 .stat(StatType.ATTACK, 18)
+                .lootContributionThreshold(0.12d)
                 .equipment(equipment)
                 .tag(MobTag.AGGRESSIVE)
                 .aiFactory(new SunkenGuardianAiFactory(1.0, 30, 40, 28f))

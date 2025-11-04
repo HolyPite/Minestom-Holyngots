@@ -2,6 +2,7 @@ package org.example.mmo.npc.mob;
 
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.LivingEntity;
+import net.minestom.server.entity.Player;
 import net.minestom.server.entity.damage.Damage;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.entity.EntityDamageEvent;
@@ -9,12 +10,22 @@ import net.minestom.server.event.entity.EntityDeathEvent;
 import net.minestom.server.event.entity.EntityTickEvent;
 import net.minestom.server.event.trait.EntityEvent;
 import org.example.bootstrap.GameContext;
+import org.example.mmo.combat.history.DamageHistory;
+import org.example.mmo.combat.history.DamageRecord;
+import org.example.mmo.combat.history.DamageTracker;
+import org.example.mmo.item.ItemDelivery;
 import org.example.mmo.npc.mob.behaviour.MobBehaviour;
+import org.example.mmo.npc.mob.loot.MobLootContext;
+import org.example.mmo.npc.mob.loot.MobLootRoller;
 
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.HashMap;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +78,7 @@ public final class MobAiService {
             Damage lastDamage = livingEntity.getLastDamageSource();
             Entity killer = lastDamage != null ? lastDamage.getAttacker() : null;
             invoke(instance.behaviours(), behaviour -> behaviour.onDeath(instance, killer));
+            distributeLoot(instance, livingEntity, killer);
             invoke(instance.behaviours(), behaviour -> behaviour.onCleanup(instance));
             GameContext.get().mobSpawnService().remove(uuid);
         });
@@ -97,5 +109,82 @@ public final class MobAiService {
     @FunctionalInterface
     private interface BehaviourConsumer {
         void accept(MobBehaviour behaviour);
+    }
+
+    private static void distributeLoot(MobInstance instance, LivingEntity deadEntity, Entity killer) {
+        DamageHistory history = DamageTracker.getHistory(deadEntity);
+        if (history == null) {
+            if (killer instanceof Player player) {
+                rollLootForPlayer(instance, deadEntity, killer, player);
+            }
+            return;
+        }
+
+        List<DamageRecord> records = history.getRecords();
+        if (records.isEmpty()) {
+            if (killer instanceof Player player) {
+                rollLootForPlayer(instance, deadEntity, killer, player);
+            }
+            return;
+        }
+
+        Map<Player, Double> contributions = new HashMap<>();
+        double totalDamage = 0d;
+        for (DamageRecord record : records) {
+            Damage damage = record.damage();
+            if (damage == null) {
+                continue;
+            }
+            float amount = damage.getAmount();
+            if (amount <= 0f) {
+                continue;
+            }
+            totalDamage += amount;
+            Entity attacker = damage.getAttacker();
+            if (attacker instanceof Player player) {
+                contributions.merge(player, (double) amount, Double::sum);
+            }
+        }
+
+        if (totalDamage <= 0d || contributions.isEmpty()) {
+            return;
+        }
+
+        double threshold = instance.archetype().lootContributionThreshold();
+        List<Player> eligiblePlayers = new ArrayList<>();
+        for (Entry<Player, Double> entry : contributions.entrySet()) {
+            Player player = entry.getKey();
+            if (player == null || !player.isOnline()) {
+                continue;
+            }
+            double share = entry.getValue() / totalDamage;
+            if (share >= threshold) {
+                eligiblePlayers.add(player);
+            }
+        }
+
+        if (eligiblePlayers.isEmpty()) {
+            return;
+        }
+
+        for (Player player : eligiblePlayers) {
+            rollLootForPlayer(instance, deadEntity, killer, player);
+        }
+    }
+
+    private static void rollLootForPlayer(MobInstance instance,
+                                          LivingEntity deadEntity,
+                                          Entity killer,
+                                          Player looter) {
+        MobLootContext context = MobLootContext.of(instance, killer, looter, deadEntity);
+        var drops = MobLootRoller.generateLoot(instance.archetype(), context, ThreadLocalRandom.current());
+        if (drops.isEmpty()) {
+            return;
+        }
+        var dropInstance = deadEntity.getInstance();
+        var dropPosition = deadEntity.getPosition();
+        for (var stack : drops) {
+            ItemDelivery.giveOrDrop(looter, stack, dropInstance, dropPosition);
+        }
     }
 }
