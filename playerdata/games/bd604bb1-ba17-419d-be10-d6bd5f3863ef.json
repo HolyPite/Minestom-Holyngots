@@ -14,29 +14,44 @@
       "slot": 1
     },
     {
+      "itemId": "mob_bundle:bandit_skirmisher",
+      "amount": 3,
+      "slot": 2
+    },
+    {
+      "itemId": "mob_bundle:bandit_archer",
+      "amount": 3,
+      "slot": 3
+    },
+    {
       "itemId": "sunken_guardian_halberd",
       "amount": 1,
       "slot": 6
     },
     {
       "itemId": "bone",
-      "amount": 6,
+      "amount": 8,
       "slot": 9
     },
     {
       "itemId": "wolf_pelt",
-      "amount": 22,
+      "amount": 26,
       "slot": 10
     },
     {
       "itemId": "wolf_fang",
-      "amount": 7,
+      "amount": 8,
       "slot": 11
     },
     {
       "itemId": "bandit_coin",
-      "amount": 12,
+      "amount": 29,
       "slot": 12
+    },
+    {
+      "itemId": "bandit_orders",
+      "amount": 4,
+      "slot": 13
     },
     {
       "itemId": "stats_grimoire",
@@ -45,20 +60,6 @@
     }
   ],
   "quests": [
-    {
-      "questId": "monster_plague",
-      "stepIndex": 0,
-      "acceptedTime": 1762204090845,
-      "stepStartTime": 1762204090845,
-      "attempts": 1,
-      "stepCompletionTime": 1762275986710,
-      "stepFinalized": false,
-      "objectiveCompletionStatus": {
-        "TextComponentImpl{content\u003d\"Tuer 3 zombies\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
-        "TextComponentImpl{content\u003d\"Tuer 5 squelettes\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
-        "TextComponentImpl{content\u003d\"Tuer 2 araignées\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
-      }
-    },
     {
       "questId": "new_beginning",
       "stepIndex": 0,
@@ -80,16 +81,18 @@
       "objectiveCompletionStatus": {}
     }
   ],
-  "completedQuests": [],
+  "completedQuests": [
+    "monster_plague"
+  ],
   "failedQuests": [],
   "position": {
-    "x": 1.4409377896044273,
+    "x": -2.9065374025755757,
     "y": 40.0,
-    "z": 3.5561851081055913,
-    "yaw": 37.723907,
-    "pitch": 20.128553
+    "z": 4.753884427553556,
+    "yaw": 63.60786,
+    "pitch": 17.02027
   },
-  "lastInstance": "game2",
+  "lastInstance": "game1",
   "questCounters": {
     "monster_plague_zombies": 3,
     "monster_plague_skeletons": 5,

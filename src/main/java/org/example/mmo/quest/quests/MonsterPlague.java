@@ -1,7 +1,6 @@
 package org.example.mmo.quest.quests;
 
 import net.kyori.adventure.text.Component;
-import net.minestom.server.entity.EntityType;
 import org.example.mmo.quest.objectives.KillObjective;
 import org.example.mmo.quest.registry.QuestRegistry;
 import org.example.mmo.quest.structure.Quest;
@@ -18,15 +17,15 @@ public final class MonsterPlague {
     static {
         QuestStep step1 = new QuestStep();
         step1.name = Component.text("Le Fléau des Monstres");
-        step1.description = Component.text("Le vieux chasseur vous a demandé de réduire la menace des monstres dans les environs.");
+        step1.description = Component.text("Le vieux chasseur vous a demandé de réduire la menace des créatures hostiles dans les environs.");
         step1.startNpc = "hunter";
         step1.endNpc = "hunter";
 
         // This step has three objectives that must all be completed.
         step1.objectives = List.of(
-                new KillObjective(EntityType.ZOMBIE, 3, "monster_plague_zombies", Component.text("Tuer 3 zombies")),
-                new KillObjective(EntityType.SKELETON, 5, "monster_plague_skeletons", Component.text("Tuer 5 squelettes")),
-                new KillObjective(EntityType.SPIDER, 2, "monster_plague_spiders", Component.text("Tuer 2 araignées"))
+                new KillObjective("forest_wolf", 4, "monster_plague_wolves", Component.text("Vaincre 4 loups des bois")),
+                new KillObjective("bandit_skirmisher", 5, "monster_plague_skirmishers", Component.text("Terrasser 5 bandits maraudeurs")),
+                new KillObjective("bandit_archer", 3, "monster_plague_archers", Component.text("Abattre 3 archers bandits"))
         );
 
         step1.waitingDialogues = List.of(Component.text("Le travail n'est pas encore terminé. Continuez la chasse !"));

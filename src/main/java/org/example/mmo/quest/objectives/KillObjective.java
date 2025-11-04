@@ -1,30 +1,29 @@
 package org.example.mmo.quest.objectives;
 
 import net.kyori.adventure.text.Component;
-import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
 import org.example.data.data_class.PlayerData;
 import org.example.mmo.quest.api.IQuestObjective;
 
 /**
- * An objective that requires the player to kill a certain number of a specific entity type.
+ * An objective that requires the player to kill a certain number of a specific mob archetype.
  */
 public class KillObjective implements IQuestObjective {
 
-    private final EntityType entityType;
+    private final String mobId;
     private final int count;
     private final String progressId;
     private final Component description;
 
-    public KillObjective(EntityType entityType, int count, String progressId, Component description) {
-        this.entityType = entityType;
+    public KillObjective(String mobId, int count, String progressId, Component description) {
+        this.mobId = mobId;
         this.count = count;
         this.progressId = progressId; // Unique ID to track progress, e.g., "kill_zombies_for_try_quest"
         this.description = description;
     }
 
-    public EntityType getEntityType() {
-        return entityType;
+    public String getMobId() {
+        return mobId;
     }
 
     public String getProgressId() {

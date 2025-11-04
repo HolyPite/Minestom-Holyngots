@@ -2,7 +2,6 @@ package org.example.mmo.quest.quests;
 
 import net.kyori.adventure.text.Component;
 import net.minestom.server.coordinate.Pos;
-import net.minestom.server.entity.EntityType;
 import org.example.mmo.item.ItemRegistry;
 import org.example.mmo.item.items.MATERIALS.Bone;
 import org.example.mmo.quest.objectives.FetchObjective;
@@ -28,8 +27,8 @@ public final class TheGrandTour {
 
         step1.objectives = List.of(
                 new TalkObjective("wizard", Component.text("Consultez l'Archimage"), List.of(Component.text("Le chasseur vous envoie ? Intéressant..."))),
-                new KillObjective(EntityType.ZOMBIE, 5, "grand_tour_zombies", Component.text("Éliminez 5 zombies")),
-                new FetchObjective(Bone.INSTANCE, 3, Component.text("Rapportez 3 os")),
+                new KillObjective("bandit_skirmisher", 5, "grand_tour_bandits", Component.text("Éliminez 5 bandits maraudeurs")),
+                new KillObjective("bandit_skirmisher", 5, "grand_tour_bandits", Component.text("Eliminez 5 bandits maraudeurs")),
                 new LocationObjective(new Pos(-15, 40, 15), 3, Component.text("Trouvez le point de vue caché"))
         );
 

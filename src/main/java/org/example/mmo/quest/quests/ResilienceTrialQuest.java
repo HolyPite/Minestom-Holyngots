@@ -3,7 +3,6 @@ package org.example.mmo.quest.quests;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.coordinate.Pos;
-import net.minestom.server.entity.EntityType;
 import org.example.mmo.quest.objectives.KillObjective;
 import org.example.mmo.quest.objectives.LocationObjective;
 import org.example.mmo.quest.objectives.TalkObjective;
@@ -65,8 +64,8 @@ public final class ResilienceTrialQuest {
         );
 
         QuestStep hunt = new QuestStep();
-        hunt.name = Component.text("Chasse ChronomǸtrǸe");
-        hunt.description = Component.text("Le chasseur veut voir si tu sais rester lucide sous pression : Ǹlimine 2 squelettes avant la fin du compte �� rebours.");
+        hunt.name = Component.text("Chasse Chronometree");
+        hunt.description = Component.text("Le chasseur veut tester ton sang-froid : elimine 2 archers bandits avant la fin du compte a rebours.");
         hunt.startNpc = "hunter";
         hunt.endNpc = "hunter";
         hunt.duration = Duration.ofSeconds(45);
@@ -76,14 +75,14 @@ public final class ResilienceTrialQuest {
         hunt.requiredLevel = 2;
         hunt.objectives = List.of(
                 new KillObjective(
-                        EntityType.SKELETON,
+                        "bandit_archer",
                         2,
-                        "resilience_trial_skeletons",
-                        Component.text("Abattre 2 squelettes")
+                        "resilience_trial_archers",
+                        Component.text("Abattre 2 archers bandits")
                 )
         );
         hunt.waitingDialogues = List.of(
-                Component.text("Pas encore. Tu dois encore te dǸbarrasser de ces squelettes.", NamedTextColor.GRAY)
+                Component.text("Pas encore. Tu dois encore te debarrasser de ces archers.", NamedTextColor.GRAY)
         );
         hunt.failureDialogues = List.of(
                 Component.text("Le temps t'a filǸ entre les doigts. Analyse ton erreur avant de revenir.", NamedTextColor.RED)
