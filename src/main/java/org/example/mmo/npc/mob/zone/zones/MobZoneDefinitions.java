@@ -26,6 +26,15 @@ public final class MobZoneDefinitions {
                     List.of("bandit_skirmisher", "bandit_archer"),
                     List.of(6, 3),
                     Duration.ofSeconds(35)
+            ),
+            new MobZoneDefinition(
+                    "sunken_sanctum",
+                    "Sanctuaire englouti",
+                    new Pos(18.0, 38.0, -72.0),
+                    11.0,
+                    List.of("sunken_guardian"),
+                    List.of(4),
+                    Duration.ofSeconds(30)
             )
     );
 
