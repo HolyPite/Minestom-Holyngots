@@ -14,9 +14,29 @@
       "slot": 1
     },
     {
-      "itemId": "polstron",
+      "itemId": "sunken_guardian_halberd",
       "amount": 1,
-      "slot": 3
+      "slot": 6
+    },
+    {
+      "itemId": "bone",
+      "amount": 6,
+      "slot": 9
+    },
+    {
+      "itemId": "wolf_pelt",
+      "amount": 22,
+      "slot": 10
+    },
+    {
+      "itemId": "wolf_fang",
+      "amount": 7,
+      "slot": 11
+    },
+    {
+      "itemId": "bandit_coin",
+      "amount": 12,
+      "slot": 12
     },
     {
       "itemId": "stats_grimoire",
@@ -31,11 +51,12 @@
       "acceptedTime": 1762204090845,
       "stepStartTime": 1762204090845,
       "attempts": 1,
-      "stepCompletionTime": 0,
+      "stepCompletionTime": 1762275986710,
       "stepFinalized": false,
       "objectiveCompletionStatus": {
         "TextComponentImpl{content\u003d\"Tuer 3 zombies\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
-        "TextComponentImpl{content\u003d\"Tuer 5 squelettes\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
+        "TextComponentImpl{content\u003d\"Tuer 5 squelettes\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
+        "TextComponentImpl{content\u003d\"Tuer 2 araignées\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
       }
     },
     {
@@ -62,17 +83,17 @@
   "completedQuests": [],
   "failedQuests": [],
   "position": {
-    "x": 26.19356811906563,
+    "x": 1.4409377896044273,
     "y": 40.0,
-    "z": 0.5699694408900655,
-    "yaw": 115.49582,
-    "pitch": 2.4787476
+    "z": 3.5561851081055913,
+    "yaw": 37.723907,
+    "pitch": 20.128553
   },
   "lastInstance": "game2",
   "questCounters": {
     "monster_plague_zombies": 3,
     "monster_plague_skeletons": 5,
-    "monster_plague_spiders": 0
+    "monster_plague_spiders": 2
   },
   "questCooldowns": {}
 }

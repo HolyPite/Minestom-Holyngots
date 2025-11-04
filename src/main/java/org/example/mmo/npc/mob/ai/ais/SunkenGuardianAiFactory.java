@@ -7,7 +7,6 @@ import net.minestom.server.entity.ai.EntityAIGroup;
 import net.minestom.server.entity.ai.EntityAIGroupBuilder;
 import net.minestom.server.entity.ai.goal.MeleeAttackGoal;
 import net.minestom.server.entity.ai.goal.RandomLookAroundGoal;
-import net.minestom.server.entity.ai.goal.RandomStrollGoal;
 import net.minestom.server.entity.ai.target.ClosestEntityTarget;
 import net.minestom.server.utils.time.TimeUnit;
 import org.example.mmo.npc.mob.MobAiFactory;
@@ -19,16 +18,13 @@ public final class SunkenGuardianAiFactory implements MobAiFactory {
 
     private final double attackSpeed;
     private final int attackDelayTicks;
-    private final int strollIntervalTicks;
     private final float detectionRange;
 
     public SunkenGuardianAiFactory(double attackSpeed,
                                    int attackDelayTicks,
-                                   int strollIntervalTicks,
                                    float detectionRange) {
         this.attackSpeed = attackSpeed;
         this.attackDelayTicks = attackDelayTicks;
-        this.strollIntervalTicks = strollIntervalTicks;
         this.detectionRange = detectionRange;
     }
 
@@ -39,7 +35,6 @@ public final class SunkenGuardianAiFactory implements MobAiFactory {
         }
         return new EntityAIGroupBuilder()
                 .addGoalSelector(new RandomLookAroundGoal(creature, 2))
-                .addGoalSelector(new RandomStrollGoal(creature, strollIntervalTicks))
                 .addGoalSelector(new MeleeAttackGoal(creature, attackSpeed, attackDelayTicks, TimeUnit.SERVER_TICK))
                 .addTargetSelector(new ClosestEntityTarget(creature, detectionRange, target -> target instanceof Player))
                 .build();

@@ -44,7 +44,7 @@ public final class SunkenGuardianMob {
                 .lootContributionThreshold(0.12d)
                 .equipment(equipment)
                 .tag(MobTag.AGGRESSIVE)
-                .aiFactory(new SunkenGuardianAiFactory(1.0, 30, 40, 28f))
+                .aiFactory(new SunkenGuardianAiFactory(1.0, 30, 28f))
                 .behaviourFactory((archetype, entity) -> new BulwarkShieldBehaviour(entity, 1))
                 .behaviourFactory((archetype, entity) -> new TidalRageBehaviour(entity, 1, 1))
                 .lootTable(SunkenGuardianLoot.TABLE)
