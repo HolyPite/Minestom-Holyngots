@@ -31,7 +31,7 @@ Factory assignment happens through `MobBehaviourFactory`:
 ## 2. Define the mob archetype
 
 `MobArchetype` captures ID, quest-friendly name, entity type, stats, equipment, loot, AI and behaviours.  
-You can refer to the demo archetypes in `org.example.mmo.npc.mob.demo` (`ForestWolfMob`, `BanditSkirmisherMob`, `BanditArcherMob`) for real examples.
+You can refer to the demo archetypes in `org.example.mmo.npc.mob.archetype.demo` (`ForestWolfMob`, `BanditSkirmisherMob`, `BanditArcherMob`) for real examples.
 
 ```java
 import net.kyori.adventure.text.Component;
@@ -47,7 +47,7 @@ import org.example.mmo.npc.mob.loot.MobLootTable;
 
 MobArchetype berserker = MobArchetype.builder("berserker_raider", "Pillard berserker", EntityType.ZOMBIE)
         .entityFactory(() -> new EntityCreature(EntityType.ZOMBIE))
-        .aiFactory(MobAiFactories.meleeCharger(10, 1.3, 25))
+        .aiFactory(MobAiFactories.meleeCharger(1.3, 25))
         .stat(StatType.HEALTH, 40)
         .tag(MobTag.AGGRESSIVE)
         .displayName(Component.text("Pillard berserker"))
@@ -139,3 +139,8 @@ mobInstance.ifPresent(instance -> {
 - Check the entity carries the `mmo:mob_archetype` tag with the correct ID.
 
 With these pieces you can script quêtes, hunting grounds, and reactive mobs while keeping the implementation modular and testable.
+
+
+
+
+

@@ -45,7 +45,7 @@ public final class EnrageOnLowHealthBehaviour extends MobBehaviourAdapter {
         double ratio = entity.getHealth() / maxHealth;
         if (ratio <= thresholdRatio) {
             enraged = true;
-            Component enragedName = Component.text("Enragé ", NamedTextColor.DARK_RED).append(originalName);
+            Component enragedName = Component.text("Enrag\u00E9 ", NamedTextColor.DARK_RED).append(originalName);
             entity.setTag(MobMetadataKeys.DISPLAY_NAME, enragedName);
             HealthUtils.updateHealthBar(entity);
         }
@@ -60,4 +60,3 @@ public final class EnrageOnLowHealthBehaviour extends MobBehaviourAdapter {
         enraged = false;
     }
 }
-

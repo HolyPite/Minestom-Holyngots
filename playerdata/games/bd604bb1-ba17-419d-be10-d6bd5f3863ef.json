@@ -21,48 +21,53 @@
   ],
   "quests": [
     {
-      "questId": "grand_tour",
+      "questId": "monster_plague",
       "stepIndex": 0,
-      "acceptedTime": 1762005436845,
-      "stepStartTime": 1762005436845,
+      "acceptedTime": 1762204090845,
+      "stepStartTime": 1762204090845,
       "attempts": 1,
       "stepCompletionTime": 0,
       "stepFinalized": false,
       "objectiveCompletionStatus": {
-        "TextComponentImpl{content\u003d\"Trouvez le point de vue caché\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
-        "TextComponentImpl{content\u003d\"Consultez l\u0027Archimage\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
-        "TextComponentImpl{content\u003d\"Éliminez 5 zombies\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
+        "TextComponentImpl{content\u003d\"Tuer 3 zombies\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
+        "TextComponentImpl{content\u003d\"Tuer 5 squelettes\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
       }
+    },
+    {
+      "questId": "new_beginning",
+      "stepIndex": 0,
+      "acceptedTime": 1762204090847,
+      "stepStartTime": 1762204090847,
+      "attempts": 1,
+      "stepCompletionTime": 0,
+      "stepFinalized": false,
+      "objectiveCompletionStatus": {}
     },
     {
       "questId": "resilience_recovery",
       "stepIndex": 0,
-      "acceptedTime": 1762005985707,
-      "stepStartTime": 1762005985707,
+      "acceptedTime": 1762204090848,
+      "stepStartTime": 1762204090848,
       "attempts": 1,
       "stepCompletionTime": 0,
       "stepFinalized": false,
       "objectiveCompletionStatus": {}
     }
   ],
-  "completedQuests": [
-    "monster_plague",
-    "new_beginning",
-    "try"
-  ],
+  "completedQuests": [],
   "failedQuests": [],
   "position": {
-    "x": -6.254132415609227,
+    "x": -17.534629243839458,
     "y": 40.0,
-    "z": 12.57989597616232,
-    "yaw": -99.19519,
-    "pitch": 7.604633
+    "z": 4.043651304874347,
+    "yaw": -101.47049,
+    "pitch": 9.74949
   },
   "lastInstance": "game2",
   "questCounters": {
-    "grand_tour_zombies": 5
+    "monster_plague_zombies": 3,
+    "monster_plague_skeletons": 5,
+    "monster_plague_spiders": 0
   },
-  "questCooldowns": {
-    "resilience_recovery": 1762005543745
-  }
+  "questCooldowns": {}
 }
