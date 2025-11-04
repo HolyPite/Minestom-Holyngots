@@ -21,9 +21,9 @@ public final class MobLootRoller {
     private MobLootRoller() {
     }
 
-    public static List<ItemStack> generateLoot(MobArchetype archetype,
-                                               MobLootContext context,
-                                               Random random) {
+    public static List<ItemStack> generateLoot(MobLootContext context,
+                                              Random random) {
+        MobArchetype archetype = context.archetype();
         List<MobLootEntry> rolledEntries = archetype.lootTable().roll(random, context);
         List<ItemStack> drops = new ArrayList<>(rolledEntries.size());
         for (MobLootEntry entry : rolledEntries) {

@@ -14,6 +14,11 @@
       "slot": 1
     },
     {
+      "itemId": "polstron",
+      "amount": 1,
+      "slot": 3
+    },
+    {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
@@ -57,11 +62,11 @@
   "completedQuests": [],
   "failedQuests": [],
   "position": {
-    "x": -17.534629243839458,
+    "x": 26.19356811906563,
     "y": 40.0,
-    "z": 4.043651304874347,
-    "yaw": -101.47049,
-    "pitch": 9.74949
+    "z": 0.5699694408900655,
+    "yaw": 115.49582,
+    "pitch": 2.4787476
   },
   "lastInstance": "game2",
   "questCounters": {

@@ -15,15 +15,13 @@ import org.example.mmo.combat.history.DamageRecord;
 import org.example.mmo.combat.history.DamageTracker;
 import org.example.mmo.item.ItemDelivery;
 import org.example.mmo.npc.mob.behaviour.MobBehaviour;
-import org.example.mmo.npc.mob.loot.MobLootContext;
-import org.example.mmo.npc.mob.loot.MobLootRoller;
+import org.example.mmo.npc.mob.loot.MobLootBundles;
 
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.HashMap;
 import java.util.ArrayList;
 import org.slf4j.Logger;
@@ -112,10 +110,12 @@ public final class MobAiService {
     }
 
     private static void distributeLoot(MobInstance instance, LivingEntity deadEntity, Entity killer) {
+        var dropInstance = deadEntity.getInstance();
+        var dropPosition = deadEntity.getPosition();
         DamageHistory history = DamageTracker.getHistory(deadEntity);
         if (history == null) {
             if (killer instanceof Player player) {
-                rollLootForPlayer(instance, deadEntity, killer, player);
+                giveBundle(instance, player, dropInstance, dropPosition);
             }
             return;
         }
@@ -123,7 +123,7 @@ public final class MobAiService {
         List<DamageRecord> records = history.getRecords();
         if (records.isEmpty()) {
             if (killer instanceof Player player) {
-                rollLootForPlayer(instance, deadEntity, killer, player);
+                giveBundle(instance, player, dropInstance, dropPosition);
             }
             return;
         }
@@ -168,23 +168,18 @@ public final class MobAiService {
         }
 
         for (Player player : eligiblePlayers) {
-            rollLootForPlayer(instance, deadEntity, killer, player);
+            giveBundle(instance, player, dropInstance, dropPosition);
         }
     }
 
-    private static void rollLootForPlayer(MobInstance instance,
-                                          LivingEntity deadEntity,
-                                          Entity killer,
-                                          Player looter) {
-        MobLootContext context = MobLootContext.of(instance, killer, looter, deadEntity);
-        var drops = MobLootRoller.generateLoot(instance.archetype(), context, ThreadLocalRandom.current());
-        if (drops.isEmpty()) {
+    private static void giveBundle(MobInstance instance,
+                                   Player player,
+                                   net.minestom.server.instance.Instance dropInstance,
+                                   net.minestom.server.coordinate.Pos dropPosition) {
+        var bundle = MobLootBundles.createBundleStack(instance.archetype());
+        if (bundle.isAir()) {
             return;
         }
-        var dropInstance = deadEntity.getInstance();
-        var dropPosition = deadEntity.getPosition();
-        for (var stack : drops) {
-            ItemDelivery.giveOrDrop(looter, stack, dropInstance, dropPosition);
-        }
+        ItemDelivery.giveOrDrop(player, bundle, dropInstance, dropPosition);
     }
 }

@@ -30,7 +30,7 @@ public final class MobZoneDefinitions {
             new MobZoneDefinition(
                     "sunken_sanctum",
                     "Sanctuaire englouti",
-                    new Pos(18.0, 38.0, -72.0),
+                    new Pos(18.0, 40.0, -72.0),
                     11.0,
                     List.of("sunken_guardian"),
                     List.of(4),
