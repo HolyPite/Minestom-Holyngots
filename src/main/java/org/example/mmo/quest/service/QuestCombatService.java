@@ -19,7 +19,7 @@ import org.example.mmo.quest.event.QuestObjectiveCompleteEvent;
 import org.example.mmo.quest.event.QuestObjectiveProgressEvent;
 import org.example.mmo.quest.objectives.KillObjective;
 import org.example.mmo.quest.objectives.SlayObjective;
-import org.example.mmo.npc.mob.MobMetadataKeys;
+import org.example.mmo.mob.MobMetadataKeys;
 import org.example.mmo.quest.registry.QuestRegistry;
 import org.example.mmo.quest.structure.Quest;
 import org.example.mmo.quest.structure.QuestProgress;

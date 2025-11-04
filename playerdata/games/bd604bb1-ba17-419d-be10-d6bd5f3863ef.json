@@ -15,56 +15,76 @@
     },
     {
       "itemId": "mob_bundle:bandit_skirmisher",
-      "amount": 3,
+      "amount": 1,
       "slot": 2
-    },
-    {
-      "itemId": "mob_bundle:bandit_archer",
-      "amount": 3,
-      "slot": 3
     },
     {
       "itemId": "sunken_guardian_halberd",
       "amount": 1,
-      "slot": 6
-    },
-    {
-      "itemId": "bone",
-      "amount": 8,
       "slot": 9
     },
     {
-      "itemId": "wolf_pelt",
-      "amount": 26,
+      "itemId": "polstron",
+      "amount": 1,
       "slot": 10
     },
     {
-      "itemId": "wolf_fang",
-      "amount": 8,
+      "itemId": "excalibur",
+      "amount": 1,
       "slot": 11
     },
     {
-      "itemId": "bandit_coin",
-      "amount": 29,
+      "itemId": "wolf_fang",
+      "amount": 17,
       "slot": 12
     },
     {
-      "itemId": "bandit_orders",
-      "amount": 4,
+      "itemId": "wolf_pelt",
+      "amount": 64,
       "slot": 13
+    },
+    {
+      "itemId": "bone",
+      "amount": 27,
+      "slot": 14
+    },
+    {
+      "itemId": "bandit_orders",
+      "amount": 11,
+      "slot": 15
+    },
+    {
+      "itemId": "bandit_coin",
+      "amount": 64,
+      "slot": 16
     },
     {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
+    },
+    {
+      "itemId": "bandit_coin",
+      "amount": 14,
+      "slot": 18
+    },
+    {
+      "itemId": "wolf_pelt",
+      "amount": 1,
+      "slot": 19
+    },
+    {
+      "itemId": "polstron",
+      "amount": 1,
+      "slot": 42
     }
   ],
   "quests": [
     {
       "questId": "new_beginning",
       "stepIndex": 0,
-      "acceptedTime": 1762204090847,
-      "stepStartTime": 1762204090847,
+      "acceptedTime": 1762289154783,
+      "stepStartTime": 1762289154783,
       "attempts": 1,
       "stepCompletionTime": 0,
       "stepFinalized": false,
@@ -73,8 +93,8 @@
     {
       "questId": "resilience_recovery",
       "stepIndex": 0,
-      "acceptedTime": 1762204090848,
-      "stepStartTime": 1762204090848,
+      "acceptedTime": 1762289154783,
+      "stepStartTime": 1762289154783,
       "attempts": 1,
       "stepCompletionTime": 0,
       "stepFinalized": false,
@@ -86,17 +106,13 @@
   ],
   "failedQuests": [],
   "position": {
-    "x": -2.9065374025755757,
+    "x": -4.755272775057916,
     "y": 40.0,
-    "z": 4.753884427553556,
-    "yaw": 63.60786,
-    "pitch": 17.02027
+    "z": 14.311734541411258,
+    "yaw": 95.99243,
+    "pitch": 22.691572
   },
-  "lastInstance": "game1",
-  "questCounters": {
-    "monster_plague_zombies": 3,
-    "monster_plague_skeletons": 5,
-    "monster_plague_spiders": 2
-  },
+  "lastInstance": "game2",
+  "questCounters": {},
   "questCooldowns": {}
 }

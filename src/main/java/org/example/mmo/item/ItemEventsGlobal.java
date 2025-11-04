@@ -16,7 +16,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.timer.TaskSchedule;
 import org.example.bootstrap.GameContext;
 import org.example.mmo.item.datas.Stats;
-import org.example.mmo.npc.mob.loot.MobLootBundles;
+import org.example.mmo.mob.loot.MobLootBundles;
 
 public class ItemEventsGlobal {
     public static void init(EventNode<Event> events){

@@ -7,8 +7,8 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.event.trait.InventoryEvent;
 import org.example.mmo.player.data.PlayerDataService;
-import org.example.mmo.npc.mob.MobSpawnService;
-import org.example.mmo.npc.mob.zone.MobSpawningZoneService;
+import org.example.mmo.mob.MobSpawnService;
+import org.example.mmo.mob.zone.MobSpawningZoneService;
 
 /**
  * Holds shared singletons that represent the running game context.

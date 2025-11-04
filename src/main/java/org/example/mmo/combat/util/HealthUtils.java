@@ -7,7 +7,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.entity.attribute.Attribute;
 import net.minestom.server.entity.damage.Damage;
 import org.example.mmo.item.datas.StatType;
-import org.example.mmo.npc.mob.MobMetadataKeys;
+import org.example.mmo.mob.MobMetadataKeys;
 
 public final class HealthUtils {
 
