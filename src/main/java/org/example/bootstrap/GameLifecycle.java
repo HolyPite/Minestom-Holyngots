@@ -26,7 +26,7 @@ import org.example.mmo.item.ItemEventsCustom;
 import org.example.mmo.item.ItemEventsGlobal;
 import org.example.mmo.npc.NpcBootstrap;
 import org.example.mmo.npc.mob.MobAiService;
-import org.example.mmo.npc.mob.archetype.MobBootstrap;
+import org.example.mmo.npc.mob.MobBootstrap;
 import org.example.mmo.npc.mob.MobSpawnService;
 import org.example.mmo.npc.mob.zone.MobSpawningZoneService;
 import org.example.mmo.npc.mob.zone.MobZoneBootstrap;

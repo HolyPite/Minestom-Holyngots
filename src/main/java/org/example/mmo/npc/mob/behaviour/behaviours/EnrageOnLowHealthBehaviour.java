@@ -1,4 +1,4 @@
-package org.example.mmo.npc.mob.behaviour.impl;
+package org.example.mmo.npc.mob.behaviour.behaviours;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

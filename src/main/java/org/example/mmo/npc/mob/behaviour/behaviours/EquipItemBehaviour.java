@@ -1,4 +1,4 @@
-package org.example.mmo.npc.mob.behaviour.impl;
+package org.example.mmo.npc.mob.behaviour.behaviours;
 
 import net.minestom.server.entity.EquipmentSlot;
 import net.minestom.server.entity.LivingEntity;

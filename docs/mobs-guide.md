@@ -7,7 +7,7 @@ This note explains how to introduce a new mob, attach an AI behaviour, and popul
 Gameplay logic lives inside implementations of `MobBehaviour`. Extend `MobBehaviourAdapter` when you only need a few hooks:
 
 ```java
-package org.example.mmo.npc.mob.behaviour.impl;
+package org.example.mmo.npc.mob.behaviour.behaviours;
 
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
@@ -31,7 +31,7 @@ Factory assignment happens through `MobBehaviourFactory`:
 ## 2. Define the mob archetype
 
 `MobArchetype` captures ID, quest-friendly name, entity type, stats, equipment, loot, AI and behaviours.  
-You can refer to the demo archetypes in `org.example.mmo.npc.mob.archetype.demo` (`ForestWolfMob`, `BanditSkirmisherMob`, `BanditArcherMob`) for real examples.
+You can refer to the demo archetypes in `org.example.mmo.npc.mob.archetype.archetypes` (`ForestWolfMob`, `BanditSkirmisherMob`, `BanditArcherMob`) for real examples.
 
 ```java
 import net.kyori.adventure.text.Component;
@@ -42,7 +42,7 @@ import org.example.mmo.npc.mob.MobArchetype;
 import org.example.mmo.npc.mob.MobRegistry;
 import org.example.mmo.npc.mob.MobTag;
 import org.example.mmo.npc.mob.ai.MobAiFactories;
-import org.example.mmo.npc.mob.behaviour.impl.BerserkShoutBehaviour;
+import org.example.mmo.npc.mob.behaviour.behaviours.BerserkShoutBehaviour;
 import org.example.mmo.npc.mob.loot.MobLootTable;
 
 MobArchetype berserker = MobArchetype.builder("berserker_raider", "Pillard berserker", EntityType.ZOMBIE)
@@ -55,7 +55,9 @@ MobArchetype berserker = MobArchetype.builder("berserker_raider", "Pillard berse
         .lootTable(MobLootTable.EMPTY)
         .build();
 
-MobRegistry.register(berserker);
+MobRegistry.
+
+register(berserker);
 ```
 
 Key points:

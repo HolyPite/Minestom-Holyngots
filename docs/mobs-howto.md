@@ -62,7 +62,7 @@ Attach projectile logic with `MobProjectileUtils.shootArrow(...)` if you need cu
 Behaviours complement AI by reacting to lifecycle events such as spawn, aggro, damage, and death. Extend `MobBehaviourAdapter` when only a subset of hooks is needed.
 
 ```java
-package org.example.mmo.npc.mob.behaviour.impl;
+package org.example.mmo.npc.mob.behaviour.behaviours;
 
 import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Entity;
@@ -103,7 +103,7 @@ import org.example.mmo.npc.mob.MobArchetype;
 import org.example.mmo.npc.mob.MobRegistry;
 import org.example.mmo.npc.mob.MobTag;
 import org.example.mmo.npc.mob.ai.custom.GuardianAiFactory;
-import org.example.mmo.npc.mob.behaviour.impl.RallyingCryBehaviour;
+import org.example.mmo.npc.mob.behaviour.behaviours.RallyingCryBehaviour;
 import org.example.mmo.npc.mob.loot.MobLootTable;
 
 public final class CityGuardianMob {
@@ -151,10 +151,11 @@ Finally, call `CityGuardianMob.register()` from `MobBootstrap.init()` to make th
 Zones are data-first. Add a new entry to `MobZoneDefinitions.ZONES` (or split into your own provider list) using the helper record `MobZoneDefinition`.
 
 ```java
-package org.example.mmo.npc.mob.zone.definition;
+package org.example.mmo.npc.mob.zone.zones;
 
 import java.time.Duration;
 import java.util.List;
+
 import net.minestom.server.coordinate.Pos;
 import org.example.mmo.npc.mob.zone.MobZoneDefinition;
 

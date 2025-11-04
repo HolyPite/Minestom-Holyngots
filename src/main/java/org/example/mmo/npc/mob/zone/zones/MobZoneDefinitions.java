@@ -1,6 +1,7 @@
-package org.example.mmo.npc.mob.zone.definition;
+package org.example.mmo.npc.mob.zone.zones;
 
 import net.minestom.server.coordinate.Pos;
+import org.example.mmo.npc.mob.zone.MobZoneDefinition;
 
 import java.time.Duration;
 import java.util.List;

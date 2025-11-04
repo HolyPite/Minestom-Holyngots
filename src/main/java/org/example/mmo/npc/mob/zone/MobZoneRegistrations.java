@@ -1,7 +1,6 @@
 package org.example.mmo.npc.mob.zone;
 
 import org.example.bootstrap.InstanceRegistry;
-import org.example.mmo.npc.mob.zone.definition.MobZoneDefinition;
 
 import java.util.Collection;
 

@@ -1,7 +1,7 @@
 package org.example.mmo.npc.mob.zone;
 
 import org.example.bootstrap.InstanceRegistry;
-import org.example.mmo.npc.mob.zone.definition.MobZoneDefinitions;
+import org.example.mmo.npc.mob.zone.zones.MobZoneDefinitions;
 
 public final class MobZoneBootstrap {
 

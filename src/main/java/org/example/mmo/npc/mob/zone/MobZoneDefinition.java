@@ -1,4 +1,4 @@
-package org.example.mmo.npc.mob.zone.definition;
+package org.example.mmo.npc.mob.zone;
 
 import net.minestom.server.coordinate.Pos;
 
