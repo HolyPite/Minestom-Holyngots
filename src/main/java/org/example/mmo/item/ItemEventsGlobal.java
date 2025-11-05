@@ -24,6 +24,8 @@ public class ItemEventsGlobal {
         EventNode<PlayerEvent> playerNode = events.findChildren("playerNode",PlayerEvent.class).getFirst();
         EventNode<InventoryEvent> inventoryNode = events.findChildren("inventoryNode", InventoryEvent.class).getFirst();
 
+        ItemProjectileListener.init(playerNode);
+
         // The InventoryItemChangeEvent listener was removed as it could fire too early
         // during the player configuration phase, causing crashes.
         // The initial stat refresh is now handled in the PlayerSpawnEvent in Main.java.

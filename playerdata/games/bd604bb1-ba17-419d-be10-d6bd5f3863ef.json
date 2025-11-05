@@ -14,6 +14,21 @@
       "slot": 1
     },
     {
+      "itemId": "frostcaster_staff",
+      "amount": 1,
+      "slot": 2
+    },
+    {
+      "itemId": "arcane_wand",
+      "amount": 1,
+      "slot": 3
+    },
+    {
+      "itemId": "hunter_shortbow",
+      "amount": 1,
+      "slot": 4
+    },
+    {
       "itemId": "bone",
       "amount": 2,
       "slot": 9
@@ -25,7 +40,7 @@
     },
     {
       "itemId": "bandit_orders",
-      "amount": 1,
+      "amount": 2,
       "slot": 11
     },
     {
@@ -35,7 +50,7 @@
     },
     {
       "itemId": "bandit_coin",
-      "amount": 9,
+      "amount": 26,
       "slot": 13
     },
     {
@@ -81,13 +96,13 @@
   ],
   "failedQuests": [],
   "position": {
-    "x": 16.05653064814908,
+    "x": 2.8635427937564613,
     "y": 40.0,
-    "z": 30.18509223564815,
-    "yaw": 126.27476,
-    "pitch": 6.4955306
+    "z": 20.70318852230492,
+    "yaw": 167.04816,
+    "pitch": 2.042131
   },
-  "lastInstance": "game2",
+  "lastInstance": "game1",
   "questCounters": {},
   "questCooldowns": {}
 }
