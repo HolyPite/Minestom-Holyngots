@@ -15,7 +15,7 @@
     },
     {
       "itemId": "mob_bundle:forest_wolf",
-      "amount": 9,
+      "amount": 14,
       "slot": 2
     },
     {
@@ -86,11 +86,11 @@
   ],
   "failedQuests": [],
   "position": {
-    "x": 103.48029477551518,
+    "x": 97.9841203805239,
     "y": 40.0,
-    "z": -42.38869727992182,
-    "yaw": 33.550774,
-    "pitch": 4.3143916
+    "z": -20.34161441920511,
+    "yaw": 54.490597,
+    "pitch": 9.985543
   },
   "lastInstance": "game2",
   "questCounters": {},
