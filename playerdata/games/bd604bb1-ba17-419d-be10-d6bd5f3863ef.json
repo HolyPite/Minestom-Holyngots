@@ -14,12 +14,42 @@
       "slot": 1
     },
     {
+      "itemId": "bone",
+      "amount": 2,
+      "slot": 9
+    },
+    {
+      "itemId": "polstron",
+      "amount": 1,
+      "slot": 10
+    },
+    {
+      "itemId": "bandit_orders",
+      "amount": 1,
+      "slot": 11
+    },
+    {
+      "itemId": "wolf_pelt",
+      "amount": 10,
+      "slot": 12
+    },
+    {
+      "itemId": "bandit_coin",
+      "amount": 9,
+      "slot": 13
+    },
+    {
+      "itemId": "wolf_fang",
+      "amount": 4,
+      "slot": 14
+    },
+    {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
     },
     {
-      "itemId": "polstron",
+      "itemId": "sunken_guardian_plate",
       "amount": 1,
       "slot": 42
     }
@@ -51,11 +81,11 @@
   ],
   "failedQuests": [],
   "position": {
-    "x": 1.8758411985335448,
+    "x": 16.05653064814908,
     "y": 40.0,
-    "z": 14.542663681760757,
-    "yaw": 101.696144,
-    "pitch": 10.221786
+    "z": 30.18509223564815,
+    "yaw": 126.27476,
+    "pitch": 6.4955306
   },
   "lastInstance": "game2",
   "questCounters": {},

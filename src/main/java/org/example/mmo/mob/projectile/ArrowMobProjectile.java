@@ -27,9 +27,8 @@ public final class ArrowMobProjectile extends AbstractMobProjectile {
 
     private boolean critical;
     private boolean firstTick = true;
-
     public ArrowMobProjectile(Entity shooter) {
-        super(EntityType.ARROW, shooter);
+        super(shooter, EntityType.ARROW);
         setBoundingBox(SMALL_BOUNDING_BOX);
         this.collidesWithEntities = false;
         if (getEntityMeta() instanceof ProjectileMeta projectileMeta) {
@@ -69,7 +68,7 @@ public final class ArrowMobProjectile extends AbstractMobProjectile {
     }
 
     @Override
-    public void shoot(@NotNull Point from, @NotNull Point to, double power, double spread) {
+    protected void launchInternal(@NotNull Point from, @NotNull Point to, double power, double spread) {
         var instance = shooter.getInstance();
         if (instance == null) {
             return;

@@ -11,7 +11,8 @@ import net.minestom.server.entity.ai.goal.RandomLookAroundGoal;
 import net.minestom.server.entity.ai.target.ClosestEntityTarget;
 import net.minestom.server.utils.time.TimeUnit;
 import org.example.mmo.mob.MobAiFactory;
-import org.example.mmo.mob.projectile.MobProjectileUtils;
+import org.example.mmo.projectile.ProjectileLaunchConfig;
+import org.example.mmo.projectile.ProjectileLauncher;
 
 /**
  * Ranged AI using configurable projectile behaviour.
@@ -55,15 +56,14 @@ public final class ArcherAiFactory implements MobAiFactory {
                 projectileSpread,
                 TimeUnit.SERVER_TICK
         );
-        goal.setProjectileGenerator((shooterEntity, targetPos, power, spread) ->
-                MobProjectileUtils.shootProjectile(
-                        (EntityCreature) shooterEntity,
-                        targetPos,
-                        EntityType.ARROW,
-                        power,
-                        spread,
-                        true
-                ));
+        goal.setProjectileGenerator((shooterEntity, targetPos, power, spread) -> {
+            ProjectileLaunchConfig config = ProjectileLaunchConfig.builder(EntityType.ARROW)
+                    .speed(power)
+                    .spread(spread)
+                    .hasGravity(true)
+                    .build();
+            ProjectileLauncher.launchTowards(shooterEntity, targetPos, config);
+        });
         return new EntityAIGroupBuilder()
                 .addGoalSelector(new RandomLookAroundGoal(creature, 2))
                 .addGoalSelector(goal)

@@ -11,7 +11,8 @@ import net.minestom.server.entity.ai.goal.RandomLookAroundGoal;
 import net.minestom.server.entity.ai.target.ClosestEntityTarget;
 import net.minestom.server.utils.time.TimeUnit;
 import org.example.mmo.mob.MobAiFactory;
-import org.example.mmo.mob.projectile.MobProjectileUtils;
+import org.example.mmo.projectile.ProjectileLaunchConfig;
+import org.example.mmo.projectile.ProjectileLauncher;
 
 /**
  * Generic ranged projectile AI supporting different projectile types.
@@ -60,15 +61,14 @@ public final class ProjectileShooterAiFactory implements MobAiFactory {
                 projectileSpread,
                 TimeUnit.SERVER_TICK
         );
-        goal.setProjectileGenerator((shooterEntity, targetPos, power, spread) ->
-                MobProjectileUtils.shootProjectile(
-                        shooterEntity,
-                        targetPos,
-                        projectileType,
-                        power,
-                        spread,
-                        hasGravity
-                ));
+        goal.setProjectileGenerator((shooterEntity, targetPos, power, spread) -> {
+            ProjectileLaunchConfig config = ProjectileLaunchConfig.builder(projectileType)
+                    .speed(power)
+                    .spread(spread)
+                    .hasGravity(hasGravity)
+                    .build();
+            ProjectileLauncher.launchTowards(shooterEntity, targetPos, config);
+        });
 
         return new EntityAIGroupBuilder()
                 .addGoalSelector(new RandomLookAroundGoal(creature, 2))

@@ -18,14 +18,13 @@ import org.jetbrains.annotations.NotNull;
  * Fireball-like projectile (no gravity).
  */
 public final class FireballMobProjectile extends AbstractMobProjectile {
-
     public FireballMobProjectile(EntityType type, Entity shooter) {
-        super(type, shooter);
+        super(shooter, type);
         setNoGravity(true);
     }
 
     @Override
-    public void shoot(@NotNull Point from, @NotNull Point to, double power, double spread) {
+    protected void launchInternal(@NotNull Point from, @NotNull Point to, double power, double spread) {
         var instance = shooter.getInstance();
         if (instance == null) {
             return;

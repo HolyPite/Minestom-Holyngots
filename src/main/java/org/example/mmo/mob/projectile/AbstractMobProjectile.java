@@ -12,6 +12,7 @@ import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.EntityProjectile;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.event.entity.EntityTickEvent;
@@ -28,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Lightweight adaptation of AtlasProjectiles' AbstractProjectile for mob usage.
  */
-public abstract class AbstractMobProjectile extends Entity implements MobProjectile {
+public abstract class AbstractMobProjectile extends EntityProjectile implements MobProjectile {
 
     protected final Entity shooter;
     protected PhysicsResult previousPhysicsResult;
@@ -37,9 +38,18 @@ public abstract class AbstractMobProjectile extends Entity implements MobProject
     private long maxAliveTicks = -1;
     private long blockLifetimeTicks = -1;
 
-    protected AbstractMobProjectile(EntityType type, Entity shooter) {
-        super(type);
+    protected AbstractMobProjectile(Entity shooter, EntityType type) {
+        super(shooter, type);
         this.shooter = shooter;
+    }
+
+    public void configureLifetime(long lifetimeTicks, long blockLifetimeTicks) {
+        if (lifetimeTicks > 0) {
+            scheduleLifetime(lifetimeTicks);
+        }
+        if (blockLifetimeTicks > 0) {
+            scheduleBlockLifetime(blockLifetimeTicks);
+        }
     }
 
     @Override
@@ -61,10 +71,17 @@ public abstract class AbstractMobProjectile extends Entity implements MobProject
     }
 
     @Override
-    public void shoot(@NotNull Point from, double power, double spread) {
+    public void launch(@NotNull Point from, double power, double spread) {
         Point to = from.add(shooter.getPosition().direction());
-        shoot(from, to, power, spread);
+        launch(from, to, power, spread);
     }
+
+    @Override
+    public void launch(@NotNull Point from, @NotNull Point to, double power, double spread) {
+        launchInternal(from, to, power, spread);
+    }
+
+    protected abstract void launchInternal(@NotNull Point from, @NotNull Point to, double power, double spread);
 
     protected PhysicsResult computePhysics(@NotNull Pos entityPosition,
                                            @NotNull Vec currentVelocity,

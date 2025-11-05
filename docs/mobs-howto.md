@@ -53,7 +53,7 @@ public final class GuardianAiFactory {
 }
 ```
 
-Attach projectile logic with `MobProjectileUtils.shootArrow(...)` if you need custom ranged attacks.
+Attach projectile logic with `ProjectileLauncher.launchTowards(...)` if you need custom ranged attacks.
 
 ---
 
@@ -199,7 +199,7 @@ With these steps, the spawn service will instantiate the archetype in every elig
   - Confirm AI targets players only.
   - Check loot drops and respawn delay.
   - Ensure floating damage indicators/action bar feedback match expectations.
-- For ranged units, confirm projectiles are spawned by `MobProjectileUtils` and travel correctly.
+- For ranged units, confirm projectiles are spawned by `ProjectileLauncher` and travel correctly.
 
 ---
 

@@ -18,13 +18,12 @@ import org.jetbrains.annotations.NotNull;
  * Generic throwable projectile (eggs, tridents).
  */
 public final class ThrownItemMobProjectile extends AbstractMobProjectile {
-
     public ThrownItemMobProjectile(EntityType type, Entity shooter) {
-        super(type, shooter);
+        super(shooter, type);
     }
 
     @Override
-    public void shoot(@NotNull Point from, @NotNull Point to, double power, double spread) {
+    protected void launchInternal(@NotNull Point from, @NotNull Point to, double power, double spread) {
         var instance = shooter.getInstance();
         if (instance == null) {
             return;
