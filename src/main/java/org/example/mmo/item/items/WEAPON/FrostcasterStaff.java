@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.item.Material;
+import org.example.mmo.item.datas.AmmoType;
 import org.example.mmo.item.GameItem;
 import org.example.mmo.item.GameItem.ProjectileOptions.Trigger;
 import org.example.mmo.item.ItemRegistry;
@@ -34,7 +35,8 @@ public final class FrostcasterStaff {
                         .hasGravity(true)
                         .cooldownTicks(6L)
                         .range(20.0D)
-                        .allowOffHand(true))
+                        .allowOffHand(true)
+                        .ammoRequirement(AmmoType.MAGIC, 1))
                 .build();
 
         ItemRegistry.register(ITEM);

@@ -1,5 +1,12 @@
 package org.example.mmo.item;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -10,20 +17,13 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.item.component.AttributeList;
 import net.minestom.server.item.component.CustomModelData;
+import org.example.mmo.item.datas.AmmoType;
 import org.example.mmo.item.datas.Category;
 import org.example.mmo.item.datas.Rarity;
 import org.example.mmo.item.datas.StatMap;
 import org.example.mmo.item.datas.StatType;
 import org.example.mmo.projectile.ProjectileLaunchConfig;
 import org.example.utils.TKit;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
 
 public final class GameItem {
 
@@ -39,20 +39,22 @@ public final class GameItem {
     public final int maxStack;
     public final boolean questItem;
     public final ProjectileOptions projectileOptions;
+    public final AmmoOptions ammoOptions;
 
-    private GameItem(Builder b) {
-        this.id = b.id;
-        this.displayName = b.displayName;
-        this.rarity = b.rarity;
-        this.category = b.category;
-        this.tradable = b.tradable;
+    private GameItem(Builder builder) {
+        this.id = builder.id;
+        this.displayName = builder.displayName;
+        this.rarity = builder.rarity;
+        this.category = builder.category;
+        this.tradable = builder.tradable;
         this.customModel = id;
-        this.material = b.material;
-        this.stats = b.stats;
-        this.story = List.copyOf(b.story);
-        this.maxStack = b.maxStack;
-        this.questItem = b.questItem;
-        this.projectileOptions = b.projectileOptions;
+        this.material = builder.material;
+        this.stats = builder.stats;
+        this.story = List.copyOf(builder.story);
+        this.maxStack = builder.maxStack;
+        this.questItem = builder.questItem;
+        this.projectileOptions = builder.projectileOptions;
+        this.ammoOptions = builder.ammoOptions;
     }
 
     public String getId() {
@@ -101,6 +103,20 @@ public final class GameItem {
             lore.add(Component.text("Projectile", NamedTextColor.AQUA).decorate(TextDecoration.BOLD));
             lore.add(Component.text(" - Type : " + projectileOptions.projectileType().name(), NamedTextColor.GRAY));
             lore.add(Component.text(" - Cadence : " + projectileOptions.cooldownTicks() + " ticks", NamedTextColor.GRAY));
+            lore.add(Component.text(" - Portee : " + projectileOptions.range() + " blocks", NamedTextColor.GRAY));
+            lore.add(Component.text(" - Declencheur : " + projectileOptions.trigger().name(), NamedTextColor.GRAY));
+            if (projectileOptions.chargeTicks() > 0) {
+                lore.add(Component.text(" - Charge : " + projectileOptions.chargeTicks() + " ticks", NamedTextColor.GRAY));
+            }
+            if (projectileOptions.consumesAmmo()) {
+                lore.add(Component.text(" - Munition : " + projectileOptions.ammoType().name() + " x" + projectileOptions.ammoPerShot(), NamedTextColor.GRAY));
+            }
+        }
+
+        if (ammoOptions != null) {
+            lore.add(Component.empty());
+            lore.add(Component.text("Munition", NamedTextColor.GOLD).decorate(TextDecoration.BOLD));
+            lore.add(Component.text(" - Type : " + ammoOptions.type().name(), NamedTextColor.GRAY));
         }
 
         if (questItem) {
@@ -122,8 +138,16 @@ public final class GameItem {
         return Optional.ofNullable(projectileOptions);
     }
 
+    public Optional<AmmoOptions> ammoOptions() {
+        return Optional.ofNullable(ammoOptions);
+    }
+
     public boolean isProjectileLauncher() {
         return projectileOptions != null;
+    }
+
+    public boolean isAmmo() {
+        return ammoOptions != null;
     }
 
     public static final class Builder {
@@ -140,6 +164,7 @@ public final class GameItem {
         private int maxStack = 64;
         private boolean questItem = false;
         private ProjectileOptions projectileOptions;
+        private AmmoOptions ammoOptions;
 
         public Builder(String id, Component name) {
             this.id = id;
@@ -147,28 +172,28 @@ public final class GameItem {
             this.customModel = id;
         }
 
-        public Builder rarity(Rarity r) {
-            this.rarity = r;
+        public Builder rarity(Rarity rarity) {
+            this.rarity = Objects.requireNonNull(rarity, "rarity");
             return this;
         }
 
-        public Builder category(Category c) {
-            this.category = c;
+        public Builder category(Category category) {
+            this.category = Objects.requireNonNull(category, "category");
             return this;
         }
 
-        public Builder tradable(boolean t) {
-            this.tradable = t;
+        public Builder tradable(boolean tradable) {
+            this.tradable = tradable;
             return this;
         }
 
-        public Builder material(Material m) {
-            this.material = m;
+        public Builder material(Material material) {
+            this.material = Objects.requireNonNull(material, "material");
             return this;
         }
 
-        public Builder stat(StatType t, int v) {
-            this.stats.with(t, v);
+        public Builder stat(StatType type, int value) {
+            this.stats.with(type, value);
             return this;
         }
 
@@ -182,13 +207,13 @@ public final class GameItem {
             return this;
         }
 
-        public Builder stackSize(int n) {
-            this.maxStack = Math.max(1, Math.min(n, 64));
+        public Builder stackSize(int maxStack) {
+            this.maxStack = Math.max(1, Math.min(maxStack, 64));
             return this;
         }
 
-        public Builder questItem(boolean isQuestItem) {
-            this.questItem = isQuestItem;
+        public Builder questItem(boolean questItem) {
+            this.questItem = questItem;
             return this;
         }
 
@@ -205,7 +230,26 @@ public final class GameItem {
             return this;
         }
 
+        public Builder ammo(Consumer<AmmoOptions.Builder> consumer) {
+            Objects.requireNonNull(consumer, "consumer");
+            AmmoOptions.Builder builder = new AmmoOptions.Builder();
+            consumer.accept(builder);
+            this.ammoOptions = builder.build();
+            return this;
+        }
+
+        public Builder clearAmmo() {
+            this.ammoOptions = null;
+            return this;
+        }
+
         public GameItem build() {
+            if (category == Category.AMMO && ammoOptions == null) {
+                throw new IllegalStateException("Ammo items must define their ammo type");
+            }
+            if (projectileOptions != null && projectileOptions.consumesAmmo() && ammoOptions != null) {
+                throw new IllegalStateException("An item cannot consume ammo and be ammo itself");
+            }
             return new GameItem(this);
         }
     }
@@ -215,11 +259,9 @@ public final class GameItem {
         public enum Trigger {
             LEFT_CLICK,
             RIGHT_CLICK,
-            BOTH;
-
-            boolean accepts(boolean left) {
-                return this == BOTH || (left && this == LEFT_CLICK) || (!left && this == RIGHT_CLICK);
-            }
+            BOTH,
+            USE_RELEASE,
+            USE_HELD
         }
 
         private final Trigger trigger;
@@ -232,6 +274,9 @@ public final class GameItem {
         private final double range;
         private final long cooldownTicks;
         private final boolean allowOffHand;
+        private final AmmoType ammoType;
+        private final int ammoPerShot;
+        private final long chargeTicks;
 
         private ProjectileOptions(Trigger trigger,
                                   EntityType projectileType,
@@ -242,7 +287,10 @@ public final class GameItem {
                                   Long blockLifetimeTicks,
                                   double range,
                                   long cooldownTicks,
-                                  boolean allowOffHand) {
+                                  boolean allowOffHand,
+                                  AmmoType ammoType,
+                                  int ammoPerShot,
+                                  long chargeTicks) {
             this.trigger = trigger;
             this.projectileType = projectileType;
             this.speed = speed;
@@ -253,6 +301,9 @@ public final class GameItem {
             this.range = range;
             this.cooldownTicks = cooldownTicks;
             this.allowOffHand = allowOffHand;
+            this.ammoType = ammoType;
+            this.ammoPerShot = ammoPerShot;
+            this.chargeTicks = chargeTicks;
         }
 
         public Trigger trigger() {
@@ -295,20 +346,40 @@ public final class GameItem {
             return allowOffHand;
         }
 
+        public AmmoType ammoType() {
+            return ammoType;
+        }
+
+        public int ammoPerShot() {
+            return ammoPerShot;
+        }
+
+        public long chargeTicks() {
+            return chargeTicks;
+        }
+
+        public boolean consumesAmmo() {
+            return ammoType != null && ammoPerShot > 0;
+        }
+
         public ProjectileLaunchConfig toLaunchConfig() {
+            return toLaunchConfig(1.0D);
+        }
+
+        public ProjectileLaunchConfig toLaunchConfig(double chargeMultiplier) {
+            double multiplier = Math.max(0.1D, chargeMultiplier);
+            double scaledSpeed = speed * multiplier;
+            double scaledSpread = Math.max(0.0D, spread / Math.max(1.0D, multiplier));
+
             ProjectileLaunchConfig.Builder builder = ProjectileLaunchConfig.builder(projectileType)
-                    .speed(speed)
-                    .spread(spread)
+                    .speed(scaledSpeed)
+                    .spread(scaledSpread)
                     .hasGravity(hasGravity)
                     .lifetimeTicks(lifetimeTicks);
             if (blockLifetimeTicks != null) {
                 builder.blockLifetimeTicks(blockLifetimeTicks);
             }
             return builder.build();
-        }
-
-        boolean acceptsTrigger(boolean leftClick) {
-            return trigger.accepts(leftClick);
         }
 
         public static final class Builder {
@@ -322,6 +393,9 @@ public final class GameItem {
             private double range = 24.0D;
             private long cooldownTicks = 10L;
             private boolean allowOffHand = false;
+            private AmmoType ammoType;
+            private int ammoPerShot = 1;
+            private long chargeTicks = 0L;
 
             public Builder trigger(Trigger trigger) {
                 this.trigger = Objects.requireNonNull(trigger, "trigger");
@@ -373,26 +447,71 @@ public final class GameItem {
                 return this;
             }
 
+            public Builder ammoRequirement(AmmoType ammoType, int amount) {
+                this.ammoType = Objects.requireNonNull(ammoType, "ammoType");
+                this.ammoPerShot = Math.max(1, amount);
+                return this;
+            }
+
+            public Builder chargeTicks(long chargeTicks) {
+                this.chargeTicks = Math.max(0L, chargeTicks);
+                return this;
+            }
+
             public ProjectileOptions build() {
                 if (projectileType == null) {
-                    throw new IllegalStateException("projectileType must be specified for projectile launcher items");
+                    throw new IllegalStateException("Projectile type must be specified for launcher items");
                 }
                 double resolvedSpeed = speed > 0 ? speed : 1.0D;
                 double resolvedRange = range > 0 ? range : 24.0D;
                 double resolvedSpread = Math.max(0.0D, spread);
                 long resolvedCooldown = Math.max(0L, cooldownTicks);
+                long resolvedLifetime = lifetimeTicks > 0 ? lifetimeTicks : ProjectileLaunchConfig.DEFAULT_LIFETIME_TICKS;
+                int resolvedAmmo = ammoPerShot > 0 ? ammoPerShot : 1;
+                long resolvedCharge = chargeTicks > 0 ? chargeTicks : 0;
                 return new ProjectileOptions(
                         trigger,
                         projectileType,
                         resolvedSpeed,
                         resolvedSpread,
                         hasGravity,
-                        lifetimeTicks,
+                        resolvedLifetime,
                         blockLifetimeTicks,
                         resolvedRange,
                         resolvedCooldown,
-                        allowOffHand
+                        allowOffHand,
+                        ammoType,
+                        resolvedAmmo,
+                        resolvedCharge
                 );
+            }
+        }
+    }
+
+    public static final class AmmoOptions {
+        private final AmmoType type;
+
+        private AmmoOptions(AmmoType type) {
+            this.type = type;
+        }
+
+        public AmmoType type() {
+            return type;
+        }
+
+        public static final class Builder {
+            private AmmoType type;
+
+            public Builder type(AmmoType type) {
+                this.type = Objects.requireNonNull(type, "type");
+                return this;
+            }
+
+            public AmmoOptions build() {
+                if (type == null) {
+                    throw new IllegalStateException("Ammo type must be provided");
+                }
+                return new AmmoOptions(type);
             }
         }
     }

@@ -1,21 +1,31 @@
 package org.example.mmo.item;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
+import net.minestom.server.entity.EntityProjectile;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerHand;
-import net.minestom.server.entity.EntityProjectile;
+import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
+import net.minestom.server.event.item.PlayerFinishItemUseEvent;
 import net.minestom.server.event.player.PlayerBlockPlaceEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerHandAnimationEvent;
 import net.minestom.server.event.player.PlayerUseItemEvent;
 import net.minestom.server.event.trait.PlayerEvent;
+import net.minestom.server.inventory.PlayerInventory;
 import net.minestom.server.item.ItemStack;
+import org.example.mmo.item.GameItem.AmmoOptions;
 import org.example.mmo.item.GameItem.ProjectileOptions;
+import org.example.mmo.item.GameItem.ProjectileOptions.Trigger;
+import org.example.mmo.item.datas.AmmoType;
 import org.example.mmo.projectile.ProjectileLaunchConfig;
 import org.example.mmo.projectile.ProjectileLauncher;
 
@@ -23,30 +33,39 @@ final class ItemProjectileListener {
 
     private static final double DEFAULT_RANGE = 24.0D;
     private static final Map<UUID, Map<String, ShotState>> LAST_SHOTS = new ConcurrentHashMap<>();
+    private static final Map<UUID, ChargeState> CHARGE_STATES = new ConcurrentHashMap<>();
 
     private ItemProjectileListener() {
     }
 
-    static void init(EventNode<PlayerEvent> playerNode) {
+    static void init(EventNode<Event> events, EventNode<PlayerEvent> playerNode) {
         playerNode.addListener(PlayerUseItemEvent.class, event -> {
-            if (handle(event.getPlayer(), event.getHand(), Action.RIGHT_CLICK, event.getItemStack())) {
+            if (processUseEvent(event)) {
                 event.setCancelled(true);
             }
         });
 
         playerNode.addListener(PlayerHandAnimationEvent.class, event ->
-                handle(event.getPlayer(), event.getHand(), Action.LEFT_CLICK, event.getPlayer().getItemInHand(event.getHand())));
+                processAction(event.getPlayer(), event.getHand(), Action.LEFT_CLICK, event.getPlayer().getItemInHand(event.getHand()), 0));
 
         playerNode.addListener(PlayerBlockPlaceEvent.class, event -> {
-            if (handle(event.getPlayer(), PlayerHand.MAIN, Action.RIGHT_CLICK, event.getPlayer().getItemInMainHand())) {
+            if (processAction(event.getPlayer(), PlayerHand.MAIN, Action.RIGHT_CLICK, event.getPlayer().getItemInMainHand(), 0)) {
                 event.setCancelled(true);
             }
         });
 
-        playerNode.addListener(PlayerDisconnectEvent.class, event -> LAST_SHOTS.remove(event.getPlayer().getUuid()));
+        playerNode.addListener(PlayerDisconnectEvent.class, event -> {
+            UUID uuid = event.getPlayer().getUuid();
+            LAST_SHOTS.remove(uuid);
+            CHARGE_STATES.remove(uuid);
+        });
+
+        events.addListener(PlayerFinishItemUseEvent.class, ItemProjectileListener::processFinishUse);
     }
 
-    private static boolean handle(Player player, PlayerHand hand, Action action, ItemStack stack) {
+    private static boolean processUseEvent(PlayerUseItemEvent event) {
+        Player player = event.getPlayer();
+        ItemStack stack = event.getItemStack();
         if (stack == null || stack.isAir()) {
             return false;
         }
@@ -58,24 +77,90 @@ final class ItemProjectileListener {
         if (options == null) {
             return false;
         }
+
+        Trigger trigger = options.trigger();
+        if (trigger == Trigger.USE_RELEASE) {
+            startCharge(player, event.getHand(), stack, item, options);
+            if (options.chargeTicks() > 0) {
+                event.setItemUseTime(options.chargeTicks() * 50L);
+            }
+            return false;
+        }
+
+        Action action = trigger == Trigger.USE_HELD ? Action.USE_HELD : Action.RIGHT_CLICK;
+        return processAction(player, event.getHand(), action, stack, item, options, 0);
+    }
+
+    private static void startCharge(Player player, PlayerHand hand, ItemStack stack, GameItem item, ProjectileOptions options) {
+        CHARGE_STATES.put(player.getUuid(), new ChargeState(item.getId(), hand, options));
+    }
+
+    private static void processFinishUse(PlayerFinishItemUseEvent event) {
+        Player player = event.getPlayer();
+        ChargeState state = CHARGE_STATES.remove(player.getUuid());
+        if (state == null) {
+            return;
+        }
+
+        ItemStack stack = event.getItemStack();
+        GameItem item = ItemUtils.resolve(stack);
+        if (item == null || !item.getId().equals(state.itemId())) {
+            return;
+        }
+
+        ProjectileOptions options = state.options();
+        long durationTicks = Math.max(1L, Math.round(event.getUseDuration() / 50.0D));
+        processAction(player, state.hand(), Action.USE_RELEASE, stack, item, options, durationTicks);
+    }
+
+    private static boolean processAction(Player player,
+                                         PlayerHand hand,
+                                         Action action,
+                                         ItemStack stack,
+                                         long chargeTicksSpent) {
+        GameItem item = ItemUtils.resolve(stack);
+        if (item == null) {
+            return false;
+        }
+        ProjectileOptions options = item.projectileOptions().orElse(null);
+        if (options == null) {
+            return false;
+        }
+        return processAction(player, hand, action, stack, item, options, chargeTicksSpent);
+    }
+
+    private static boolean processAction(Player player,
+                                         PlayerHand hand,
+                                         Action action,
+                                         ItemStack stack,
+                                         GameItem item,
+                                         ProjectileOptions options,
+                                         long chargeTicksSpent) {
         if (!options.allowOffHand() && hand == PlayerHand.OFF) {
             return false;
         }
-        boolean leftClick = action == Action.LEFT_CLICK;
-        if (!options.acceptsTrigger(leftClick)) {
+        if (!isActionCompatible(options.trigger(), action)) {
             return false;
         }
 
         double range = options.range() > 0 ? options.range() : DEFAULT_RANGE;
         Pos target = computeAim(player, range);
-        ProjectileLaunchConfig config = options.toLaunchConfig();
+        double chargeMultiplier = computeChargeMultiplier(options, chargeTicksSpent);
+        ProjectileLaunchConfig config = options.toLaunchConfig(chargeMultiplier);
 
         ShotState state = LAST_SHOTS
                 .computeIfAbsent(player.getUuid(), uuid -> new ConcurrentHashMap<>())
-                .computeIfAbsent(item.id, key -> new ShotState());
+                .computeIfAbsent(item.getId(), key -> new ShotState());
 
         long currentTick = player.getAliveTicks();
         if (!state.canShoot(currentTick, options.cooldownTicks())) {
+            return false;
+        }
+
+        if (!consumeAmmo(player, options)) {
+            AmmoType missing = options.ammoType();
+            String name = missing != null ? missing.name().toLowerCase() : "inconnue";
+            player.sendMessage(Component.text("Plus de munitions " + name + " !", NamedTextColor.RED));
             return false;
         }
 
@@ -86,6 +171,24 @@ final class ItemProjectileListener {
 
         state.mark(currentTick);
         return true;
+    }
+
+    private static double computeChargeMultiplier(ProjectileOptions options, long chargeTicksSpent) {
+        if (options.chargeTicks() <= 0) {
+            return 1.0D;
+        }
+        double ratio = Math.min(1.0D, chargeTicksSpent / (double) options.chargeTicks());
+        return Math.max(0.25D, ratio);
+    }
+
+    private static boolean isActionCompatible(Trigger trigger, Action action) {
+        return switch (trigger) {
+            case LEFT_CLICK -> action == Action.LEFT_CLICK;
+            case RIGHT_CLICK -> action == Action.RIGHT_CLICK;
+            case BOTH -> action == Action.LEFT_CLICK || action == Action.RIGHT_CLICK;
+            case USE_RELEASE -> action == Action.USE_RELEASE;
+            case USE_HELD -> action == Action.USE_HELD;
+        };
     }
 
     private static Pos computeAim(Player player, double range) {
@@ -99,9 +202,65 @@ final class ItemProjectileListener {
         return eye.add(direction.mul(range));
     }
 
+    private static boolean consumeAmmo(Player player, ProjectileOptions options) {
+        if (!options.consumesAmmo()) {
+            return true;
+        }
+
+        AmmoType ammoType = options.ammoType();
+        int remaining = options.ammoPerShot();
+        if (ammoType == null || remaining <= 0) {
+            return true;
+        }
+
+        PlayerInventory inventory = player.getInventory();
+        List<SlotUse> candidates = new ArrayList<>();
+
+        for (int slot = 0; slot < inventory.getSize(); slot++) {
+            ItemStack slotStack = inventory.getItemStack(slot);
+            if (slotStack == null || slotStack.isAir()) {
+                continue;
+            }
+            GameItem slotItem = ItemUtils.resolve(slotStack);
+            if (slotItem == null) {
+                continue;
+            }
+            AmmoType slotType = slotItem.ammoOptions()
+                    .map(AmmoOptions::type)
+                    .orElse(null);
+            if (slotType == null || slotType != ammoType) {
+                continue;
+            }
+
+            int available = slotStack.amount();
+            int take = Math.min(available, remaining);
+            candidates.add(new SlotUse(slot, take));
+            remaining -= take;
+            if (remaining <= 0) {
+                break;
+            }
+        }
+
+        if (remaining > 0) {
+            return false;
+        }
+
+        for (SlotUse use : candidates) {
+            ItemStack stack = inventory.getItemStack(use.slot());
+            if (stack == null || stack.isAir()) {
+                continue;
+            }
+            int updated = stack.amount() - use.amount();
+            inventory.setItemStack(use.slot(), updated <= 0 ? ItemStack.AIR : stack.withAmount(updated));
+        }
+        return true;
+    }
+
     private enum Action {
         LEFT_CLICK,
-        RIGHT_CLICK
+        RIGHT_CLICK,
+        USE_HELD,
+        USE_RELEASE
     }
 
     private static final class ShotState {
@@ -115,5 +274,11 @@ final class ItemProjectileListener {
         void mark(long currentTick) {
             this.lastTick = currentTick;
         }
+    }
+
+    private record SlotUse(int slot, int amount) {
+    }
+
+    private record ChargeState(String itemId, PlayerHand hand, ProjectileOptions options) {
     }
 }

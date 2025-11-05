@@ -29,6 +29,11 @@
       "slot": 4
     },
     {
+      "itemId": "steel_arrow_bundle",
+      "amount": 1,
+      "slot": 5
+    },
+    {
       "itemId": "bone",
       "amount": 2,
       "slot": 9
@@ -40,7 +45,7 @@
     },
     {
       "itemId": "bandit_orders",
-      "amount": 2,
+      "amount": 3,
       "slot": 11
     },
     {
@@ -50,7 +55,7 @@
     },
     {
       "itemId": "bandit_coin",
-      "amount": 26,
+      "amount": 35,
       "slot": 13
     },
     {
@@ -96,13 +101,13 @@
   ],
   "failedQuests": [],
   "position": {
-    "x": 2.8635427937564613,
+    "x": 2.036540583078726,
     "y": 40.0,
-    "z": 20.70318852230492,
-    "yaw": 167.04816,
-    "pitch": 2.042131
+    "z": 14.472463225563475,
+    "yaw": 127.07717,
+    "pitch": 0.9878518
   },
-  "lastInstance": "game1",
+  "lastInstance": "game2",
   "questCounters": {},
   "questCooldowns": {}
 }
