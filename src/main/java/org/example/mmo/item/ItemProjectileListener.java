@@ -1,6 +1,7 @@
 package org.example.mmo.item;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import net.minestom.server.event.item.PlayerFinishItemUseEvent;
 import net.minestom.server.event.player.PlayerBlockPlaceEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerHandAnimationEvent;
+import net.minestom.server.event.player.PlayerTickEvent;
 import net.minestom.server.event.player.PlayerUseItemEvent;
 import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.inventory.PlayerInventory;
@@ -32,6 +34,8 @@ import org.example.mmo.projectile.ProjectileLauncher;
 final class ItemProjectileListener {
 
     private static final double DEFAULT_RANGE = 24.0D;
+    private static final long DEFAULT_MAX_USE_TICKS = 72000L;
+
     private static final Map<UUID, Map<String, ShotState>> LAST_SHOTS = new ConcurrentHashMap<>();
     private static final Map<UUID, ChargeState> CHARGE_STATES = new ConcurrentHashMap<>();
 
@@ -39,11 +43,7 @@ final class ItemProjectileListener {
     }
 
     static void init(EventNode<Event> events, EventNode<PlayerEvent> playerNode) {
-        playerNode.addListener(PlayerUseItemEvent.class, event -> {
-            if (processUseEvent(event)) {
-                event.setCancelled(true);
-            }
-        });
+        playerNode.addListener(PlayerUseItemEvent.class, ItemProjectileListener::handleUseEvent);
 
         playerNode.addListener(PlayerHandAnimationEvent.class, event ->
                 processAction(event.getPlayer(), event.getHand(), Action.LEFT_CLICK, event.getPlayer().getItemInHand(event.getHand()), 0));
@@ -61,6 +61,13 @@ final class ItemProjectileListener {
         });
 
         events.addListener(PlayerFinishItemUseEvent.class, ItemProjectileListener::processFinishUse);
+        events.addListener(PlayerTickEvent.class, event -> handleChargeTick(event.getPlayer()));
+    }
+
+    private static void handleUseEvent(PlayerUseItemEvent event) {
+        if (processUseEvent(event)) {
+            event.setCancelled(true);
+        }
     }
 
     private static boolean processUseEvent(PlayerUseItemEvent event) {
@@ -80,11 +87,12 @@ final class ItemProjectileListener {
 
         Trigger trigger = options.trigger();
         if (trigger == Trigger.USE_RELEASE) {
-            startCharge(player, event.getHand(), stack, item, options);
-            if (options.chargeTicks() > 0) {
-                event.setItemUseTime(options.chargeTicks() * 50L);
+            if (!hasAmmo(player, options)) {
+                sendMissingAmmoMessage(player, options);
+                return true;
             }
-            return false;
+            startCharge(player, event.getHand(), stack, item, options);
+            return true;
         }
 
         Action action = trigger == Trigger.USE_HELD ? Action.USE_HELD : Action.RIGHT_CLICK;
@@ -92,7 +100,11 @@ final class ItemProjectileListener {
     }
 
     private static void startCharge(Player player, PlayerHand hand, ItemStack stack, GameItem item, ProjectileOptions options) {
-        CHARGE_STATES.put(player.getUuid(), new ChargeState(item.getId(), hand, options));
+        long useTicks = options.chargeTicks() > 0 ? options.chargeTicks() : DEFAULT_MAX_USE_TICKS;
+        boolean offHand = hand == PlayerHand.OFF;
+        player.refreshActiveHand(true, offHand, false);
+        player.refreshItemUse(hand, useTicks);
+        CHARGE_STATES.put(player.getUuid(), new ChargeState(item.getId(), hand, options, player.getAliveTicks()));
     }
 
     private static void processFinishUse(PlayerFinishItemUseEvent event) {
@@ -107,10 +119,34 @@ final class ItemProjectileListener {
         if (item == null || !item.getId().equals(state.itemId())) {
             return;
         }
+        ProjectileOptions options = item.projectileOptions().orElse(null);
+        if (options == null) {
+            return;
+        }
 
-        ProjectileOptions options = state.options();
-        long durationTicks = Math.max(1L, Math.round(event.getUseDuration() / 50.0D));
+        long durationTicks = event.getUseDuration();
+        if (durationTicks <= 0) {
+            durationTicks = Math.max(0L, player.getAliveTicks() - state.startTick());
+        }
+
         processAction(player, state.hand(), Action.USE_RELEASE, stack, item, options, durationTicks);
+    }
+
+    private static void handleChargeTick(Player player) {
+        ChargeState state = CHARGE_STATES.get(player.getUuid());
+        if (state == null) {
+            return;
+        }
+        if (player.isUsingItem()) {
+            return;
+        }
+
+        CHARGE_STATES.remove(player.getUuid());
+        long chargeSpent = Math.max(0L, player.getAliveTicks() - state.startTick());
+        ItemStack stack = player.getItemInHand(state.hand());
+        processAction(player, state.hand(), Action.USE_RELEASE, stack, chargeSpent);
+        player.refreshActiveHand(false, state.hand() == PlayerHand.OFF, false);
+        player.refreshItemUse(null, 0);
     }
 
     private static boolean processAction(Player player,
@@ -158,9 +194,7 @@ final class ItemProjectileListener {
         }
 
         if (!consumeAmmo(player, options)) {
-            AmmoType missing = options.ammoType();
-            String name = missing != null ? missing.name().toLowerCase() : "inconnue";
-            player.sendMessage(Component.text("Plus de munitions " + name + " !", NamedTextColor.RED));
+            sendMissingAmmoMessage(player, options);
             return false;
         }
 
@@ -202,20 +236,50 @@ final class ItemProjectileListener {
         return eye.add(direction.mul(range));
     }
 
+    private static boolean hasAmmo(Player player, ProjectileOptions options) {
+        if (!options.consumesAmmo()) {
+            return true;
+        }
+        return locateAmmoSlots(player, options) != null;
+    }
+
     private static boolean consumeAmmo(Player player, ProjectileOptions options) {
         if (!options.consumesAmmo()) {
             return true;
         }
 
-        AmmoType ammoType = options.ammoType();
-        int remaining = options.ammoPerShot();
-        if (ammoType == null || remaining <= 0) {
+        List<SlotUse> slots = locateAmmoSlots(player, options);
+        if (slots == null) {
+            return false;
+        }
+        if (slots.isEmpty()) {
             return true;
         }
 
         PlayerInventory inventory = player.getInventory();
-        List<SlotUse> candidates = new ArrayList<>();
+        for (SlotUse use : slots) {
+            ItemStack stack = inventory.getItemStack(use.slot());
+            if (stack == null || stack.isAir()) {
+                continue;
+            }
+            int updated = stack.amount() - use.amount();
+            inventory.setItemStack(use.slot(), updated <= 0 ? ItemStack.AIR : stack.withAmount(updated));
+        }
+        return true;
+    }
 
+    private static List<SlotUse> locateAmmoSlots(Player player, ProjectileOptions options) {
+        if (!options.consumesAmmo()) {
+            return Collections.emptyList();
+        }
+        AmmoType ammoType = options.ammoType();
+        int remaining = options.ammoPerShot();
+        if (ammoType == null || remaining <= 0) {
+            return Collections.emptyList();
+        }
+
+        PlayerInventory inventory = player.getInventory();
+        List<SlotUse> result = new ArrayList<>();
         for (int slot = 0; slot < inventory.getSize(); slot++) {
             ItemStack slotStack = inventory.getItemStack(slot);
             if (slotStack == null || slotStack.isAir()) {
@@ -234,26 +298,26 @@ final class ItemProjectileListener {
 
             int available = slotStack.amount();
             int take = Math.min(available, remaining);
-            candidates.add(new SlotUse(slot, take));
+            result.add(new SlotUse(slot, take));
             remaining -= take;
             if (remaining <= 0) {
                 break;
             }
         }
+        return remaining <= 0 ? result : null;
+    }
 
-        if (remaining > 0) {
-            return false;
-        }
+    private static void sendMissingAmmoMessage(Player player, ProjectileOptions options) {
+        AmmoType type = options.ammoType();
+        String label = ammoLabel(type);
+        player.sendMessage(Component.text("Plus de munitions " + label + " !", NamedTextColor.RED));
+    }
 
-        for (SlotUse use : candidates) {
-            ItemStack stack = inventory.getItemStack(use.slot());
-            if (stack == null || stack.isAir()) {
-                continue;
-            }
-            int updated = stack.amount() - use.amount();
-            inventory.setItemStack(use.slot(), updated <= 0 ? ItemStack.AIR : stack.withAmount(updated));
+    private static String ammoLabel(AmmoType type) {
+        if (type == null) {
+            return "inconnue";
         }
-        return true;
+        return type.name().toLowerCase();
     }
 
     private enum Action {
@@ -279,6 +343,6 @@ final class ItemProjectileListener {
     private record SlotUse(int slot, int amount) {
     }
 
-    private record ChargeState(String itemId, PlayerHand hand, ProjectileOptions options) {
+    private record ChargeState(String itemId, PlayerHand hand, ProjectileOptions options, long startTick) {
     }
 }

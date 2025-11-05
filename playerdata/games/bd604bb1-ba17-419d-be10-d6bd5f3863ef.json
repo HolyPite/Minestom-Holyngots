@@ -29,11 +29,6 @@
       "slot": 4
     },
     {
-      "itemId": "steel_arrow_bundle",
-      "amount": 1,
-      "slot": 5
-    },
-    {
       "itemId": "bone",
       "amount": 2,
       "slot": 9
@@ -45,7 +40,7 @@
     },
     {
       "itemId": "bandit_orders",
-      "amount": 3,
+      "amount": 5,
       "slot": 11
     },
     {
@@ -55,13 +50,18 @@
     },
     {
       "itemId": "bandit_coin",
-      "amount": 35,
+      "amount": 38,
       "slot": 13
     },
     {
       "itemId": "wolf_fang",
       "amount": 4,
       "slot": 14
+    },
+    {
+      "itemId": "polstron",
+      "amount": 1,
+      "slot": 15
     },
     {
       "itemId": "stats_grimoire",
@@ -101,13 +101,13 @@
   ],
   "failedQuests": [],
   "position": {
-    "x": 2.036540583078726,
+    "x": -0.40011661811346666,
     "y": 40.0,
-    "z": 14.472463225563475,
-    "yaw": 127.07717,
-    "pitch": 0.9878518
+    "z": 19.073618113771698,
+    "yaw": 41.75541,
+    "pitch": 6.2227774
   },
-  "lastInstance": "game2",
+  "lastInstance": "game1",
   "questCounters": {},
   "questCooldowns": {}
 }
