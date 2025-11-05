@@ -52,7 +52,7 @@ public final class FloatingCombatText {
         meta.setBillboardRenderConstraints(AbstractDisplayMeta.BillboardConstraints.CENTER);
         meta.setShadow(true);
         meta.setBackgroundColor(0x00000000);
-        meta.setLineWidth(0);
+        meta.setLineWidth(200);
 
         indicator.setNoGravity(true);
         indicator.setInstance(target.getInstance(), randomOffset(target));

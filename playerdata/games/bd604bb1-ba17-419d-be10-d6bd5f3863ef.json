@@ -14,41 +14,6 @@
       "slot": 1
     },
     {
-      "itemId": "mob_bundle:forest_wolf",
-      "amount": 14,
-      "slot": 2
-    },
-    {
-      "itemId": "mob_bundle:bandit_slinger",
-      "amount": 3,
-      "slot": 3
-    },
-    {
-      "itemId": "mob_bundle:cult_pyromancer",
-      "amount": 2,
-      "slot": 4
-    },
-    {
-      "itemId": "mob_bundle:tidal_trident",
-      "amount": 2,
-      "slot": 5
-    },
-    {
-      "itemId": "wolf_pelt",
-      "amount": 15,
-      "slot": 9
-    },
-    {
-      "itemId": "bone",
-      "amount": 2,
-      "slot": 10
-    },
-    {
-      "itemId": "wolf_fang",
-      "amount": 5,
-      "slot": 11
-    },
-    {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
@@ -86,11 +51,11 @@
   ],
   "failedQuests": [],
   "position": {
-    "x": 97.9841203805239,
+    "x": 1.8758411985335448,
     "y": 40.0,
-    "z": -20.34161441920511,
-    "yaw": 54.490597,
-    "pitch": 9.985543
+    "z": 14.542663681760757,
+    "yaw": 101.696144,
+    "pitch": 10.221786
   },
   "lastInstance": "game2",
   "questCounters": {},

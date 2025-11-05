@@ -9,6 +9,10 @@ import net.minestom.server.entity.LivingEntity;
 
 public final class MobProjectileUtils {
 
+    private static final long DEFAULT_PROJECTILE_LIFETIME_TICKS = 20L * 10;     // 10 seconds
+    private static final long DEFAULT_BLOCK_LIFETIME_TICKS = 20L * 3;           // 3 seconds
+    private static final long ARROW_BLOCK_LIFETIME_TICKS = 20L * 30;            // 30 seconds (allows recovery)
+
     private MobProjectileUtils() {
     }
 
@@ -46,6 +50,10 @@ public final class MobProjectileUtils {
         }
 
         projectile.setNoGravity(!hasGravity);
+        projectile.scheduleLifetime(DEFAULT_PROJECTILE_LIFETIME_TICKS);
+        projectile.scheduleBlockLifetime(projectileType == EntityType.ARROW
+                ? ARROW_BLOCK_LIFETIME_TICKS
+                : DEFAULT_BLOCK_LIFETIME_TICKS);
         projectile.shoot(spawnPos, aim, speed, inaccuracy);
         return projectile;
     }

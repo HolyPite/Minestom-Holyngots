@@ -43,7 +43,7 @@ public final class TidalTridentMob {
                         40,
                         30,
                         18,
-                        0.7,
+                        1.4,
                         0.04,
                         true,
                         EntityType.TRIDENT

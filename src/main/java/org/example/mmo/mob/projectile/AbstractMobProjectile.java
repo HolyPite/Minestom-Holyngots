@@ -22,6 +22,7 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockHandler;
 import net.minestom.server.utils.chunk.ChunkCache;
 import net.minestom.server.utils.chunk.ChunkUtils;
+import net.minestom.server.timer.TaskSchedule;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,6 +34,8 @@ public abstract class AbstractMobProjectile extends Entity implements MobProject
     protected PhysicsResult previousPhysicsResult;
     protected Pos previousPosition;
     protected boolean inBlock = false;
+    private long maxAliveTicks = -1;
+    private long blockLifetimeTicks = -1;
 
     protected AbstractMobProjectile(EntityType type, Entity shooter) {
         super(type);
@@ -41,7 +44,14 @@ public abstract class AbstractMobProjectile extends Entity implements MobProject
 
     @Override
     public void tick(long time) {
-        if (isRemoved() || inBlock) {
+        if (isRemoved()) {
+            return;
+        }
+        if (maxAliveTicks > 0 && getAliveTicks() >= maxAliveTicks) {
+            remove();
+            return;
+        }
+        if (inBlock) {
             return;
         }
         updatePosition(time);
@@ -197,6 +207,8 @@ public abstract class AbstractMobProjectile extends Entity implements MobProject
         if (handler != null) {
             handler.onTouch(new BlockHandler.Touch(hitBlock, instance, hitPos, this));
         }
+        maxAliveTicks = -1;
+        scheduleRemoval(blockLifetimeTicks);
     }
 
     protected boolean handleEntityCollision(EntityCollisionResult result, Point hitPos, Pos posBefore) {
@@ -211,4 +223,25 @@ public abstract class AbstractMobProjectile extends Entity implements MobProject
                                                    boolean entityFlying,
                                                    boolean entityOnGround,
                                                    boolean entityNoGravity);
+
+    protected void scheduleLifetime(long lifetimeTicks) {
+        this.maxAliveTicks = lifetimeTicks;
+    }
+
+    protected void scheduleBlockLifetime(long lifetimeTicks) {
+        this.blockLifetimeTicks = lifetimeTicks;
+    }
+
+    private void scheduleRemoval(long ticks) {
+        if (ticks <= 0) {
+            return;
+        }
+        MinecraftServer.getSchedulerManager().buildTask(() -> {
+                    if (!isRemoved()) {
+                        remove();
+                    }
+                })
+                .delay(TaskSchedule.tick((int) ticks))
+                .schedule();
+    }
 }

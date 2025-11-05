@@ -36,7 +36,7 @@ public final class CultPyromancerMob {
                         50,
                         28,
                         16,
-                        0.4,
+                        0.8,
                         0.02,
                         false,
                         EntityType.SMALL_FIREBALL
