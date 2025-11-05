@@ -1,6 +1,5 @@
 package org.example.mmo.mob.ai.ais;
-import net.minestom.server.entity.EntityCreature;
-import net.minestom.server.entity.EntityType;
+
 import net.minestom.server.entity.EntityCreature;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.LivingEntity;
@@ -56,7 +55,15 @@ public final class ArcherAiFactory implements MobAiFactory {
                 projectileSpread,
                 TimeUnit.SERVER_TICK
         );
-        goal.setProjectileGenerator(target -> MobProjectileUtils.shootProjectile(creature, target, EntityType.ARROW, projectileSpeed, projectileSpread, true));
+        goal.setProjectileGenerator((shooterEntity, targetPos, power, spread) ->
+                MobProjectileUtils.shootProjectile(
+                        (EntityCreature) shooterEntity,
+                        targetPos,
+                        EntityType.ARROW,
+                        power,
+                        spread,
+                        true
+                ));
         return new EntityAIGroupBuilder()
                 .addGoalSelector(new RandomLookAroundGoal(creature, 2))
                 .addGoalSelector(goal)

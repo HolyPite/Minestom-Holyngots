@@ -60,14 +60,15 @@ public final class ProjectileShooterAiFactory implements MobAiFactory {
                 projectileSpread,
                 TimeUnit.SERVER_TICK
         );
-        goal.setProjectileGenerator(target -> MobProjectileUtils.shootProjectile(
-                creature,
-                target,
-                projectileType,
-                projectileSpeed,
-                projectileSpread,
-                hasGravity
-        ));
+        goal.setProjectileGenerator((shooterEntity, targetPos, power, spread) ->
+                MobProjectileUtils.shootProjectile(
+                        shooterEntity,
+                        targetPos,
+                        projectileType,
+                        power,
+                        spread,
+                        hasGravity
+                ));
 
         return new EntityAIGroupBuilder()
                 .addGoalSelector(new RandomLookAroundGoal(creature, 2))

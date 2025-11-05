@@ -32,7 +32,7 @@ public final class BanditArcherMob {
     private static MobArchetype create() {
         return MobArchetype.builder(ID, NAME, EntityType.SKELETON)
                 .entityFactory(() -> new EntityCreature(EntityType.SKELETON))
-                .aiFactory(new ArcherAiFactory(30, 28, 14, 1.1, 0.05))
+                .aiFactory(new ArcherAiFactory(55, 28, 14, 0.5, 0.025))
                 .stat(StatType.HEALTH, 26)
                 .tag(MobTag.RANGED)
                 .behaviourFactory((archetype, entity) -> new EquipItemBehaviour(entity, EquipmentSlot.MAIN_HAND, ItemStack.of(Material.BOW)))

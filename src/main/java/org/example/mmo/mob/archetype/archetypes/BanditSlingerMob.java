@@ -42,7 +42,7 @@ public final class BanditSlingerMob {
                         25,
                         22,
                         12,
-                        0.9,
+                        0.8,
                         0.12,
                         true,
                         EntityType.EGG
