@@ -28,7 +28,6 @@ public final class TheGrandTour {
         step1.objectives = List.of(
                 new TalkObjective("wizard", Component.text("Consultez l'Archimage"), List.of(Component.text("Le chasseur vous envoie ? Intéressant..."))),
                 new KillObjective("bandit_skirmisher", 5, "grand_tour_bandits", Component.text("Éliminez 5 bandits maraudeurs")),
-                new KillObjective("bandit_skirmisher", 5, "grand_tour_bandits", Component.text("Eliminez 5 bandits maraudeurs")),
                 new LocationObjective(new Pos(-15, 40, 15), 3, Component.text("Trouvez le point de vue caché"))
         );
 

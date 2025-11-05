@@ -37,6 +37,7 @@ public abstract class AbstractMobProjectile extends EntityProjectile implements 
     protected boolean inBlock = false;
     private long maxAliveTicks = -1;
     private long blockLifetimeTicks = -1;
+    private long aliveTicks;
 
     protected AbstractMobProjectile(Entity shooter, EntityType type) {
         super(shooter, type);
@@ -44,11 +45,16 @@ public abstract class AbstractMobProjectile extends EntityProjectile implements 
     }
 
     public void configureLifetime(long lifetimeTicks, long blockLifetimeTicks) {
+        this.aliveTicks = 0;
         if (lifetimeTicks > 0) {
             scheduleLifetime(lifetimeTicks);
+        } else {
+            this.maxAliveTicks = -1;
         }
         if (blockLifetimeTicks > 0) {
             scheduleBlockLifetime(blockLifetimeTicks);
+        } else {
+            this.blockLifetimeTicks = -1;
         }
     }
 
@@ -57,7 +63,8 @@ public abstract class AbstractMobProjectile extends EntityProjectile implements 
         if (isRemoved()) {
             return;
         }
-        if (maxAliveTicks > 0 && getAliveTicks() >= maxAliveTicks) {
+        aliveTicks++;
+        if (maxAliveTicks > 0 && aliveTicks >= maxAliveTicks) {
             remove();
             return;
         }
