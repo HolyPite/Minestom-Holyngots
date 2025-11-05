@@ -32,7 +32,7 @@ public final class MobProjectileUtils {
         }
         Pos shooterPos = shooter.getPosition();
         Vec direction = computeDirection(shooter, target);
-        Pos spawnPos = shooterPos.add(direction.mul(0.75));
+        Pos spawnPos = shooterPos.add(direction.mul(0.75)).add(shooter.getEyeHeight());
 
         Pos aim = target;
 
