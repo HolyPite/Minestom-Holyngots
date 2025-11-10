@@ -9,129 +9,29 @@
       "slot": 0
     },
     {
-      "itemId": "admin_slayer",
+      "itemId": "stormrunner_sigil",
       "amount": 1,
       "slot": 1
     },
     {
-      "itemId": "frostcaster_staff",
-      "amount": 1,
+      "itemId": "mob_bundle:bandit_skirmisher",
+      "amount": 8,
       "slot": 2
     },
     {
-      "itemId": "arcane_wand",
+      "itemId": "admin_slayer",
       "amount": 1,
       "slot": 3
     },
     {
-      "itemId": "mob_bundle:bandit_skirmisher",
-      "amount": 1,
-      "slot": 4
-    },
-    {
-      "itemId": "hunter_shortbow",
-      "amount": 1,
-      "slot": 5
-    },
-    {
       "itemId": "mob_bundle:bandit_archer",
       "amount": 3,
-      "slot": 6
-    },
-    {
-      "itemId": "hunter_shortbow",
-      "amount": 1,
-      "slot": 7
-    },
-    {
-      "itemId": "hunter_shortbow",
-      "amount": 1,
-      "slot": 8
-    },
-    {
-      "itemId": "sunken_guardian_plate",
-      "amount": 1,
-      "slot": 9
-    },
-    {
-      "itemId": "wolf_pelt",
-      "amount": 19,
-      "slot": 10
-    },
-    {
-      "itemId": "wolf_fang",
-      "amount": 7,
-      "slot": 11
-    },
-    {
-      "itemId": "bone",
-      "amount": 7,
-      "slot": 12
-    },
-    {
-      "itemId": "bandit_coin",
-      "amount": 64,
-      "slot": 13
-    },
-    {
-      "itemId": "bandit_orders",
-      "amount": 8,
-      "slot": 14
-    },
-    {
-      "itemId": "polstron",
-      "amount": 1,
-      "slot": 15
-    },
-    {
-      "itemId": "polstron",
-      "amount": 1,
-      "slot": 16
+      "slot": 4
     },
     {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
-    },
-    {
-      "itemId": "hunter_shortbow",
-      "amount": 1,
-      "slot": 18
-    },
-    {
-      "itemId": "polstron",
-      "amount": 1,
-      "slot": 19
-    },
-    {
-      "itemId": "bandit_coin",
-      "amount": 8,
-      "slot": 20
-    },
-    {
-      "itemId": "mob_bundle:forest_wolf",
-      "amount": 10,
-      "slot": 21
-    },
-    {
-      "itemId": "mob_bundle:bandit_slinger",
-      "amount": 2,
-      "slot": 22
-    },
-    {
-      "itemId": "mob_bundle:cult_pyromancer",
-      "amount": 2,
-      "slot": 23
-    },
-    {
-      "itemId": "mob_bundle:tidal_trident",
-      "amount": 2,
-      "slot": 24
-    },
-    {
-      "itemId": "sunken_guardian_plate",
-      "amount": 1,
-      "slot": 42
     }
   ],
   "quests": [
@@ -159,11 +59,11 @@
   "completedQuests": [],
   "failedQuests": [],
   "position": {
-    "x": -3.090629488861495,
-    "y": 41.24918707874468,
-    "z": 1.428509494241369,
-    "yaw": -65.87268,
-    "pitch": 21.77675
+    "x": -3.2894092605101433,
+    "y": 40.0,
+    "z": 0.9185655181423732,
+    "yaw": -41.712006,
+    "pitch": 17.923307
   },
   "lastInstance": "game1",
   "questCounters": {},
