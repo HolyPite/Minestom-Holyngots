@@ -29,7 +29,7 @@ public final class StormrunnerSigil {
                     .level(2)
                     .cooldown(Duration.ofSeconds(3))
                     .parameterTemplate(template -> template
-                            .linear("speed", 9.0, 1.0)
+                            .linear("speed", 20.0, 4.0)
                             .constant("vertical_scale", 0.2)))
             .skill(TeleportPower.ID, skill -> skill
                     .addTrigger(SkillTrigger.RIGHT_CLICK_AIR)
