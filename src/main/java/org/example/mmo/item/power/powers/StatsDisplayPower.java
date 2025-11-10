@@ -1,5 +1,6 @@
 package org.example.mmo.item.power.powers;
 
+import net.minestom.server.entity.Player;
 import org.example.mmo.item.datas.Stats;
 import org.example.mmo.item.power.PowerId;
 import org.example.mmo.item.skill.Power;
@@ -14,7 +15,11 @@ public final class StatsDisplayPower implements Power {
 
     @Override
     public void execute(PowerContext context, PowerParameters parameters) {
-        Stats.refresh(context.player());
+        Player player = context.asPlayer();
+        if (player == null) {
+            return;
+        }
+        Stats.refresh(player);
         if (context.triggerData() instanceof SkillTriggerData.InventoryClickData data) {
             data.event().setCancelled(true);
         }

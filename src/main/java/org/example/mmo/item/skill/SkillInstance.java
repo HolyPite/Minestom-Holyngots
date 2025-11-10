@@ -1,6 +1,6 @@
 package org.example.mmo.item.skill;
 
-import net.minestom.server.entity.Player;
+import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,24 +27,24 @@ public final class SkillInstance {
         return definition.triggers().contains(trigger);
     }
 
-    public boolean tryActivate(Player player,
-                               ItemStack stack,
-                               SkillTrigger trigger,
-                               SkillTriggerData data) {
+    public SkillActivationResult tryActivate(LivingEntity entity,
+                                             ItemStack stack,
+                                             SkillTrigger trigger,
+                                             SkillTriggerData data) {
         if (!supports(trigger)) {
-            return false;
+            return SkillActivationResult.UNSUPPORTED;
         }
         long now = System.currentTimeMillis();
-        long nextAllowed = lastUse.getOrDefault(player.getUuid(), 0L);
+        long nextAllowed = lastUse.getOrDefault(entity.getUuid(), 0L);
         if (now < nextAllowed) {
-            return false;
+            return SkillActivationResult.onCooldown(definition.powerId(), nextAllowed - now);
         }
-        PowerContext context = new PowerContext(player, stack, trigger, data, definition.level());
-        power.execute(context, definition.parameters());
+        PowerContext context = new PowerContext(entity, stack, trigger, data, definition.level());
+        power.execute(context, definition.resolveParameters());
         long cooldownMillis = definition.cooldown().toMillis();
         if (cooldownMillis > 0) {
-            lastUse.put(player.getUuid(), now + cooldownMillis);
+            lastUse.put(entity.getUuid(), now + cooldownMillis);
         }
-        return true;
+        return SkillActivationResult.success(definition.powerId());
     }
 }

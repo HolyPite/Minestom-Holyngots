@@ -4,12 +4,15 @@ import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.EntityCreature;
 import net.minestom.server.entity.EntityType;
 import org.example.mmo.item.datas.StatType;
+import org.example.mmo.item.skill.SkillTrigger;
+import org.example.mmo.mob.skill.MobSkills;
 import org.example.mmo.mob.MobArchetype;
 import org.example.mmo.mob.MobRegistry;
 import org.example.mmo.mob.MobTag;
 import org.example.mmo.mob.ai.ais.ProjectileShooterAiFactory;
 import org.example.mmo.mob.loot.loots.BanditArcherLoot;
 
+import java.time.Duration;
 public final class CultPyromancerMob {
 
     public static final String ID = "cult_pyromancer";
@@ -41,6 +44,7 @@ public final class CultPyromancerMob {
                         false,
                         EntityType.SMALL_FIREBALL
                 ))
+                .skillBehaviour(MobSkills.ignite(3.1, -1.0, Duration.ofSeconds(8), SkillTrigger.ENTITY_TICK))
                 .lootTable(BanditArcherLoot.TABLE)
                 .build();
     }

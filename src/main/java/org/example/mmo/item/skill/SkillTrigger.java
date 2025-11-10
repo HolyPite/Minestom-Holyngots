@@ -7,5 +7,10 @@ public enum SkillTrigger {
     RIGHT_CLICK_BLOCK,
     LEFT_CLICK_ENTITY,
     LEFT_CLICK_AIR,
-    HELD_TICK
+    HELD_TICK,
+    ENTITY_TICK,
+    ENTITY_AGGRO,
+    ENTITY_DAMAGED,
+    ENTITY_DEATH,
+    ENTITY_SPAWN
 }

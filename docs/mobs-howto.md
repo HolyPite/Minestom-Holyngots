@@ -86,6 +86,20 @@ public final class RallyingCryBehaviour extends MobBehaviourAdapter {
 
 Register behaviours on the archetype (see next section) by providing a `MobBehaviourFactory`.
 
+### 3.1 Skill-based behaviours
+
+Many buffs/offensive powers are now implemented via the shared skill system used by GameItems. Instead of writing a behaviour per effect, attach a reusable power through `MobArchetype.Builder#skillBehaviour` (or the helper `MobSkills` presets):
+
+```java
+import org.example.mmo.item.skill.SkillTrigger;
+import org.example.mmo.mob.skill.MobSkills;
+
+builder.skillBehaviour(MobSkills.dash(8.0, 0.1, Duration.ofSeconds(5), SkillTrigger.ENTITY_AGGRO));
+builder.skillBehaviour(MobSkills.frenzy(0.45, 80, 1, 1, Duration.ofSeconds(8), SkillTrigger.ENTITY_DAMAGED));
+```
+
+Each preset returns a `SkillDefinition` wired to an existing `Power` (dash, teleport, ignite burst, frenzy, bulwark). You can still call `skillBehaviour(SkillDefinition.builder(...))` manually for custom parameters. Powers are automatically registered via `PowerBootstrap`, so they can be reused by both items and mobs without extra wiring.
+
 ---
 
 ## 4. Define the mob archetype

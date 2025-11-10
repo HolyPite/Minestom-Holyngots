@@ -3,9 +3,15 @@ package org.example.mmo.mob;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.EntityType;
 import org.example.mmo.item.datas.StatType;
+import org.example.mmo.item.skill.SkillDefinition;
+import org.example.mmo.item.skill.SkillInstance;
+import org.example.mmo.item.skill.SkillLibrary;
 import org.example.mmo.mob.behaviour.MobBehaviourFactory;
+import org.example.mmo.mob.behaviour.MobSkillBehaviour;
 import org.example.mmo.mob.loot.MobLootTable;
 import org.example.mmo.mob.loot.MobQuestLootTable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -22,6 +28,8 @@ import java.util.Set;
  * Immutable definition of a mob archetype (stats, equipment, behaviours, loot).
  */
 public final class MobArchetype {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MobArchetype.class);
 
     private final String id;
     private final String name;
@@ -187,6 +195,15 @@ public final class MobArchetype {
 
         public Builder behaviourFactory(@NotNull MobBehaviourFactory factory) {
             this.behaviourFactories.add(factory);
+            return this;
+        }
+
+        public Builder skillBehaviour(@NotNull SkillDefinition definition) {
+            SkillLibrary.resolve(definition).ifPresentOrElse(
+                    skill -> this.behaviourFactories.add((archetype, entity) ->
+                            new MobSkillBehaviour(skill, definition.triggers())),
+                    () -> LOGGER.warn("Failed to resolve power {} for mob {}", definition.powerId(), id)
+            );
             return this;
         }
 

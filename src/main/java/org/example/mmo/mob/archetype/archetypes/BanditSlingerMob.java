@@ -10,7 +10,11 @@ import org.example.mmo.mob.MobEquipment;
 import org.example.mmo.mob.MobRegistry;
 import org.example.mmo.mob.MobTag;
 import org.example.mmo.mob.ai.ais.ProjectileShooterAiFactory;
+import org.example.mmo.item.skill.SkillTrigger;
 import org.example.mmo.mob.loot.loots.BanditSkirmisherLoot;
+import org.example.mmo.mob.skill.MobSkills;
+
+import java.time.Duration;
 
 public final class BanditSlingerMob {
 
@@ -47,6 +51,8 @@ public final class BanditSlingerMob {
                         true,
                         EntityType.EGG
                 ))
+                .skillBehaviour(MobSkills.teleport(4.5, 0.1, Duration.ofSeconds(10), SkillTrigger.ENTITY_DAMAGED))
+                .skillBehaviour(MobSkills.dash(7.0, 0.05, Duration.ofSeconds(6), SkillTrigger.ENTITY_AGGRO))
                 .lootTable(BanditSkirmisherLoot.TABLE)
                 .build();
     }

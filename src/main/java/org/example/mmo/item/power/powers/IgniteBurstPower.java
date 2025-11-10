@@ -1,7 +1,7 @@
 package org.example.mmo.item.power.powers;
 
 import net.minestom.server.coordinate.Pos;
-import net.minestom.server.entity.Player;
+import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import org.example.mmo.item.power.PowerId;
@@ -16,15 +16,15 @@ public final class IgniteBurstPower implements Power {
 
     @Override
     public void execute(PowerContext context, PowerParameters parameters) {
-        Player player = context.player();
-        Instance instance = player.getInstance();
+        LivingEntity entity = context.entity();
+        Instance instance = entity.getInstance();
         if (instance == null) {
             return;
         }
         double radius = Math.max(1.0, parameters.get("radius", 3.0));
         int yOffset = (int) Math.round(parameters.get("y_offset", 0.0));
 
-        Pos pos = player.getPosition();
+        Pos pos = entity.getPosition();
         int centerX = (int) Math.floor(pos.x());
         int centerY = (int) Math.floor(pos.y()) + yOffset;
         int centerZ = (int) Math.floor(pos.z());

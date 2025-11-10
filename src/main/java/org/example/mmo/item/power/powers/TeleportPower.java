@@ -2,7 +2,7 @@ package org.example.mmo.item.power.powers;
 
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
-import net.minestom.server.entity.Player;
+import net.minestom.server.entity.LivingEntity;
 import org.example.mmo.item.power.PowerId;
 import org.example.mmo.item.skill.Power;
 import org.example.mmo.item.skill.PowerContext;
@@ -15,15 +15,16 @@ public final class TeleportPower implements Power {
 
     @Override
     public void execute(PowerContext context, PowerParameters parameters) {
-        Player player = context.player();
+        LivingEntity entity = context.entity();
         double distance = Math.max(1.0, parameters.get("distance", 8.0));
         double verticalOffset = parameters.get("vertical_offset", 0.0);
 
-        Pos current = player.getPosition();
+        Pos current = entity.getPosition();
         Vec direction = forward(current);
-        Pos target = current.add(direction.mul(distance)).withY(current.y() + direction.y() * distance + verticalOffset);
+        Pos target = current.add(direction.mul(distance))
+                .withY(current.y() + direction.y() * distance + verticalOffset);
 
-        player.teleport(target);
+        entity.teleport(target);
     }
 
     private static Vec forward(Pos pos) {

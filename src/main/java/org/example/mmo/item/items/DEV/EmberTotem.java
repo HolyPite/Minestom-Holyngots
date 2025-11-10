@@ -8,7 +8,6 @@ import org.example.mmo.item.ItemRegistry;
 import org.example.mmo.item.datas.Category;
 import org.example.mmo.item.datas.Rarity;
 import org.example.mmo.item.power.powers.IgniteBurstPower;
-import org.example.mmo.item.skill.PowerParameters;
 import org.example.mmo.item.skill.SkillTrigger;
 
 import java.time.Duration;
@@ -26,11 +25,11 @@ public final class EmberTotem {
             .skill(IgniteBurstPower.ID, skill -> skill
                     .addTrigger(SkillTrigger.RIGHT_CLICK_AIR)
                     .addTrigger(SkillTrigger.RIGHT_CLICK_BLOCK)
+                    .level(3)
                     .cooldown(Duration.ofSeconds(12))
-                    .parameters(PowerParameters.builder()
-                            .put("radius", 4.5)
-                            .put("y_offset", -1.0)
-                            .build()))
+                    .parameterTemplate(template -> template
+                            .linear("radius", 3.5, 0.5)
+                            .constant("y_offset", -1.0)))
             .build();
 
     static {

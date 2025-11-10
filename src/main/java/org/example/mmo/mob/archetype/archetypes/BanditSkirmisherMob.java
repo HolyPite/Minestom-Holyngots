@@ -11,6 +11,10 @@ import org.example.mmo.mob.MobTag;
 import org.example.mmo.mob.ai.ais.MeleeChargerAiFactory;
 import org.example.mmo.mob.behaviour.behaviours.AttributeSetterBehaviour;
 import org.example.mmo.mob.loot.loots.BanditSkirmisherLoot;
+import org.example.mmo.mob.skill.MobSkills;
+import org.example.mmo.item.skill.SkillTrigger;
+
+import java.time.Duration;
 
 public final class BanditSkirmisherMob {
 
@@ -34,6 +38,7 @@ public final class BanditSkirmisherMob {
                 .stat(StatType.HEALTH, 32)
                 .tag(MobTag.AGGRESSIVE)
                 .behaviourFactory((archetype, entity) -> new AttributeSetterBehaviour(entity, Attribute.MOVEMENT_SPEED, 0.25))
+                .skillBehaviour(MobSkills.dash(8.5, 0.05, Duration.ofSeconds(5), SkillTrigger.ENTITY_AGGRO, SkillTrigger.ENTITY_DAMAGED))
                 .lootTable(BanditSkirmisherLoot.TABLE)
                 .displayName(Component.text(NAME))
                 .build();

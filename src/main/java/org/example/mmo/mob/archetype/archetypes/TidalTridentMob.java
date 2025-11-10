@@ -5,12 +5,15 @@ import net.minestom.server.entity.EntityCreature;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.EquipmentSlot;
 import org.example.mmo.item.datas.StatType;
+import org.example.mmo.item.skill.SkillTrigger;
 import org.example.mmo.mob.MobArchetype;
 import org.example.mmo.mob.MobEquipment;
 import org.example.mmo.mob.MobRegistry;
 import org.example.mmo.mob.MobTag;
 import org.example.mmo.mob.ai.ais.ProjectileShooterAiFactory;
 import org.example.mmo.mob.loot.loots.SunkenGuardianLoot;
+import org.example.mmo.mob.skill.MobSkills;
+import java.time.Duration;
 
 public final class TidalTridentMob {
 
@@ -48,6 +51,8 @@ public final class TidalTridentMob {
                         true,
                         EntityType.TRIDENT
                 ))
+                .skillBehaviour(MobSkills.dash(10.0, 0.15, Duration.ofSeconds(6), SkillTrigger.ENTITY_AGGRO))
+                .skillBehaviour(MobSkills.teleport(6.0, 0.2, Duration.ofSeconds(12), SkillTrigger.ENTITY_DAMAGED))
                 .lootTable(SunkenGuardianLoot.TABLE)
                 .build();
     }

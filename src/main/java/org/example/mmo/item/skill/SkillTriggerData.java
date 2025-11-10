@@ -2,6 +2,7 @@ package org.example.mmo.item.skill;
 
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.damage.Damage;
 import net.minestom.server.event.inventory.InventoryItemChangeEvent;
 import net.minestom.server.event.inventory.InventoryPreClickEvent;
 import net.minestom.server.item.ItemStack;
@@ -12,7 +13,11 @@ public sealed interface SkillTriggerData permits SkillTriggerData.InventoryClick
         SkillTriggerData.BlockTargetData,
         SkillTriggerData.EntityTargetData,
         SkillTriggerData.HeldTickData,
-        SkillTriggerData.SimpleData {
+        SkillTriggerData.SimpleData,
+        SkillTriggerData.DamageData,
+        SkillTriggerData.TickData,
+        SkillTriggerData.SpawnData,
+        SkillTriggerData.DeathData {
 
     record SimpleData() implements SkillTriggerData {}
 
@@ -25,5 +30,13 @@ public sealed interface SkillTriggerData permits SkillTriggerData.InventoryClick
 
     record EntityTargetData(@Nullable Entity target) implements SkillTriggerData {}
 
+    record DamageData(Damage damage) implements SkillTriggerData {}
+
     record HeldTickData(long aliveTicks) implements SkillTriggerData {}
+
+    record TickData(long tick) implements SkillTriggerData {}
+
+    record SpawnData() implements SkillTriggerData {}
+
+    record DeathData(@Nullable Entity killer) implements SkillTriggerData {}
 }

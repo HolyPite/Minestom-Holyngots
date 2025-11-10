@@ -10,8 +10,11 @@ import org.example.mmo.mob.MobRegistry;
 import org.example.mmo.mob.MobTag;
 import org.example.mmo.mob.ai.ais.MeleeChargerAiFactory;
 import org.example.mmo.mob.behaviour.behaviours.AttributeSetterBehaviour;
-import org.example.mmo.mob.behaviour.behaviours.EnrageOnLowHealthBehaviour;
 import org.example.mmo.mob.loot.loots.ForestWolfLoot;
+import org.example.mmo.mob.skill.MobSkills;
+import org.example.mmo.item.skill.SkillTrigger;
+
+import java.time.Duration;
 
 public final class ForestWolfMob {
 
@@ -35,7 +38,7 @@ public final class ForestWolfMob {
                 .stat(StatType.HEALTH, 24)
                 .tag(MobTag.AGGRESSIVE)
                 .behaviourFactory((archetype, entity) -> new AttributeSetterBehaviour(entity, Attribute.MOVEMENT_SPEED, 0.30))
-                .behaviourFactory((archetype, entity) -> new EnrageOnLowHealthBehaviour(entity, 0.35f))
+                .skillBehaviour(MobSkills.frenzy(0.4, 100, 1, 1, Duration.ofSeconds(6), SkillTrigger.ENTITY_DAMAGED))
                 .lootTable(ForestWolfLoot.TABLE)
                 .displayName(Component.text(NAME))
                 .build();

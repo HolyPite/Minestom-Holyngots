@@ -26,11 +26,11 @@ public final class StormrunnerSigil {
             .story("Permet de filer comme l'eclair", "ou de disparaitre dans un flash.")
             .skill(DashPower.ID, skill -> skill
                     .addTrigger(SkillTrigger.LEFT_CLICK_AIR)
+                    .level(2)
                     .cooldown(Duration.ofSeconds(3))
-                    .parameters(PowerParameters.builder()
-                            .put("speed", 11.0)
-                            .put("vertical_scale", 0.2)
-                            .build()))
+                    .parameterTemplate(template -> template
+                            .linear("speed", 9.0, 1.0)
+                            .constant("vertical_scale", 0.2)))
             .skill(TeleportPower.ID, skill -> skill
                     .addTrigger(SkillTrigger.RIGHT_CLICK_AIR)
                     .cooldown(Duration.ofSeconds(10))

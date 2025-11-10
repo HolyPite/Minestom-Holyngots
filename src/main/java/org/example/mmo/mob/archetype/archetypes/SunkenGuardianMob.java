@@ -10,10 +10,12 @@ import org.example.mmo.mob.MobEquipment;
 import org.example.mmo.mob.MobRegistry;
 import org.example.mmo.mob.MobTag;
 import org.example.mmo.mob.ai.ais.SunkenGuardianAiFactory;
-import org.example.mmo.mob.behaviour.behaviours.BulwarkShieldBehaviour;
-import org.example.mmo.mob.behaviour.behaviours.TidalRageBehaviour;
 import org.example.mmo.mob.loot.loots.SunkenGuardianLoot;
 import org.example.mmo.mob.loot.loots.SunkenGuardianQuestLoot;
+import org.example.mmo.mob.skill.MobSkills;
+import org.example.mmo.item.skill.SkillTrigger;
+
+import java.time.Duration;
 
 public final class SunkenGuardianMob {
 
@@ -46,8 +48,8 @@ public final class SunkenGuardianMob {
                 .equipment(equipment)
                 .tag(MobTag.AGGRESSIVE)
                 .aiFactory(new SunkenGuardianAiFactory(1.0, 30, 28f))
-                .behaviourFactory((archetype, entity) -> new BulwarkShieldBehaviour(entity, 1))
-                .behaviourFactory((archetype, entity) -> new TidalRageBehaviour(entity, 1, 1))
+                .skillBehaviour(MobSkills.bulwark(1, 100, Duration.ofSeconds(8), SkillTrigger.ENTITY_TICK))
+                .skillBehaviour(MobSkills.frenzy(0.5, 80, 1, 1, Duration.ofSeconds(10), SkillTrigger.ENTITY_DAMAGED))
                 .lootTable(SunkenGuardianLoot.TABLE)
                 .questLootTable(SunkenGuardianQuestLoot.TABLE)
                 .build();

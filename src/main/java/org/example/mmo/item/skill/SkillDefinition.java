@@ -3,12 +3,13 @@ package org.example.mmo.item.skill;
 import java.time.Duration;
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public record SkillDefinition(String powerId,
                               Set<SkillTrigger> triggers,
                               int level,
                               Duration cooldown,
-                              PowerParameters parameters) {
+                              SkillParameterProvider parameterProvider) {
 
     public SkillDefinition {
         if (powerId == null || powerId.isBlank()) {
@@ -19,8 +20,14 @@ public record SkillDefinition(String powerId,
         }
         level = Math.max(1, level);
         cooldown = cooldown == null ? Duration.ZERO : cooldown;
-        parameters = parameters == null ? PowerParameters.builder().build() : parameters;
+        parameterProvider = parameterProvider == null
+                ? SkillParameterProvider.constant(PowerParameters.builder().build())
+                : parameterProvider;
         triggers = EnumSet.copyOf(triggers);
+    }
+
+    public PowerParameters resolveParameters() {
+        return parameterProvider.parametersForLevel(level);
     }
 
     public static Builder builder(String powerId) {
@@ -32,7 +39,7 @@ public record SkillDefinition(String powerId,
         private final EnumSet<SkillTrigger> triggers = EnumSet.noneOf(SkillTrigger.class);
         private int level = 1;
         private Duration cooldown = Duration.ZERO;
-        private PowerParameters parameters = PowerParameters.builder().build();
+        private SkillParameterProvider parameterProvider = SkillParameterProvider.constant(PowerParameters.builder().build());
 
         private Builder(String powerId) {
             this.powerId = powerId;
@@ -54,12 +61,24 @@ public record SkillDefinition(String powerId,
         }
 
         public Builder parameters(PowerParameters parameters) {
-            this.parameters = parameters;
+            this.parameterProvider = SkillParameterProvider.constant(parameters);
+            return this;
+        }
+
+        public Builder parameterProvider(SkillParameterProvider provider) {
+            this.parameterProvider = provider;
+            return this;
+        }
+
+        public Builder parameterTemplate(Consumer<PowerParameterTemplate.Builder> consumer) {
+            PowerParameterTemplate.Builder builder = PowerParameterTemplate.builder();
+            consumer.accept(builder);
+            this.parameterProvider = builder.build();
             return this;
         }
 
         public SkillDefinition build() {
-            return new SkillDefinition(powerId, triggers, level, cooldown, parameters);
+            return new SkillDefinition(powerId, triggers, level, cooldown, parameterProvider);
         }
     }
 }

@@ -2,7 +2,7 @@ package org.example.mmo.item.power.powers;
 
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
-import net.minestom.server.entity.Player;
+import net.minestom.server.entity.LivingEntity;
 import org.example.mmo.item.power.PowerId;
 import org.example.mmo.item.skill.Power;
 import org.example.mmo.item.skill.PowerContext;
@@ -15,13 +15,13 @@ public final class DashPower implements Power {
 
     @Override
     public void execute(PowerContext context, PowerParameters parameters) {
-        Player player = context.player();
+        LivingEntity entity = context.entity();
         double speed = Math.max(0.1, parameters.get("speed", 8.0));
         double verticalScale = parameters.get("vertical_scale", 1.0);
 
-        Vec dir = forward(player.getPosition());
+        Vec dir = forward(entity.getPosition());
         Vec velocity = new Vec(dir.x() * speed, dir.y() * speed * verticalScale, dir.z() * speed);
-        player.setVelocity(velocity);
+        entity.setVelocity(velocity);
     }
 
     private static Vec forward(Pos pos) {

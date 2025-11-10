@@ -23,9 +23,9 @@ import org.example.mmo.item.datas.Category;
 import org.example.mmo.item.datas.Rarity;
 import org.example.mmo.item.datas.StatMap;
 import org.example.mmo.item.datas.StatType;
-import org.example.mmo.item.skill.PowerRegistry;
 import org.example.mmo.item.skill.SkillDefinition;
 import org.example.mmo.item.skill.SkillInstance;
+import org.example.mmo.item.skill.SkillLibrary;
 import org.example.mmo.projectile.ProjectileLaunchConfig;
 import org.example.utils.TKit;
 
@@ -197,10 +197,7 @@ public final class GameItem {
         }
         List<SkillInstance> resolved = new ArrayList<>();
         for (SkillDefinition definition : definitions) {
-            var power = PowerRegistry.resolve(definition.powerId());
-            if (power != null) {
-                resolved.add(new SkillInstance(definition, power));
-            }
+            SkillLibrary.resolve(definition).ifPresent(resolved::add);
         }
         return List.copyOf(resolved);
     }

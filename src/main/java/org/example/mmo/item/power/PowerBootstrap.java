@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public final class PowerBootstrap {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PowerBootstrap.class);
-    private static final String POWER_PACKAGE = "org.example.mmo.item.power";
+    private static final String POWER_PACKAGE = "org.example.mmo.item.power.powers";
 
     private PowerBootstrap() {}
 
