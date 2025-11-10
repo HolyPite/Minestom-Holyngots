@@ -1,5 +1,6 @@
 package org.example.mmo.mob;
 
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
@@ -12,7 +13,6 @@ import net.minestom.server.event.trait.EntityEvent;
 import org.example.bootstrap.GameContext;
 import org.example.data.data_class.PlayerData;
 import org.example.mmo.combat.history.DamageHistory;
-import org.example.mmo.combat.history.DamageRecord;
 import org.example.mmo.combat.history.DamageTracker;
 import org.example.mmo.item.ItemDelivery;
 import org.example.mmo.mob.behaviour.MobBehaviour;
@@ -20,11 +20,9 @@ import org.example.mmo.mob.loot.MobLootBundles;
 import org.example.mmo.mob.loot.MobQuestLootRoller;
 
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import org.slf4j.Logger;
@@ -124,8 +122,8 @@ public final class MobAiService {
             return;
         }
 
-        List<DamageRecord> records = history.getRecords();
-        if (records.isEmpty()) {
+        List<DamageHistory.AttackerContribution> contributions = history.getAttackerContributions();
+        if (contributions.isEmpty()) {
             if (killer instanceof Player player) {
                 giveQuestLoot(instance, player, dropInstance, dropPosition);
                 giveBundle(instance, player, dropInstance, dropPosition);
@@ -133,36 +131,21 @@ public final class MobAiService {
             return;
         }
 
-        Map<Player, Double> contributions = new HashMap<>();
-        double totalDamage = 0d;
-        for (DamageRecord record : records) {
-            Damage damage = record.damage();
-            if (damage == null) {
-                continue;
-            }
-            float amount = damage.getAmount();
-            if (amount <= 0f) {
-                continue;
-            }
-            totalDamage += amount;
-            Entity attacker = damage.getAttacker();
-            if (attacker instanceof Player player) {
-                contributions.merge(player, (double) amount, Double::sum);
-            }
-        }
-
-        if (totalDamage <= 0d || contributions.isEmpty()) {
+        double totalDamage = contributions.stream()
+                .mapToDouble(DamageHistory.AttackerContribution::totalDamage)
+                .sum();
+        if (totalDamage <= 0d) {
             return;
         }
 
         double threshold = instance.archetype().lootContributionThreshold();
         List<Player> eligiblePlayers = new ArrayList<>();
-        for (Entry<Player, Double> entry : contributions.entrySet()) {
-            Player player = entry.getKey();
+        for (DamageHistory.AttackerContribution contribution : contributions) {
+            Player player = MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(contribution.attackerId());
             if (player == null || !player.isOnline()) {
                 continue;
             }
-            double share = entry.getValue() / totalDamage;
+            double share = contribution.totalDamage() / totalDamage;
             if (share >= threshold) {
                 eligiblePlayers.add(player);
             }
