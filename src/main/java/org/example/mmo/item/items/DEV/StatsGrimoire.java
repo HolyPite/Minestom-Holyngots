@@ -7,7 +7,7 @@ import org.example.mmo.item.datas.Category;
 import org.example.mmo.item.datas.Rarity;
 import org.example.utils.TKit;
 import org.example.mmo.item.*;
-import org.example.mmo.item.skill.power.StatsDisplayPower;
+import org.example.mmo.item.power.powers.StatsDisplayPower;
 import org.example.mmo.item.skill.SkillTrigger;
 
 import java.time.Duration;

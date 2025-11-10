@@ -1,11 +1,13 @@
-package org.example.mmo.item.skill.power;
+package org.example.mmo.item.power.powers;
 
+import org.example.mmo.item.datas.Stats;
+import org.example.mmo.item.power.PowerId;
 import org.example.mmo.item.skill.Power;
-import org.example.mmo.item.skill.SkillTriggerData;
 import org.example.mmo.item.skill.PowerContext;
 import org.example.mmo.item.skill.PowerParameters;
-import org.example.mmo.item.datas.Stats;
+import org.example.mmo.item.skill.SkillTriggerData;
 
+@PowerId(StatsDisplayPower.ID)
 public final class StatsDisplayPower implements Power {
 
     public static final String ID = "core:stats_display";
