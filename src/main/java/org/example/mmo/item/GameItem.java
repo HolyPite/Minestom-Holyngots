@@ -1,12 +1,16 @@
 package org.example.mmo.item;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -26,6 +30,7 @@ import org.example.mmo.item.datas.StatType;
 import org.example.mmo.item.skill.SkillDefinition;
 import org.example.mmo.item.skill.SkillInstance;
 import org.example.mmo.item.skill.SkillLibrary;
+import org.example.mmo.item.skill.SkillTrigger;
 import org.example.mmo.projectile.ProjectileLaunchConfig;
 import org.example.utils.TKit;
 
@@ -151,6 +156,7 @@ public final class GameItem {
                     TextColor.color(0xFF9EA3))
                     .decorate(TextDecoration.ITALIC));
         }
+        appendSkillsLore(lore);
         return lore;
     }
 
@@ -208,6 +214,100 @@ public final class GameItem {
 
     public boolean hasSkills() {
         return !skills.isEmpty();
+    }
+
+    private void appendSkillsLore(List<Component> lore) {
+        if (skills.isEmpty()) {
+            return;
+        }
+        lore.add(Component.empty());
+        lore.add(Component.text("Pouvoirs", NamedTextColor.AQUA).decorate(TextDecoration.BOLD));
+        for (SkillInstance skill : skills) {
+            lore.add(buildSkillLine(skill));
+        }
+    }
+
+    private Component buildSkillLine(SkillInstance skill) {
+        SkillDefinition def = skill.definition();
+        String name = prettifyPowerId(def.powerId());
+        String triggers = formatTriggerList(def.triggers());
+        String cooldown = formatCooldown(def.cooldown());
+        String level = def.level() > 1 ? "Niv. " + def.level() : null;
+        String params = formatParameters(def.resolveParameters().asMap());
+
+        Component line = Component.text(" - ", NamedTextColor.GRAY)
+                .append(Component.text(name, NamedTextColor.WHITE).decorate(TextDecoration.BOLD));
+        if (level != null) {
+            line = line.append(Component.text(" (" + level + ")", NamedTextColor.GRAY));
+        }
+        line = line.append(Component.text(" • " + triggers, NamedTextColor.DARK_GRAY));
+        if (cooldown != null) {
+            line = line.append(Component.text(" | " + cooldown, NamedTextColor.GRAY));
+        }
+        if (params != null && !params.isBlank()) {
+            line = line.append(Component.text(" | " + params, NamedTextColor.DARK_GRAY));
+        }
+        return line;
+    }
+
+    private static String formatTriggerList(Set<SkillTrigger> triggers) {
+        if (triggers.isEmpty()) {
+            return "Passif";
+        }
+        List<String> labels = new ArrayList<>();
+        for (SkillTrigger trigger : triggers) {
+            labels.add(triggerLabel(trigger));
+        }
+        return String.join(", ", labels);
+    }
+
+    private static String triggerLabel(SkillTrigger trigger) {
+        return switch (trigger) {
+            case RIGHT_CLICK_AIR, RIGHT_CLICK_BLOCK -> "Clic droit";
+            case LEFT_CLICK_AIR, LEFT_CLICK_ENTITY -> "Clic gauche";
+            case INVENTORY_CLICK -> "Inventaire";
+            case INVENTORY_CHANGE -> "Changement equip.";
+            case HELD_TICK, ENTITY_TICK -> "Maintien";
+            case ENTITY_AGGRO -> "Aggro";
+            case ENTITY_DAMAGED -> "Dommage subi";
+            case ENTITY_DEATH -> "A la mort";
+            case ENTITY_SPAWN -> "Apparition";
+            default -> trigger.name().toLowerCase(Locale.ROOT).replace('_', ' ');
+        };
+    }
+
+    private static String formatCooldown(Duration cooldown) {
+        if (cooldown == null || cooldown.isZero()) {
+            return null;
+        }
+        double seconds = cooldown.toMillis() / 1000.0;
+        return "CD " + (seconds % 1 == 0 ? (int) seconds + "s" : String.format(Locale.US, "%.1fs", seconds));
+    }
+
+    private static String formatParameters(Map<String, Double> params) {
+        if (params.isEmpty()) {
+            return null;
+        }
+        List<String> chunks = new ArrayList<>();
+        params.forEach((key, value) -> chunks.add(key + "=" + formatParamValue(value)));
+        return String.join(", ", chunks);
+    }
+
+    private static String formatParamValue(double value) {
+        if (Math.abs(value - Math.round(value)) < 1e-6) {
+            return Long.toString(Math.round(value));
+        }
+        return String.format(Locale.US, "%.2f", value);
+    }
+
+    private static String prettifyPowerId(String id) {
+        if (id == null || id.isBlank()) {
+            return "Pouvoir";
+        }
+        int colon = id.indexOf(':');
+        String tail = colon >= 0 ? id.substring(colon + 1) : id;
+        tail = tail.replace('_', ' ');
+        return tail.isEmpty() ? "Pouvoir" : Character.toUpperCase(tail.charAt(0)) + tail.substring(1);
     }
 
     public static final class Builder {
