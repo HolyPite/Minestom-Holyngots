@@ -35,7 +35,6 @@ public final class HunterShortbow {
                         .spread(0.01D)
                         .hasGravity(true)
                         .cooldownTicks(10L)
-                        .range(36.0D)
                         .allowOffHand(false)
                         .ammoRequirement(AmmoType.ARROW, 1))
                 .build();

@@ -47,6 +47,19 @@ public final class ProjectileLauncher {
         return projectile;
     }
 
+    public static EntityProjectile launchWithDirection(LivingEntity shooter,
+                                                       Vec direction,
+                                                       ProjectileLaunchConfig config) {
+        Objects.requireNonNull(shooter, "shooter");
+        Objects.requireNonNull(direction, "direction");
+        Objects.requireNonNull(config, "config");
+        Vec resolvedDirection = direction.lengthSquared() > 1e-6 ? direction.normalize() : new Vec(0, 0, 1);
+        Pos origin = shooter.getPosition().add(0, shooter.getEyeHeight(), 0);
+        double aimDistance = Math.max(config.speed(), 1.0D);
+        Pos aim = origin.add(resolvedDirection.mul(aimDistance));
+        return launchTowards(shooter, aim, config);
+    }
+
     private static AbstractMobProjectile createProjectile(Entity shooter, EntityType projectileType) {
         if (projectileType == EntityType.ARROW) {
             return new ArrowMobProjectile(shooter);

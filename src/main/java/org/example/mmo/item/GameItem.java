@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
@@ -101,15 +102,29 @@ public final class GameItem {
         if (projectileOptions != null) {
             lore.add(Component.empty());
             lore.add(Component.text("Projectile", NamedTextColor.AQUA).decorate(TextDecoration.BOLD));
-            lore.add(Component.text(" - Type : " + projectileOptions.projectileType().name(), NamedTextColor.GRAY));
-            lore.add(Component.text(" - Cadence : " + projectileOptions.cooldownTicks() + " ticks", NamedTextColor.GRAY));
-            lore.add(Component.text(" - Portee : " + projectileOptions.range() + " blocks", NamedTextColor.GRAY));
-            lore.add(Component.text(" - Declencheur : " + projectileOptions.trigger().name(), NamedTextColor.GRAY));
+
+            List<String> primaryStats = new ArrayList<>();
+            primaryStats.add("Cadence : " + projectileOptions.cooldownTicks() + " ticks");
+            primaryStats.add("Déclencheur : " + projectileOptions.trigger().name());
+            lore.add(composeInlineStatLine(primaryStats));
+
+            List<String> mechanicStats = new ArrayList<>();
+            mechanicStats.add("Vitesse : " + formatDecimal(projectileOptions.speed()));
+            if (projectileOptions.spread() > 0.0D) {
+                mechanicStats.add("Dispersion : " + formatDecimal(projectileOptions.spread()));
+            }
+            mechanicStats.add("Gravite : " + (projectileOptions.hasGravity() ? "Oui" : "Non"));
+            lore.add(composeInlineStatLine(mechanicStats));
+
+            List<String> extraStats = new ArrayList<>();
             if (projectileOptions.chargeTicks() > 0) {
-                lore.add(Component.text(" - Charge : " + projectileOptions.chargeTicks() + " ticks", NamedTextColor.GRAY));
+                extraStats.add("Charge : " + projectileOptions.chargeTicks() + " ticks");
             }
             if (projectileOptions.consumesAmmo()) {
-                lore.add(Component.text(" - Munition : " + projectileOptions.ammoType().name() + " x" + projectileOptions.ammoPerShot(), NamedTextColor.GRAY));
+                extraStats.add("Munition : " + projectileOptions.ammoType().name() + " x" + projectileOptions.ammoPerShot());
+            }
+            if (!extraStats.isEmpty()) {
+                lore.add(composeInlineStatLine(extraStats));
             }
         }
 
@@ -132,6 +147,27 @@ public final class GameItem {
                     .decorate(TextDecoration.ITALIC));
         }
         return lore;
+    }
+
+    private static Component composeInlineStatLine(List<String> entries) {
+        if (entries.isEmpty()) {
+            return Component.empty();
+        }
+        Component line = Component.text(" - ", NamedTextColor.GRAY);
+        for (int i = 0; i < entries.size(); i++) {
+            if (i > 0) {
+                line = line.append(Component.text(" | ", NamedTextColor.DARK_GRAY));
+            }
+            line = line.append(Component.text(entries.get(i), NamedTextColor.GRAY));
+        }
+        return line;
+    }
+
+    private static String formatDecimal(double value) {
+        if (Math.abs(value - Math.round(value)) < 1e-6) {
+            return Long.toString(Math.round(value));
+        }
+        return String.format(Locale.US, "%.2f", value);
     }
 
     public Optional<ProjectileOptions> projectileOptions() {
@@ -271,7 +307,6 @@ public final class GameItem {
         private final boolean hasGravity;
         private final long lifetimeTicks;
         private final Long blockLifetimeTicks;
-        private final double range;
         private final long cooldownTicks;
         private final boolean allowOffHand;
         private final AmmoType ammoType;
@@ -285,7 +320,6 @@ public final class GameItem {
                                   boolean hasGravity,
                                   long lifetimeTicks,
                                   Long blockLifetimeTicks,
-                                  double range,
                                   long cooldownTicks,
                                   boolean allowOffHand,
                                   AmmoType ammoType,
@@ -298,7 +332,6 @@ public final class GameItem {
             this.hasGravity = hasGravity;
             this.lifetimeTicks = lifetimeTicks;
             this.blockLifetimeTicks = blockLifetimeTicks;
-            this.range = range;
             this.cooldownTicks = cooldownTicks;
             this.allowOffHand = allowOffHand;
             this.ammoType = ammoType;
@@ -332,10 +365,6 @@ public final class GameItem {
 
         public Optional<Long> blockLifetimeTicks() {
             return Optional.ofNullable(blockLifetimeTicks);
-        }
-
-        public double range() {
-            return range;
         }
 
         public long cooldownTicks() {
@@ -390,7 +419,6 @@ public final class GameItem {
             private boolean hasGravity = true;
             private long lifetimeTicks = ProjectileLaunchConfig.DEFAULT_LIFETIME_TICKS;
             private Long blockLifetimeTicks;
-            private double range = 24.0D;
             private long cooldownTicks = 10L;
             private boolean allowOffHand = false;
             private AmmoType ammoType;
@@ -432,11 +460,6 @@ public final class GameItem {
                 return this;
             }
 
-            public Builder range(double range) {
-                this.range = range;
-                return this;
-            }
-
             public Builder cooldownTicks(long cooldownTicks) {
                 this.cooldownTicks = cooldownTicks;
                 return this;
@@ -463,7 +486,6 @@ public final class GameItem {
                     throw new IllegalStateException("Projectile type must be specified for launcher items");
                 }
                 double resolvedSpeed = speed > 0 ? speed : 1.0D;
-                double resolvedRange = range > 0 ? range : 24.0D;
                 double resolvedSpread = Math.max(0.0D, spread);
                 long resolvedCooldown = Math.max(0L, cooldownTicks);
                 long resolvedLifetime = lifetimeTicks > 0 ? lifetimeTicks : ProjectileLaunchConfig.DEFAULT_LIFETIME_TICKS;
@@ -477,7 +499,6 @@ public final class GameItem {
                         hasGravity,
                         resolvedLifetime,
                         blockLifetimeTicks,
-                        resolvedRange,
                         resolvedCooldown,
                         allowOffHand,
                         ammoType,

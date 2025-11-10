@@ -8,7 +8,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.EntityProjectile;
 import net.minestom.server.entity.Player;
@@ -33,7 +32,6 @@ import org.example.mmo.projectile.ProjectileLauncher;
 
 final class ItemProjectileListener {
 
-    private static final double DEFAULT_RANGE = 24.0D;
     private static final long DEFAULT_MAX_USE_TICKS = 72000L;
 
     private static final Map<UUID, Map<String, ShotState>> LAST_SHOTS = new ConcurrentHashMap<>();
@@ -179,8 +177,7 @@ final class ItemProjectileListener {
             return false;
         }
 
-        double range = options.range() > 0 ? options.range() : DEFAULT_RANGE;
-        Pos target = computeAim(player, range);
+        Vec aimDirection = resolveDirection(player);
         double chargeMultiplier = computeChargeMultiplier(options, chargeTicksSpent);
         ProjectileLaunchConfig config = options.toLaunchConfig(chargeMultiplier);
 
@@ -198,7 +195,7 @@ final class ItemProjectileListener {
             return false;
         }
 
-        EntityProjectile projectile = ProjectileLauncher.launchTowards(player, target, config);
+        EntityProjectile projectile = ProjectileLauncher.launchWithDirection(player, aimDirection, config);
         if (projectile == null) {
             return false;
         }
@@ -225,15 +222,12 @@ final class ItemProjectileListener {
         };
     }
 
-    private static Pos computeAim(Player player, double range) {
-        Pos eye = player.getPosition().add(0, player.getEyeHeight(), 0);
+    private static Vec resolveDirection(Player player) {
         Vec direction = player.getPosition().direction();
         if (direction.lengthSquared() < 1e-6) {
-            direction = new Vec(0, 0, 1);
-        } else {
-            direction = direction.normalize();
+            return new Vec(0, 0, 1);
         }
-        return eye.add(direction.mul(range));
+        return direction.normalize();
     }
 
     private static boolean hasAmmo(Player player, ProjectileOptions options) {

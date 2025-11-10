@@ -34,7 +34,6 @@ public final class ArcaneWand {
                         .spread(0.03D)
                         .hasGravity(false)
                         .cooldownTicks(20L)
-                        .range(28.0D)
                         .allowOffHand(true)
                         .ammoRequirement(AmmoType.MAGIC, 1))
                 .build();

@@ -34,7 +34,6 @@ public final class FrostcasterStaff {
                         .spread(0.08D)
                         .hasGravity(true)
                         .cooldownTicks(6L)
-                        .range(20.0D)
                         .allowOffHand(true)
                         .ammoRequirement(AmmoType.MAGIC, 1))
                 .build();

@@ -77,19 +77,9 @@ public final class ArrowMobProjectile extends AbstractMobProjectile {
         float yaw = -shooter.getPosition().yaw();
         float pitch = -shooter.getPosition().pitch();
 
-        double pitchDiff = pitch - 35f;
-        if (pitchDiff == 0) {
-            pitchDiff = 0.0001;
-        }
-        double pitchAdjust = pitchDiff * 0.002145329238474369D;
-
         double dx = to.x() - from.x();
-        double dy = to.y() - from.y() + pitchAdjust;
+        double dy = to.y() - from.y();
         double dz = to.z() - from.z();
-        if (!hasNoGravity()) {
-            final double xzLength = Math.sqrt(dx * dx + dz * dz);
-            dy += xzLength * 0.20000000298023224D;
-        }
 
         final double length = Math.sqrt(dx * dx + dy * dy + dz * dz);
         dx /= length;

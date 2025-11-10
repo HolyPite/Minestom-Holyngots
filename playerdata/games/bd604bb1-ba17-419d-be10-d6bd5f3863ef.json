@@ -25,7 +25,7 @@
     },
     {
       "itemId": "mob_bundle:bandit_skirmisher",
-      "amount": 2,
+      "amount": 1,
       "slot": 4
     },
     {
@@ -35,8 +35,18 @@
     },
     {
       "itemId": "mob_bundle:bandit_archer",
-      "amount": 1,
+      "amount": 3,
       "slot": 6
+    },
+    {
+      "itemId": "hunter_shortbow",
+      "amount": 1,
+      "slot": 7
+    },
+    {
+      "itemId": "hunter_shortbow",
+      "amount": 1,
+      "slot": 8
     },
     {
       "itemId": "sunken_guardian_plate",
@@ -60,12 +70,12 @@
     },
     {
       "itemId": "bandit_coin",
-      "amount": 60,
+      "amount": 64,
       "slot": 13
     },
     {
       "itemId": "bandit_orders",
-      "amount": 7,
+      "amount": 8,
       "slot": 14
     },
     {
@@ -84,22 +94,78 @@
       "slot": 17
     },
     {
+      "itemId": "hunter_shortbow",
+      "amount": 1,
+      "slot": 18
+    },
+    {
+      "itemId": "polstron",
+      "amount": 1,
+      "slot": 19
+    },
+    {
+      "itemId": "bandit_coin",
+      "amount": 8,
+      "slot": 20
+    },
+    {
+      "itemId": "mob_bundle:forest_wolf",
+      "amount": 10,
+      "slot": 21
+    },
+    {
+      "itemId": "mob_bundle:bandit_slinger",
+      "amount": 2,
+      "slot": 22
+    },
+    {
+      "itemId": "mob_bundle:cult_pyromancer",
+      "amount": 2,
+      "slot": 23
+    },
+    {
+      "itemId": "mob_bundle:tidal_trident",
+      "amount": 2,
+      "slot": 24
+    },
+    {
       "itemId": "sunken_guardian_plate",
       "amount": 1,
       "slot": 42
     }
   ],
-  "quests": [],
+  "quests": [
+    {
+      "questId": "new_beginning",
+      "stepIndex": 0,
+      "acceptedTime": 1762465461560,
+      "stepStartTime": 1762465461560,
+      "attempts": 1,
+      "stepCompletionTime": 0,
+      "stepFinalized": false,
+      "objectiveCompletionStatus": {}
+    },
+    {
+      "questId": "resilience_recovery",
+      "stepIndex": 0,
+      "acceptedTime": 1762465461562,
+      "stepStartTime": 1762465461562,
+      "attempts": 1,
+      "stepCompletionTime": 0,
+      "stepFinalized": false,
+      "objectiveCompletionStatus": {}
+    }
+  ],
   "completedQuests": [],
   "failedQuests": [],
   "position": {
-    "x": 1.1007691647896196,
-    "y": 40.0,
-    "z": 1.6035081593819311,
-    "yaw": -97.734375,
-    "pitch": 15.269658
+    "x": -3.090629488861495,
+    "y": 41.24918707874468,
+    "z": 1.428509494241369,
+    "yaw": -65.87268,
+    "pitch": 21.77675
   },
-  "lastInstance": "game2",
+  "lastInstance": "game1",
   "questCounters": {},
   "questCooldowns": {}
 }
