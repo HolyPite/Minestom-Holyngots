@@ -24,6 +24,7 @@ import org.example.mmo.inventory.InventoryListener;
 import org.example.mmo.item.ItemBootstrap;
 import org.example.mmo.item.ItemEventsCustom;
 import org.example.mmo.item.ItemEventsGlobal;
+import org.example.mmo.item.skill.PowerBootstrap;
 import org.example.mmo.npc.NpcBootstrap;
 import org.example.mmo.mob.MobAiService;
 import org.example.mmo.mob.MobBootstrap;
@@ -84,6 +85,7 @@ public final class GameLifecycle {
         mobSpawningZoneService.init(entityNode);
         CombatBossBarService.init(gameNode, playerNode);
         CombatListener.init(gameNode);
+        PowerBootstrap.init();
         ItemEventsGlobal.init(gameNode);
         ItemEventsCustom.init(gameNode);
         QuestManager.init(gameNode);
