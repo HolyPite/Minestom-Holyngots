@@ -23,6 +23,9 @@ import org.example.mmo.item.datas.Category;
 import org.example.mmo.item.datas.Rarity;
 import org.example.mmo.item.datas.StatMap;
 import org.example.mmo.item.datas.StatType;
+import org.example.mmo.item.skill.PowerRegistry;
+import org.example.mmo.item.skill.SkillDefinition;
+import org.example.mmo.item.skill.SkillInstance;
 import org.example.mmo.projectile.ProjectileLaunchConfig;
 import org.example.utils.TKit;
 
@@ -41,6 +44,7 @@ public final class GameItem {
     public final boolean questItem;
     public final ProjectileOptions projectileOptions;
     public final AmmoOptions ammoOptions;
+    private final List<SkillInstance> skills;
 
     private GameItem(Builder builder) {
         this.id = builder.id;
@@ -56,6 +60,7 @@ public final class GameItem {
         this.questItem = builder.questItem;
         this.projectileOptions = builder.projectileOptions;
         this.ammoOptions = builder.ammoOptions;
+        this.skills = buildSkills(builder.skills);
     }
 
     public String getId() {
@@ -186,6 +191,28 @@ public final class GameItem {
         return ammoOptions != null;
     }
 
+    private static List<SkillInstance> buildSkills(List<SkillDefinition> definitions) {
+        if (definitions.isEmpty()) {
+            return List.of();
+        }
+        List<SkillInstance> resolved = new ArrayList<>();
+        for (SkillDefinition definition : definitions) {
+            var power = PowerRegistry.resolve(definition.powerId());
+            if (power != null) {
+                resolved.add(new SkillInstance(definition, power));
+            }
+        }
+        return List.copyOf(resolved);
+    }
+
+    public List<SkillInstance> skills() {
+        return skills;
+    }
+
+    public boolean hasSkills() {
+        return !skills.isEmpty();
+    }
+
     public static final class Builder {
         private final String id;
         private final Component displayName;
@@ -201,6 +228,7 @@ public final class GameItem {
         private boolean questItem = false;
         private ProjectileOptions projectileOptions;
         private AmmoOptions ammoOptions;
+        private final List<SkillDefinition> skills = new ArrayList<>();
 
         public Builder(String id, Component name) {
             this.id = id;
@@ -277,6 +305,20 @@ public final class GameItem {
         public Builder clearAmmo() {
             this.ammoOptions = null;
             return this;
+        }
+
+        public Builder skill(SkillDefinition definition) {
+            Objects.requireNonNull(definition, "definition");
+            this.skills.add(definition);
+            return this;
+        }
+
+        public Builder skill(String powerId, Consumer<SkillDefinition.Builder> consumer) {
+            Objects.requireNonNull(powerId, "powerId");
+            Objects.requireNonNull(consumer, "consumer");
+            SkillDefinition.Builder skillBuilder = SkillDefinition.builder(powerId);
+            consumer.accept(skillBuilder);
+            return skill(skillBuilder.build());
         }
 
         public GameItem build() {
