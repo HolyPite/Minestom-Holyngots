@@ -4,29 +4,14 @@
   "experience": 0,
   "inventory": [
     {
-      "itemId": "excalibur",
+      "itemId": "admin_slayer",
       "amount": 1,
       "slot": 0
     },
     {
-      "itemId": "stormrunner_sigil",
-      "amount": 1,
-      "slot": 1
-    },
-    {
       "itemId": "mob_bundle:bandit_skirmisher",
-      "amount": 8,
-      "slot": 2
-    },
-    {
-      "itemId": "admin_slayer",
-      "amount": 1,
-      "slot": 3
-    },
-    {
-      "itemId": "mob_bundle:bandit_archer",
-      "amount": 3,
-      "slot": 4
+      "amount": 5,
+      "slot": 1
     },
     {
       "itemId": "stats_grimoire",
@@ -59,13 +44,22 @@
   "completedQuests": [],
   "failedQuests": [],
   "position": {
-    "x": -3.2894092605101433,
+    "x": -4.2825107883943145,
     "y": 40.0,
-    "z": 0.9185655181423732,
-    "yaw": -41.712006,
-    "pitch": 17.923307
+    "z": 1.3626490968766978,
+    "yaw": 102.58142,
+    "pitch": 17.886118
   },
   "lastInstance": "game1",
+  "respawnPosition": {
+    "x": 20.5,
+    "y": 40.0,
+    "z": 0.5,
+    "yaw": 0.0,
+    "pitch": 0.0
+  },
+  "respawnInstance": "game2",
+  "respawnStoneId": "camp_20_50_0",
   "questCounters": {},
   "questCooldowns": {}
 }

@@ -5,6 +5,7 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
@@ -166,6 +167,30 @@ public class PlayerDataService {
                 repository.save(data, group);
             }
         });
+    }
+
+    public boolean updateRespawnPoint(Player player, Instance instance, Pos position, String stoneId) {
+        PlayerData data = cache.get(player.getUuid());
+        if (data == null) {
+            return false;
+        }
+
+        data.respawnPosition = position;
+        data.respawnStoneId = stoneId;
+        data.respawnInstance = resolveInstanceName(instance);
+        if (data.respawnInstance == null && player.getInstance() instanceof InstanceContainer container) {
+            data.respawnInstance = instances.nameOf(container);
+        }
+
+        player.setRespawnPoint(position);
+        return true;
+    }
+
+    private String resolveInstanceName(Instance instance) {
+        if (instance instanceof InstanceContainer container) {
+            return instances.nameOf(container);
+        }
+        return null;
     }
 
     private void updateInventory(Player player, PlayerData data) {

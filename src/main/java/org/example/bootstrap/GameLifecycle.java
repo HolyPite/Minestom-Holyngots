@@ -35,6 +35,7 @@ import org.example.mmo.npc.dialog.NpcDialogService;
 import org.example.mmo.player.PlayerQuestListener;
 import org.example.mmo.quest.QuestManager;
 import org.example.mmo.quest.registry.QuestBootstrap;
+import org.example.mmo.player.respawn.RespawnStoneService;
 
 import java.util.Objects;
 
@@ -91,6 +92,7 @@ public final class GameLifecycle {
         QuestManager.init(gameNode);
         NpcDialogService.init(playerNode);
         PlayerQuestListener.init(playerNode);
+        RespawnStoneService.init(playerNode, instances, playerDataService);
         InventoryListener.init(inventoryNode);
 
         CommandRegister.init();
