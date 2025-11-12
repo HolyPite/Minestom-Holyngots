@@ -9,14 +9,59 @@
       "slot": 0
     },
     {
-      "itemId": "mob_bundle:bandit_skirmisher",
-      "amount": 5,
+      "itemId": "mob_bundle:forest_wolf",
+      "amount": 4,
       "slot": 1
+    },
+    {
+      "itemId": "wolf_fang",
+      "amount": 6,
+      "slot": 9
+    },
+    {
+      "itemId": "polstron",
+      "amount": 1,
+      "slot": 10
+    },
+    {
+      "itemId": "polstron",
+      "amount": 1,
+      "slot": 11
+    },
+    {
+      "itemId": "bone",
+      "amount": 8,
+      "slot": 12
+    },
+    {
+      "itemId": "bandit_orders",
+      "amount": 2,
+      "slot": 13
+    },
+    {
+      "itemId": "wolf_pelt",
+      "amount": 31,
+      "slot": 14
+    },
+    {
+      "itemId": "bandit_coin",
+      "amount": 12,
+      "slot": 15
+    },
+    {
+      "itemId": "polstron",
+      "amount": 1,
+      "slot": 16
     },
     {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
+    },
+    {
+      "itemId": "sunken_guardian_plate",
+      "amount": 1,
+      "slot": 42
     }
   ],
   "quests": [
@@ -44,11 +89,11 @@
   "completedQuests": [],
   "failedQuests": [],
   "position": {
-    "x": -4.2825107883943145,
+    "x": 0.37110223807094506,
     "y": 40.0,
-    "z": 1.3626490968766978,
-    "yaw": 102.58142,
-    "pitch": 17.886118
+    "z": 2.0748860777353775,
+    "yaw": -147.91287,
+    "pitch": 24.59327
   },
   "lastInstance": "game1",
   "respawnPosition": {
@@ -58,7 +103,7 @@
     "yaw": 0.0,
     "pitch": 0.0
   },
-  "respawnInstance": "game2",
+  "respawnInstance": "game1",
   "respawnStoneId": "camp_20_50_0",
   "questCounters": {},
   "questCooldowns": {}
