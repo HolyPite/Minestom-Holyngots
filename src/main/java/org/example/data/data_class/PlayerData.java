@@ -25,6 +25,9 @@ public class PlayerData {
     public List<String> failedQuests = new ArrayList<>();
     public Pos position;
     public String lastInstance;
+    public Pos respawnPosition;
+    public String respawnInstance;
+    public String respawnStoneId;
 
     public Map<String, Integer> questCounters = new HashMap<>();
     /**

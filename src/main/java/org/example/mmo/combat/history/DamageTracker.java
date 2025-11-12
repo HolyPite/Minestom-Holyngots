@@ -54,6 +54,11 @@ public final class DamageTracker {
         return DAMAGE_HISTORY_MAP.get(entity.getUuid());
     }
 
+    public static long getLastDamageTimestamp(Entity entity) {
+        DamageHistory history = DAMAGE_HISTORY_MAP.get(entity.getUuid());
+        return history == null ? 0L : history.getLastDamageTimestamp();
+    }
+
     private static void cleanupExpiredHistories() {
         long now = System.currentTimeMillis();
         DAMAGE_HISTORY_MAP.entrySet().removeIf(entry -> {

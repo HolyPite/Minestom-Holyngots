@@ -10,8 +10,6 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.entity.damage.DamageType;
 import net.minestom.server.registry.RegistryKey;
 
-import java.util.Locale;
-
 /**
  * Centralised combat feedback helpers (action bar messaging).
  */
@@ -68,7 +66,7 @@ public final class CombatFeedback {
 
         if (attacker instanceof Player player) {
             TextComponent.Builder builder = Component.text();
-            builder.append(displayName(victim));
+            builder.append(HealthUtils.baseDisplayName(victim));
             if (victimMaxHealth > 0f) {
                 builder.append(Component.text(" - ", NamedTextColor.DARK_GRAY));
                 builder.append(Component.text(Math.round(victimHealth) + " PV", chooseColor(victimHealth, victimMaxHealth)));
@@ -99,15 +97,6 @@ public final class CombatFeedback {
         return Component.text("[" + capitalize(label) + "]", color).decorate(TextDecoration.BOLD);
     }
 
-    private static Component displayName(LivingEntity entity) {
-        Component custom = entity.getCustomName();
-        if (custom != null) {
-            return custom;
-        }
-        String typeName = entity.getEntityType().name().toLowerCase(Locale.ROOT).replace('_', ' ');
-        return Component.text(capitalize(typeName), NamedTextColor.WHITE);
-    }
-
     private static TextColor chooseColor(float health, float maxHealth) {
         if (maxHealth <= 0f) {
             return NamedTextColor.GREEN;
@@ -133,3 +122,6 @@ public final class CombatFeedback {
         return first + input.substring(1);
     }
 }
+
+
+

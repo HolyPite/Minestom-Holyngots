@@ -24,11 +24,18 @@ import org.example.mmo.inventory.InventoryListener;
 import org.example.mmo.item.ItemBootstrap;
 import org.example.mmo.item.ItemEventsCustom;
 import org.example.mmo.item.ItemEventsGlobal;
+import org.example.mmo.item.power.PowerBootstrap;
 import org.example.mmo.npc.NpcBootstrap;
+import org.example.mmo.mob.MobAiService;
+import org.example.mmo.mob.MobBootstrap;
+import org.example.mmo.mob.MobSpawnService;
+import org.example.mmo.mob.zone.MobSpawningZoneService;
+import org.example.mmo.mob.zone.MobZoneBootstrap;
 import org.example.mmo.npc.dialog.NpcDialogService;
 import org.example.mmo.player.PlayerQuestListener;
 import org.example.mmo.quest.QuestManager;
 import org.example.mmo.quest.registry.QuestBootstrap;
+import org.example.mmo.player.respawn.RespawnStoneService;
 
 import java.util.Objects;
 
@@ -42,6 +49,8 @@ public final class GameLifecycle {
     private final EventNode<EntityEvent> entityNode;
     private final EventNode<InventoryEvent> inventoryNode;
     private final PlayerDataService playerDataService;
+    private final MobSpawnService mobSpawnService = new MobSpawnService();
+    private final MobSpawningZoneService mobSpawningZoneService = new MobSpawningZoneService(mobSpawnService);
 
     public GameLifecycle(InstanceRegistry instances) {
         this.playerDataService = new PlayerDataService(new JsonPlayerDataRepository(), instances);
@@ -73,13 +82,17 @@ public final class GameLifecycle {
 
     private void registerGameplay(InstanceRegistry instances) {
         DamageTracker.init();
+        MobAiService.init(entityNode);
+        mobSpawningZoneService.init(entityNode);
         CombatBossBarService.init(gameNode, playerNode);
         CombatListener.init(gameNode);
+        PowerBootstrap.init();
         ItemEventsGlobal.init(gameNode);
         ItemEventsCustom.init(gameNode);
         QuestManager.init(gameNode);
         NpcDialogService.init(playerNode);
         PlayerQuestListener.init(playerNode);
+        RespawnStoneService.init(playerNode, instances, playerDataService);
         InventoryListener.init(inventoryNode);
 
         CommandRegister.init();
@@ -90,6 +103,8 @@ public final class GameLifecycle {
         ItemBootstrap.init();
         QuestBootstrap.init();
         NpcBootstrap.init();
+        MobBootstrap.init();
+        MobZoneBootstrap.init(instances, mobSpawningZoneService);
 
         QuestEntitySpawner.spawnPersistentEntities(instances);
     }
@@ -109,4 +124,13 @@ public final class GameLifecycle {
     public PlayerDataService playerDataService() {
         return playerDataService;
     }
+
+    public MobSpawnService mobSpawnService() {
+        return mobSpawnService;
+    }
+
+    public MobSpawningZoneService mobSpawningZoneService() {
+        return mobSpawningZoneService;
+    }
 }
+

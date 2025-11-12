@@ -1,19 +1,25 @@
-• Plan D’Action UI Combat
-
-  - BossBar ciblée : créer CombatBossBarService (org.example.mmo.combat.ui) qui écoute les dégâts/aggro,
-    mémorise le dernier mob touché par chaque joueur, affiche une BossBar auto-colorée (vert→jaune→rouge) avec
-    PV actuels/max, rafraîchit à chaque tick de dégâts/regen et se retire dès que la cible meurt, s’éloigne ou
-    après un timeout de 5 s sans contact.
-  - Action-bar enrichie : refondre CombatFeedback pour composer un message unique tenant compte des états (crit,
-    dodge, heal, absorption) avec codes couleurs cohérents, icônes ASCII ([], !!, ++) et suffixes indiquant le
-    type de dégâts ([Feu], [Poison]), plus un léger cooldown pour éviter le spam.
-  - Indicateurs flottants : ajouter FloatingCombatText (TextDisplay ou armor-stand miniature) généré sur chaque
-    DamageRecord, montant coloré selon type, animation montée/fondu, regroupement en cas de rafale afin d’éviter
-    la surcharge.
-  - Intégration : centraliser la publication via DamageTracker/CombatEvents, exposer une API CombatUiEvents pour
-    rester découplé, et nettoyer tous les artefacts (bossbar + floats) sur mort/déconnexion (EntityDeathEvent,
-    PlayerDisconnectEvent).
-  - Validation : ./gradlew build + tests manuels en jeu (melee + projectiles + effets DoT) pour vérifier synchro
-    des PV, disparition correcte de la barre et cohérence des valeurs affichées.
+  - Domain Model:
+      - Create org.example.mmo.npc.mob.MobArchetype capturing entity type, stat block (reuse StatType totals), equipment bundle, loot table entries (item + drop chance), optional rider
+        config, and behavioural tags (aggressive, ranged, support).
+      - Introduce lightweight MobInstance wrapper to spawn archetypes into an Instance, track spawned entity UUID, and expose helpers for cleanup or respawn.
+  - Data Definitions:
+      - Add MobRegistry under npc.mob to register archetypes keyed by string ID; provide bootstrap loader for JSON/YAML definitions if desired, otherwise static builder methods.
+      - Model loot as MobLootEntry (item id, chance, min/max amount, conditions) plus optional grouped tables for rarity rolls.
+  - AI Architecture:
+      - Define MobBehaviour interface (tick, onAggro, onDamaged, onDeath) with concrete strategies (melee chase, ranged kiting, caster, passive).
+      - Wire behaviours via MobArchetype (list or primary behaviour), and register listeners in MobAiService that bind behaviour lifecycles to spawned entities (attach via entityNode).
+  - Spawning & Lifecycle:
+      - Implement MobSpawnService handling explicit spawn calls, quest-driven spawns, and scheduled respawn timers; ensure cleanup on death/despawn and reapply rider or equipment.
+      - Hook loot drops by intercepting EntityDeathEvent, consulting MobRegistry for the archetype, and spawning items respecting probabilities (consider RNG seeding for determinism).
+  - Integration Points:
+      - Update QuestCombatService/kill objectives to recognise mob archetype IDs (optional metadata tag on entity).
+      - Ensure DamageTracker + combat feedback operate seamlessly (set custom name/HP updates via HealthUtils).
+      - Expose commands or dev tools to spawn mobs for testing (/mob spawn <id>).
+  - Persistence & Config:
+      - Decide on data source (resources/mobs/*.json or code-first). Provide reload hook (e.g., /mob reload).
+      - Store rider linkage and equipment using existing item registry IDs to avoid duplication.
+  - Validation & Tests:
+      - Unit-test loot roll logic and behaviour selection; add integration smoke test spawning a mob in a test instance.
+      - Manual check list: spawn each behaviour type, confirm bossbar/action bar/floating text, verify loot probabilities and rider setup, ensure despawn clears trackers.
 
 codex resume 019a3cc3-bbec-7ae2-825f-c2c225bc3bf8

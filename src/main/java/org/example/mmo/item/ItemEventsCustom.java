@@ -1,8 +1,8 @@
 // org.example.mmo.combats.CustomItemEvents
 package org.example.mmo.item;
 
-import net.minestom.server.coordinate.Point;
-import net.minestom.server.entity.Entity;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerHand;
 import net.minestom.server.event.Event;
@@ -18,41 +18,15 @@ import net.minestom.server.event.player.PlayerUseItemOnBlockEvent;
 import net.minestom.server.event.trait.EntityEvent;
 import net.minestom.server.event.trait.InventoryEvent;
 import net.minestom.server.event.trait.PlayerEvent;
+import net.minestom.server.inventory.AbstractInventory;
 import net.minestom.server.item.ItemStack;
+import org.example.mmo.item.skill.SkillActivationResult;
+import org.example.mmo.item.skill.SkillTrigger;
+import org.example.mmo.item.skill.SkillTriggerData;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Locale;
 
 public final class ItemEventsCustom {
-
-    /* ------------------------------------------------------------------ */
-    /* 1)  public API – registration                                       */
-    /* ------------------------------------------------------------------ */
-    public interface Behaviour {
-
-        //Inventory clic
-        default void onInventoryClic(Player p, ItemStack stack, InventoryPreClickEvent e) {}
-        default void onInventoryChange(ItemStack stack, InventoryItemChangeEvent e) {}
-
-        //Left-Clic
-        default void onLeftClickAir(Player p, ItemStack stack) {}
-        default void onLeftClickEntity(Player p, Entity target, ItemStack stack) {}
-
-        //Right-Clic
-        default void onRightClickAir(Player p, ItemStack stack) {}
-        default void onRightClickBlock(Player p, Point blockPos, ItemStack stack) {}
-
-        //Every tick
-        default void onHeldTick(Player p, ItemStack held) {}
-
-    }
-
-    private static final Map<String, Behaviour> BEHAVIOURS = new HashMap<>();
-
-    /** to be called by the custom item class (once, at bootstrap) */
-    public static void register(GameItem item, Behaviour behaviour) {
-        BEHAVIOURS.put(item.id, behaviour);
-    }
 
     /* ------------------------------------------------------------------ */
     /* 2)  single wiring on the global event bus                           */
@@ -65,48 +39,59 @@ public final class ItemEventsCustom {
 
         /* Inventory clic ------------------------------------------------ */
         inventoryNode.addListener(InventoryPreClickEvent.class, e -> {
-            Behaviour b = behaviour(e.getClickedItem());
-            if (b != null) {
-                b.onInventoryClic(e.getPlayer(), e.getClickedItem(), e);
+            ItemStack clicked = e.getClickedItem();
+            SkillTriggerOutcome outcome = triggerSkills(e.getPlayer(), clicked, SkillTrigger.INVENTORY_CLICK, new SkillTriggerData.InventoryClickData(e));
+            if (!outcome.activated() && outcome.onCooldown()) {
+                notifyCooldown(e.getPlayer(), outcome);
             }
         });
 
         /* Inventory Change ------------------------------------------------*/
         inventoryNode.addListener(InventoryItemChangeEvent.class, e -> {
-            Behaviour b1 = behaviour(e.getPreviousItem());
-            Behaviour b2 = behaviour(e.getNewItem());
-            if (b1 != null) {
-                b1.onInventoryChange(e.getPreviousItem(),e);
+            var data = new SkillTriggerData.InventoryChangeData(e, e.getPreviousItem(), e.getNewItem());
+
+            AbstractInventory inv = e.getInventory();
+
+            if (inv.getViewers().isEmpty()) return;
+            Player player = inv.getViewers().iterator().next();
+
+            SkillTriggerOutcome previousOutcome = triggerSkills(player, e.getPreviousItem(), SkillTrigger.INVENTORY_CHANGE, data);
+            SkillTriggerOutcome newOutcome = triggerSkills(player, e.getNewItem(), SkillTrigger.INVENTORY_CHANGE, data);
+            if (!previousOutcome.activated() && previousOutcome.onCooldown()) {
+                notifyCooldown(player, previousOutcome);
             }
-            if (b2 != null) {
-                b2.onInventoryChange(e.getNewItem(),e);
+            if (!newOutcome.activated() && newOutcome.onCooldown()) {
+                notifyCooldown(player, newOutcome);
             }
         });
 
         /* right-click air ------------------------------------------------ */
         playerNode.addListener(PlayerUseItemEvent.class, e -> {
-            Behaviour b = behaviour(e.getItemStack());
-            if (b != null) {
-                b.onRightClickAir(e.getPlayer(), e.getItemStack());
+            SkillTriggerOutcome outcome = triggerSkills(e.getPlayer(), e.getItemStack(), SkillTrigger.RIGHT_CLICK_AIR, new SkillTriggerData.SimpleData());
+            if (outcome.activated()) {
                 e.setCancelled(true);
+            } else if (outcome.onCooldown()) {
+                notifyCooldown(e.getPlayer(), outcome);
             }
         });
 
         /* right-click block --------------------------------------------- */
         playerNode.addListener(PlayerUseItemOnBlockEvent.class, e -> {
             ItemStack inHand = e.getItemStack();
-            Behaviour b = behaviour(inHand);
-            if (b != null) {
-                b.onRightClickBlock(e.getPlayer(), e.getPosition(), inHand);
+            SkillTriggerOutcome outcome = triggerSkills(e.getPlayer(), inHand, SkillTrigger.RIGHT_CLICK_BLOCK, new SkillTriggerData.BlockTargetData(e.getPosition()));
+            if (!outcome.activated() && outcome.onCooldown()) {
+                notifyCooldown(e.getPlayer(), outcome);
             }
         });
 
         playerNode.addListener(PlayerBlockPlaceEvent.class, e -> {
             ItemStack inHand = e.getEntity().getItemInMainHand();
-            Behaviour b = behaviour(inHand);
-            if (b != null) {
-                b.onRightClickBlock(e.getPlayer(), e.getBlockPosition(), inHand);
+            SkillTriggerOutcome outcome = triggerSkills(e.getPlayer(), inHand, SkillTrigger.RIGHT_CLICK_BLOCK,
+                    new SkillTriggerData.BlockTargetData(e.getBlockPosition()));
+            if (outcome.activated()) {
                 e.setCancelled(true);
+            } else if (outcome.onCooldown()) {
+                notifyCooldown(e.getPlayer(), outcome);
             }
         });
 
@@ -114,36 +99,91 @@ public final class ItemEventsCustom {
         entityNode.addListener(EntityAttackEvent.class, e -> {
             if (!(e.getEntity() instanceof Player p)) return;
             ItemStack inHand = p.getItemInMainHand();
-            Behaviour b = behaviour(inHand);
-            if (b != null)
-                b.onLeftClickEntity(p, e.getTarget(), inHand);     // no cancel → damage still applies
+            SkillTriggerOutcome outcome = triggerSkills(p, inHand, SkillTrigger.LEFT_CLICK_ENTITY, new SkillTriggerData.EntityTargetData(e.getTarget()));
+            if (!outcome.activated() && outcome.onCooldown()) {
+                notifyCooldown(p, outcome);
+            }
         });
 
         /* left-click air (arm-swing with no victim) --------------------- */
         playerNode.addListener(PlayerHandAnimationEvent.class, e -> {
             Player p = e.getPlayer();
             PlayerHand h = e.getHand();
-            Behaviour b = behaviour(p.getItemInHand(h));
-            if (b != null)
-                b.onLeftClickAir(p, p.getItemInHand(h));
+            ItemStack stack = p.getItemInHand(h);
+            SkillTriggerOutcome outcome = triggerSkills(p, stack, SkillTrigger.LEFT_CLICK_AIR, new SkillTriggerData.SimpleData());
+            if (!outcome.activated() && outcome.onCooldown()) {
+                notifyCooldown(p, outcome);
+            }
         });
 
         /* tick while held ----------------------------------------------- */
         entityNode.addListener(EntityTickEvent.class, e -> {
             if (!(e.getEntity() instanceof Player p)) return;
             ItemStack inHand = p.getItemInMainHand();
-            Behaviour b = behaviour(inHand);
-            if (b != null)
-                b.onHeldTick(p, inHand);
+            triggerSkills(p, inHand, SkillTrigger.HELD_TICK, new SkillTriggerData.HeldTickData(e.getEntity().getAliveTicks()));
         });
     }
 
     /* ------------------------------------------------------------------ */
     /* helpers                                                            */
     /* ------------------------------------------------------------------ */
-    private static Behaviour behaviour(ItemStack stack) {
+    private static SkillTriggerOutcome triggerSkills(Player player,
+                                                     ItemStack stack,
+                                                     SkillTrigger trigger,
+                                                     SkillTriggerData data) {
+        if (player == null || stack == null || stack.isAir()) {
+            return SkillTriggerOutcome.EMPTY;
+        }
         GameItem gi = ItemUtils.resolve(stack);
-        return gi == null ? null : BEHAVIOURS.get(gi.id);
+        if (gi == null || !gi.hasSkills()) {
+            return SkillTriggerOutcome.EMPTY;
+        }
+        boolean activated = false;
+        long cooldownMs = 0L;
+        String cooldownPowerId = null;
+        for (var skill : gi.skills()) {
+            SkillActivationResult result = skill.tryActivate(player, stack, trigger, data);
+            if (result.isSuccess()) {
+                activated = true;
+            } else if (result.isOnCooldown() && result.cooldownRemainingMs() > cooldownMs) {
+                cooldownMs = result.cooldownRemainingMs();
+                cooldownPowerId = result.powerId();
+            }
+        }
+        return new SkillTriggerOutcome(activated, cooldownMs, cooldownPowerId);
+    }
+
+    private static void notifyCooldown(Player player, SkillTriggerOutcome outcome) {
+        if (player == null || !outcome.onCooldown()) {
+            return;
+        }
+        double seconds = outcome.cooldownRemainingMs() / 1000.0;
+        String formatted = String.format(Locale.US, "%.1f", seconds);
+        String label = prettifyPowerId(outcome.cooldownPowerId());
+        Component message = Component.text("[" + label + "] ", NamedTextColor.DARK_AQUA)
+                .append(Component.text("Recharge " + formatted + "s", NamedTextColor.GRAY));
+        player.sendActionBar(message);
+    }
+
+    private static String prettifyPowerId(String powerId) {
+        if (powerId == null || powerId.isBlank()) {
+            return "Pouvoir";
+        }
+        int colon = powerId.indexOf(':');
+        String tail = colon >= 0 ? powerId.substring(colon + 1) : powerId;
+        tail = tail.replace('_', ' ');
+        if (tail.isEmpty()) {
+            return "Pouvoir";
+        }
+        return Character.toUpperCase(tail.charAt(0)) + tail.substring(1);
+    }
+
+    private record SkillTriggerOutcome(boolean activated, long cooldownRemainingMs, String cooldownPowerId) {
+        private static final SkillTriggerOutcome EMPTY = new SkillTriggerOutcome(false, 0L, null);
+
+        boolean onCooldown() {
+            return cooldownRemainingMs > 0L;
+        }
     }
 
     private ItemEventsCustom() {}

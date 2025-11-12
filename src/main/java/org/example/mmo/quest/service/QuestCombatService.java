@@ -19,6 +19,7 @@ import org.example.mmo.quest.event.QuestObjectiveCompleteEvent;
 import org.example.mmo.quest.event.QuestObjectiveProgressEvent;
 import org.example.mmo.quest.objectives.KillObjective;
 import org.example.mmo.quest.objectives.SlayObjective;
+import org.example.mmo.mob.MobMetadataKeys;
 import org.example.mmo.quest.registry.QuestRegistry;
 import org.example.mmo.quest.structure.Quest;
 import org.example.mmo.quest.structure.QuestProgress;
@@ -56,6 +57,11 @@ public final class QuestCombatService {
             return;
         }
 
+        String mobId = event.getKilled().getTag(MobMetadataKeys.ARCHETYPE_ID);
+        if (mobId == null || mobId.isBlank()) {
+            return;
+        }
+
         for (QuestProgress progress : new ArrayList<>(data.quests)) {
             Quest quest = QuestRegistry.byId(progress.questId);
             if (quest == null || progress.stepIndex >= quest.steps.size()) {
@@ -64,11 +70,11 @@ public final class QuestCombatService {
 
             QuestStep currentStep = quest.steps.get(progress.stepIndex);
             for (IQuestObjective objective : currentStep.objectives) {
-                if (objective instanceof KillObjective killObj && killObj.getEntityType() == event.getKilled().getEntityType()) {
+                if (objective instanceof KillObjective killObj && mobId.equals(killObj.getMobId())) {
                     if (tryIncrementObjective(player, data, quest, progress, currentStep, killObj, killObj.getProgressId(), killObj.getCount())) {
                         QuestManager.getEventNode().call(new QuestObjectiveCompleteEvent(player, progress, currentStep, killObj));
                     }
-                } else if (objective instanceof SlayObjective slayObj && slayObj.getEntityType() == event.getKilled().getEntityType()) {
+                } else if (objective instanceof SlayObjective slayObj && mobId.equals(slayObj.getMobId())) {
                     DamageHistory history = DamageTracker.getHistory(event.getKilled());
                     if (history != null) {
                         DamageRecord lastDamage = history.getLastDamage();

@@ -4,65 +4,107 @@
   "experience": 0,
   "inventory": [
     {
-      "itemId": "excalibur",
+      "itemId": "admin_slayer",
       "amount": 1,
       "slot": 0
     },
     {
-      "itemId": "admin_slayer",
-      "amount": 1,
+      "itemId": "mob_bundle:forest_wolf",
+      "amount": 4,
       "slot": 1
+    },
+    {
+      "itemId": "wolf_fang",
+      "amount": 6,
+      "slot": 9
+    },
+    {
+      "itemId": "polstron",
+      "amount": 1,
+      "slot": 10
+    },
+    {
+      "itemId": "polstron",
+      "amount": 1,
+      "slot": 11
+    },
+    {
+      "itemId": "bone",
+      "amount": 8,
+      "slot": 12
+    },
+    {
+      "itemId": "bandit_orders",
+      "amount": 2,
+      "slot": 13
+    },
+    {
+      "itemId": "wolf_pelt",
+      "amount": 31,
+      "slot": 14
+    },
+    {
+      "itemId": "bandit_coin",
+      "amount": 12,
+      "slot": 15
+    },
+    {
+      "itemId": "polstron",
+      "amount": 1,
+      "slot": 16
     },
     {
       "itemId": "stats_grimoire",
       "amount": 1,
       "slot": 17
+    },
+    {
+      "itemId": "sunken_guardian_plate",
+      "amount": 1,
+      "slot": 42
     }
   ],
   "quests": [
     {
-      "questId": "grand_tour",
+      "questId": "new_beginning",
       "stepIndex": 0,
-      "acceptedTime": 1762005436845,
-      "stepStartTime": 1762005436845,
+      "acceptedTime": 1762465461560,
+      "stepStartTime": 1762465461560,
       "attempts": 1,
       "stepCompletionTime": 0,
       "stepFinalized": false,
-      "objectiveCompletionStatus": {
-        "TextComponentImpl{content\u003d\"Trouvez le point de vue caché\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
-        "TextComponentImpl{content\u003d\"Consultez l\u0027Archimage\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true,
-        "TextComponentImpl{content\u003d\"Éliminez 5 zombies\", style\u003dStyleImpl{obfuscated\u003dnot_set, bold\u003dnot_set, strikethrough\u003dnot_set, underlined\u003dnot_set, italic\u003dnot_set, color\u003dnull, shadowColor\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dnull}, children\u003d[]}": true
-      }
+      "objectiveCompletionStatus": {}
     },
     {
       "questId": "resilience_recovery",
       "stepIndex": 0,
-      "acceptedTime": 1762005985707,
-      "stepStartTime": 1762005985707,
+      "acceptedTime": 1762465461562,
+      "stepStartTime": 1762465461562,
       "attempts": 1,
       "stepCompletionTime": 0,
       "stepFinalized": false,
       "objectiveCompletionStatus": {}
     }
   ],
-  "completedQuests": [
-    "monster_plague",
-    "new_beginning",
-    "try"
-  ],
+  "completedQuests": [],
   "failedQuests": [],
   "position": {
-    "x": -0.21367230869385226,
+    "x": 0.37110223807094506,
     "y": 40.0,
-    "z": 14.915591342658812,
-    "yaw": 14.586609,
-    "pitch": 6.368766
+    "z": 2.0748860777353775,
+    "yaw": -147.91287,
+    "pitch": 24.59327
   },
-  "lastInstance": "game2",
-  "questCounters": {
-    "grand_tour_zombies": 5
+  "lastInstance": "game1",
+  "respawnPosition": {
+    "x": 20.5,
+    "y": 40.0,
+    "z": 0.5,
+    "yaw": 0.0,
+    "pitch": 0.0
   },
-  "questCooldowns": {
-    "resilience_recovery": 1762005543745
-  }
+  "respawnInstance": "game1",
+  "respawnStoneId": "camp_20_50_0",
+  "questCounters": {},
+  "questCooldowns": {}
 }

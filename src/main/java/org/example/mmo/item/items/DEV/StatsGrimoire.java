@@ -2,15 +2,15 @@
 package org.example.mmo.item.items.DEV;
 
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minestom.server.event.inventory.InventoryPreClickEvent;
-import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import org.example.mmo.item.datas.Category;
 import org.example.mmo.item.datas.Rarity;
-import org.example.mmo.item.datas.Stats;
 import org.example.utils.TKit;
 import org.example.mmo.item.*;
-import net.minestom.server.entity.Player;
+import org.example.mmo.item.power.powers.StatsDisplayPower;
+import org.example.mmo.item.skill.SkillTrigger;
+
+import java.time.Duration;
 
 public final class StatsGrimoire {
 
@@ -23,21 +23,15 @@ public final class StatsGrimoire {
                     .tradable(false)
                     .stackSize(1)
                     .story("Clic-droit (air ou bloc) pour","afficher vos attributs actuels.")
+                    .skill(StatsDisplayPower.ID, skill -> skill
+                            .addTrigger(SkillTrigger.RIGHT_CLICK_AIR)
+                            .addTrigger(SkillTrigger.RIGHT_CLICK_BLOCK)
+                            .addTrigger(SkillTrigger.INVENTORY_CLICK)
+                            .cooldown(Duration.ZERO))
                     .build();
 
     static {
         ItemRegistry.register(ITEM);
-
-        /* ---- register behaviour on the bus ---- */
-        ItemEventsCustom.register(ITEM, new ItemEventsCustom.Behaviour() {
-
-            @Override
-            public void onInventoryClic(Player p, ItemStack stack, InventoryPreClickEvent e) {
-                Stats.refresh(p);
-                e.setCancelled(true);
-            }
-
-        });
     }
 
     private StatsGrimoire() {}

@@ -7,6 +7,7 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.LivingEntity;
+import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
 import net.minestom.server.entity.metadata.display.TextDisplayMeta;
 import net.minestom.server.entity.damage.DamageType;
 import net.minestom.server.registry.RegistryKey;
@@ -48,8 +49,10 @@ public final class FloatingCombatText {
         Entity indicator = new Entity(EntityType.TEXT_DISPLAY);
         TextDisplayMeta meta = (TextDisplayMeta) indicator.getEntityMeta();
         meta.setText(text);
-        // Optional: Add a shadow for better visibility
+        meta.setBillboardRenderConstraints(AbstractDisplayMeta.BillboardConstraints.CENTER);
         meta.setShadow(true);
+        meta.setBackgroundColor(0x00000000);
+        meta.setLineWidth(200);
 
         indicator.setNoGravity(true);
         indicator.setInstance(target.getInstance(), randomOffset(target));

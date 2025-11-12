@@ -2,12 +2,12 @@ package org.example;
 
 import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
-import net.minestom.server.utils.mojang.MojangUtils;
 import org.example.bootstrap.GameContext;
 import org.example.bootstrap.GameLifecycle;
 import org.example.bootstrap.InstanceBootstrap;
@@ -66,7 +66,9 @@ public class Main {
 
                 TeleportUtils.Target target = TeleportUtils.lastPositionInInstanceGroup(player, instanceRegistry.gameInstances());
                 player.teleport(target.pos());
-                player.setRespawnPoint(target.pos());
+
+                Pos respawnPos = data.respawnPosition != null ? data.respawnPosition : target.pos();
+                player.setRespawnPoint(respawnPos);
 
                 // --- Game-Specific Logic ---
                 if (instanceRegistry.isGameInstance(event.getSpawnInstance())) {

@@ -1,7 +1,6 @@
 package org.example.mmo.quest.objectives;
 
 import net.kyori.adventure.text.Component;
-import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.damage.Damage;
 import org.example.data.data_class.PlayerData;
@@ -15,22 +14,22 @@ import java.util.function.Predicate;
  */
 public class SlayObjective implements IQuestObjective {
 
-    private final EntityType entityType;
+    private final String mobId;
     private final int count;
     private final String progressId;
     private final Component description;
     private final Predicate<Damage> killCondition;
 
-    public SlayObjective(EntityType entityType, int count, String progressId, Component description, Predicate<Damage> killCondition) {
-        this.entityType = entityType;
+    public SlayObjective(String mobId, int count, String progressId, Component description, Predicate<Damage> killCondition) {
+        this.mobId = mobId;
         this.count = count;
         this.progressId = progressId;
         this.description = description;
         this.killCondition = killCondition;
     }
 
-    public EntityType getEntityType() {
-        return entityType;
+    public String getMobId() {
+        return mobId;
     }
 
     public String getProgressId() {
