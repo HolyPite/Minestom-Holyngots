@@ -61,7 +61,7 @@
     {
       "itemId": "sunken_guardian_plate",
       "amount": 1,
-      "slot": 42
+      "slot": 19
     }
   ],
   "quests": [
@@ -89,11 +89,11 @@
   "completedQuests": [],
   "failedQuests": [],
   "position": {
-    "x": 0.37110223807094506,
+    "x": 16.420428944985233,
     "y": 40.0,
-    "z": 2.0748860777353775,
-    "yaw": -147.91287,
-    "pitch": 24.59327
+    "z": 1.121665294136504,
+    "yaw": 84.031624,
+    "pitch": 9.379257
   },
   "lastInstance": "game1",
   "respawnPosition": {

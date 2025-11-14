@@ -15,5 +15,6 @@ public final class CommandRegister {
         MinecraftServer.getCommandManager().register(new QuestsCommand());
         MinecraftServer.getCommandManager().register(new SetQuestCommand());
         MinecraftServer.getCommandManager().register(new RemoveQuestCommand());
+        MinecraftServer.getCommandManager().register(new AdvancementUiCommand());
     }
 }

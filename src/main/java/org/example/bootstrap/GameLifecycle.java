@@ -20,6 +20,7 @@ import org.example.mmo.combat.CombatListener;
 import org.example.mmo.combat.history.DamageTracker;
 import org.example.mmo.combat.ui.CombatBossBarService;
 import org.example.mmo.dev.QuestEntitySpawner;
+import org.example.mmo.dev.advancementui.AdvancementUiService;
 import org.example.mmo.inventory.InventoryListener;
 import org.example.mmo.item.ItemBootstrap;
 import org.example.mmo.item.ItemEventsCustom;
@@ -77,10 +78,10 @@ public final class GameLifecycle {
         playerDataService.startAutoSave();
         playerDataService.init(gameNode);
 
-        registerGameplay(instances);
+        registerGameplay(instances, globalEvents);
     }
 
-    private void registerGameplay(InstanceRegistry instances) {
+    private void registerGameplay(InstanceRegistry instances, GlobalEventHandler globalEvents) {
         DamageTracker.init();
         MobAiService.init(entityNode);
         mobSpawningZoneService.init(entityNode);
@@ -94,6 +95,7 @@ public final class GameLifecycle {
         PlayerQuestListener.init(playerNode);
         RespawnStoneService.init(playerNode, instances, playerDataService);
         InventoryListener.init(inventoryNode);
+        AdvancementUiService.init(globalEvents, instances);
 
         CommandRegister.init();
         CommandManager commandManager = MinecraftServer.getCommandManager();
