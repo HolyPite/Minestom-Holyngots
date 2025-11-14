@@ -30,7 +30,7 @@ public final class AdvancementTabFactory {
         AdvancementRoot root = createRoot(prototype.display());
         AdvancementTab tab = advancementManager.createTab(identifier, root);
         Map<String, Advancement> nodes = attachNodes(tab, prototype);
-        return new PlayerAdvancementTab(identifier, tab, Map.copyOf(nodes));
+        return new PlayerAdvancementTab(identifier, tab, new java.util.concurrent.ConcurrentHashMap<>(nodes), prototype);
     }
 
     private AdvancementRoot createRoot(SkillTreeDisplayPrototype display) {
@@ -54,6 +54,10 @@ public final class AdvancementTabFactory {
             int addedThisPass = 0;
             for (String nodeId : Set.copyOf(remaining)) {
                 SkillNodePrototype nodePrototype = prototype.nodes().get(nodeId);
+                if (nodePrototype.secret()) {
+                    remaining.remove(nodeId);
+                    continue;
+                }
                 Advancement parent = nodePrototype.parentId() == null ? root : resolved.get(nodePrototype.parentId());
                 if (parent == null) {
                     continue;
@@ -65,8 +69,7 @@ public final class AdvancementTabFactory {
                 addedThisPass++;
             }
             if (addedThisPass == 0) {
-                throw new IllegalStateException("Could not resolve parents for remaining nodes " + remaining
-                        + " in tree " + prototype.id());
+                break;
             }
         }
         return resolved;
@@ -92,5 +95,18 @@ public final class AdvancementTabFactory {
 
     private String nodeIdentifier(String treeId, String nodeId) {
         return ("skills/" + treeId + "/" + nodeId).toLowerCase(Locale.ROOT);
+    }
+
+    public boolean revealNode(PlayerAdvancementTab playerTab, SkillNodePrototype prototype) {
+        Advancement parent = prototype.parentId() == null
+                ? playerTab.tab().getRoot()
+                : playerTab.nodes().get(prototype.parentId());
+        if (parent == null) {
+            return false;
+        }
+        Advancement advancement = createAdvancement(prototype);
+        playerTab.tab().createAdvancement(nodeIdentifier(playerTab.prototype().id(), prototype.id()), advancement, parent);
+        playerTab.nodes().put(prototype.id(), advancement);
+        return true;
     }
 }

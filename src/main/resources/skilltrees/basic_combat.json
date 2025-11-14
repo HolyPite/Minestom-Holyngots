@@ -7,7 +7,7 @@
     "frameType": "TASK",
     "x": 0.0,
     "y": 0.0,
-    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
+    "background": "minecraft:textures/gui/advancements/backgrounds/story.png"
   },
   "nodes": [
     {
@@ -16,54 +16,159 @@
       "description": "+1 dégâts de mêlée",
       "icon": "IRON_SWORD",
       "frameType": "TASK",
-      "x": 2.5,
-      "y": -0.5,
       "toast": true,
       "hidden": false,
-      "parentId": null,
+      "secret": false,
       "metadata": {
         "type": "damage",
         "amount": 1
-      }
+      },
+      "children": [
+        {
+          "id": "strike_ii",
+          "title": "Frappe II",
+          "description": "+2 dégâts de mêlée",
+          "icon": "IRON_SWORD",
+          "frameType": "GOAL",
+          "toast": true,
+          "hidden": false,
+          "secret": false,
+          "metadata": {
+            "type": "damage",
+            "amount": 2
+          },
+          "children": [
+            {
+              "id": "berserk",
+              "title": "Frénésie",
+              "description": "Augmente les dégâts à basse vie",
+              "icon": "GOLDEN_SWORD",
+              "frameType": "TASK",
+              "toast": true,
+              "hidden": false,
+              "secret": false,
+              "metadata": {
+                "type": "buff",
+                "threshold": 0.3
+              }
+            },
+            {
+              "id": "whirlwind",
+              "title": "Tourbillon",
+              "description": "Frappe tous les ennemis proches",
+              "icon": "IRON_AXE",
+              "frameType": "CHALLENGE",
+              "toast": true,
+              "hidden": false,
+              "secret": true,
+              "metadata": {
+                "type": "ability",
+                "radius": 3.0
+              }
+            }
+          ]
+        },
+        {
+          "id": "shield_expert",
+          "title": "Maîtrise du bouclier",
+          "description": "Réduit les dégâts bloqués",
+          "icon": "SHIELD",
+          "frameType": "CHALLENGE",
+          "toast": true,
+          "hidden": false,
+          "secret": false,
+          "metadata": {
+            "type": "defense",
+            "block_factor": 0.2
+          },
+          "children": [
+            {
+              "id": "rallying_cry",
+              "title": "Cri de ralliement",
+              "description": "Augmente les dégâts des alliés proches",
+              "icon": "GOAT_HORN",
+              "frameType": "GOAL",
+              "toast": true,
+              "hidden": false,
+              "secret": true,
+              "metadata": {
+                "type": "support",
+                "radius": 6.0
+              }
+            }
+          ]
+        }
+      ]
     },
     {
-      "id": "strike_ii",
-      "title": "Frappe II",
-      "description": "+2 dégâts de mêlée",
-      "icon": "IRON_SWORD",
-      "frameType": "GOAL",
-      "x": 6.0,
-      "y": -0.5,
-      "toast": true,
-      "hidden": true,
-      "parentId": "strike_i",
-      "metadata": {
-        "type": "damage",
-        "amount": 2
-      }
-    },
-    {
-      "id": "shield_expert",
-      "title": "Maîtrise du bouclier",
-      "description": "Réduit les dégâts bloqués",
+      "id": "guard_i",
+      "title": "Garde I",
+      "description": "Débloque une parade basique",
       "icon": "SHIELD",
-      "frameType": "CHALLENGE",
-      "x": 2.5,
-      "y": 2.5,
+      "frameType": "TASK",
       "toast": true,
-      "hidden": true,
-      "parentId": "strike_i",
+      "hidden": false,
+      "secret": false,
       "metadata": {
         "type": "defense",
-        "block_factor": 0.2
-      }
+        "block_factor": 0.1
+      },
+      "children": [
+        {
+          "id": "shield_wall",
+          "title": "Mur de boucliers",
+          "description": "Réduit fortement les dégâts de face",
+          "icon": "SHIELD",
+          "frameType": "GOAL",
+          "toast": true,
+          "hidden": false,
+          "secret": false,
+          "metadata": {
+            "type": "defense",
+            "block_factor": 0.35
+          },
+          "children": [
+            {
+              "id": "fortress",
+              "title": "Forteresse",
+              "description": "Réduit tous les dégâts reçus lorsque vous portez un bouclier",
+              "icon": "DIAMOND",
+              "frameType": "CHALLENGE",
+              "toast": true,
+              "hidden": false,
+              "secret": true,
+              "metadata": {
+                "type": "defense",
+                "reduction": 0.15
+              }
+            }
+          ]
+        },
+        {
+          "id": "bash_mastery",
+          "title": "Maîtrise de la frappe de bouclier",
+          "description": "Etourdit la cible lors d'un blocage parfait",
+          "icon": "SHIELD",
+          "frameType": "CHALLENGE",
+          "toast": true,
+          "hidden": false,
+          "secret": false,
+          "metadata": {
+            "type": "utility",
+            "stun_duration": 1.5
+          }
+        }
+      ]
     }
   ],
   "layout": {
-    "minX": -2.0,
-    "maxX": 8.0,
-    "minY": -10.0,
-    "maxY": 10.0,
-    "minDistance": 1.0
+    "minX": null,
+    "maxX": null,
+    "minY": null,
+    "maxY": null,
+    "minDistance": 1.0,
+    "autoArrange": true,
+    "horizontalStep": 2.5,
+    "verticalSpacing": 1.5
   }
 }

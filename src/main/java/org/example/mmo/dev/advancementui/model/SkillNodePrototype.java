@@ -16,7 +16,25 @@ public record SkillNodePrototype(
         float y,
         boolean toast,
         boolean hidden,
+        boolean secret,
         String parentId,
         Map<String, Object> metadata
 ) {
+
+    public SkillNodePrototype withPosition(float x, float y) {
+        return new SkillNodePrototype(
+                id,
+                title,
+                description,
+                icon,
+                frameType,
+                x,
+                y,
+                toast,
+                hidden,
+                secret,
+                parentId,
+                metadata
+        );
+    }
 }

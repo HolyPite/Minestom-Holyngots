@@ -1,5 +1,6 @@
 package org.example.mmo.dev.advancementui.definition;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,7 +16,13 @@ public record SkillNodeDefinition(
         float y,
         boolean toast,
         boolean hidden,
+        boolean secret,
         String parentId,
-        Map<String, Object> metadata
+        Map<String, Object> metadata,
+        List<SkillNodeDefinition> children
 ) {
+
+    public SkillNodeDefinition {
+        children = children == null ? List.of() : List.copyOf(children);
+    }
 }

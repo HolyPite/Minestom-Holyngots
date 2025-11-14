@@ -83,4 +83,8 @@ public final class AdvancementUiService {
     public java.util.Collection<String> treeIds() {
         return registry.ids();
     }
+
+    public boolean revealNode(Player player, String treeId, String nodeId) {
+        return tabController.revealSecretNode(player, treeId, nodeId);
+    }
 }

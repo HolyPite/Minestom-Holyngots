@@ -1,6 +1,7 @@
 package org.example.mmo.dev.advancementui;
 
 import net.minestom.server.entity.Player;
+import org.example.mmo.dev.advancementui.model.SkillNodePrototype;
 import org.example.mmo.dev.advancementui.model.SkillTreePrototype;
 
 import java.util.Map;
@@ -38,5 +39,20 @@ public final class PlayerAdvancementTabController {
             return null;
         }
         return tabs.get(treeId);
+    }
+
+    public boolean revealSecretNode(Player player, String treeId, String nodeId) {
+        PlayerAdvancementTab playerTab = get(player, treeId);
+        if (playerTab == null) {
+            return false;
+        }
+        SkillNodePrototype prototype = playerTab.prototype().nodes().get(nodeId);
+        if (prototype == null || !prototype.secret()) {
+            return false;
+        }
+        if (playerTab.nodes().containsKey(nodeId)) {
+            return true;
+        }
+        return tabFactory.revealNode(playerTab, prototype);
     }
 }

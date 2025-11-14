@@ -17,9 +17,9 @@ Outils prévus pour exploiter l’écran d’advancements vanilla exclusivement 
       "description": "Arbre factice pour tester le rendu Advancement",
       "icon": "IRON_SWORD",
       "frameType": "TASK",
-      "x": 0.5,
-      "y": 0.5,
-      "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
+      "x": 0.0,
+      "y": 0.0,
+      "background": "minecraft:textures/gui/advancements/backgrounds/story.png" // utiliser l'un des fonds vanilla: adventure|husbandry|nether|story|the_end
     },
     "nodes": [
       {
@@ -28,30 +28,32 @@ Outils prévus pour exploiter l’écran d’advancements vanilla exclusivement 
         "description": "+1 dégâts de mêlée",
         "icon": "IRON_SWORD",
         "frameType": "TASK",
-        "x": 2.0,
-        "y": 0.0,
         "toast": true,
-        "hidden": false,
-        "parentId": null,
-        "metadata": {
-          "type": "damage",
-          "amount": 1
-        }
+        "children": [
+          {
+            "id": "strike_ii",
+            "title": "Frappe II",
+            "icon": "IRON_SWORD",
+            "frameType": "GOAL",
+            "toast": true,
+            "children": [
+              { "id": "berserk", "title": "Frénésie", "icon": "GOLDEN_SWORD", "frameType": "TASK" }
+            ]
+          }
+        ]
       }
     ],
     "layout": {
-      "minX": -10.0,
-      "maxX": 10.0,
-      "minY": -10.0,
-      "maxY": 10.0,
-      "minDistance": 0.5
+      "autoArrange": true,
+      "horizontalStep": 2.5,
+      "verticalSpacing": 1.5
     }
   }
   ```
 - DTO Java dédiés (`org.example.mmo.dev.advancementui.definition.*`) :
   - `SkillTreeDefinition` : id + `SkillTreeDisplayDefinition display` + `List<SkillNodeDefinition> nodes` + `SkillTreeLayoutConstraints layout`.
-  - `SkillNodeDefinition` : id, titres, icône (`Material` en uppercase), `frameType`, coordonnées, flags `toast/hidden`, `parentId`, `metadata` libre.
-  - `SkillTreeLayoutConstraints` : bornes X/Y et distance minimale pour la validation.
+  - `SkillNodeDefinition` : id, titres, icône (`Material`), `frameType`, `toast/hidden`, `secret` (si vrai le nœud n’est pas créé tant qu’on ne l’expose pas manuellement), `metadata` libre et `children` (déclaration imbriquée des compétences filles). Le `parentId` reste disponible pour les cas particuliers, mais l’arbre est normalement déduit de la hiérarchie.
+  - `SkillTreeLayoutConstraints` : bornes X/Y, distance minimale et options `autoArrange` (disposition automatique) + `horizontalStep` (écart entre niveaux) + `verticalSpacing` (espacement entre branches d’un même niveau).
 
 ## 3. `AdvancementGraphBuilder`
 Package suggéré : `org.example.mmo.dev.advancementui`.
@@ -60,7 +62,7 @@ Responsabilités :
 - Lire une `SkillTreeDefinition` et produire :
   - un `AdvancementRoot` (title, description, icon, frame, background) ;
   - un graphe d’`Advancement` enfants reliés via `AdvancementTab.createAdvancement`.
-- Vérifier que chaque parent existe et que les coordonnées respectent les contraintes (lever une exception descriptive sinon).
+- Vérifier que chaque parent existe et que les coordonnées respectent les contraintes (lever une exception descriptive sinon). Si `autoArrange=true`, un layout horizontal est calculé automatiquement : chaque niveau est repoussé vers la droite (`horizontalStep`) et les nœuds d’un même niveau sont espacés uniformément (`verticalSpacing`), les parents étant centrés par rapport à leurs enfants.
 - Appliquer les flags (`showToast`, `setHidden`, `setFrameType`, `setIcon`) selon la définition.
 - Retourner un objet `AdvancementTabPrototype` contenant :
   - `String rootIdentifier`;
@@ -104,7 +106,8 @@ API prévue :
 - `void hideTree(Player player, String treeId)`
 - `void setNodeState(Player player, String skillId, SkillVisualState state)` (`ACHIEVED`, `AVAILABLE`, `LOCKED`, `HIDDEN`…) → applique `setAchieved`, `setHidden`, éventuellement change `icon`/`frame`.
 - `void flashNode(Player player, String skillId, Duration duration)` → schedule une mise à jour (ex. passer en `FrameType.CHALLENGE` puis revert).
-- `Collection<String> listVisibleTrees(Player player)`
+  - `Collection<String> listVisibleTrees(Player player)`
+  - `boolean revealNode(Player player, String treeId, String nodeId)` : crée dynamiquement un nœud `secret`.
 
 `SkillVisualState` encapsule la logique de mapping vers les attributs `Advancement` (toast, frame, hidden).
 

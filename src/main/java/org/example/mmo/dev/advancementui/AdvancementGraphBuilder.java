@@ -31,13 +31,11 @@ public final class AdvancementGraphBuilder {
 
         Map<String, SkillNodePrototype> nodeMap = new LinkedHashMap<>();
         for (SkillNodeDefinition node : definition.nodes()) {
-            SkillNodePrototype prototype = toNodePrototype(definition.id(), node);
-            if (nodeMap.putIfAbsent(prototype.id(), prototype) != null) {
-                throw new IllegalStateException("Duplicate node id '" + prototype.id() + "' in tree " + definition.id());
-            }
+            populateNodeMap(definition.id(), node, null, nodeMap);
         }
 
         validateParentLinks(definition.id(), nodeMap);
+        nodeMap = applyAutoLayoutIfNeeded(definition.id(), nodeMap, definition.layout());
         validateLayout(definition.id(), definition.layout(), nodeMap);
 
         return new SkillTreePrototype(definition.id(), displayPrototype, Map.copyOf(nodeMap), definition.layout());
@@ -53,7 +51,18 @@ public final class AdvancementGraphBuilder {
                 display.x(), display.y(), display.background());
     }
 
-    private SkillNodePrototype toNodePrototype(String treeId, SkillNodeDefinition node) {
+    private void populateNodeMap(String treeId, SkillNodeDefinition node, String parentId,
+                                 Map<String, SkillNodePrototype> nodeMap) {
+        SkillNodePrototype prototype = toNodePrototype(treeId, node, parentId);
+        if (nodeMap.putIfAbsent(prototype.id(), prototype) != null) {
+            throw new IllegalStateException("Duplicate node id '" + prototype.id() + "' in tree " + treeId);
+        }
+        for (SkillNodeDefinition child : node.children()) {
+            populateNodeMap(treeId, child, prototype.id(), nodeMap);
+        }
+    }
+
+    private SkillNodePrototype toNodePrototype(String treeId, SkillNodeDefinition node, String parentOverride) {
         if (node.id() == null || node.id().isBlank()) {
             throw new IllegalStateException("Node without id in tree " + treeId);
         }
@@ -62,6 +71,7 @@ public final class AdvancementGraphBuilder {
         Material icon = resolveMaterial(node.icon(), "icon for node " + node.id() + " in tree " + treeId);
         FrameType frameType = resolveFrame(node.frameType(), FrameType.TASK);
         Map<String, Object> metadata = node.metadata() == null ? Map.of() : Map.copyOf(node.metadata());
+        String parentId = parentOverride != null ? parentOverride : node.parentId();
         return new SkillNodePrototype(
                 node.id(),
                 title,
@@ -72,7 +82,8 @@ public final class AdvancementGraphBuilder {
                 node.y(),
                 node.toast(),
                 node.hidden(),
-                node.parentId(),
+                node.secret(),
+                parentId,
                 metadata
         );
     }
@@ -94,22 +105,24 @@ public final class AdvancementGraphBuilder {
         if (constraints == null) {
             return;
         }
-        for (SkillNodePrototype prototype : nodeMap.values()) {
-            if (constraints.minX() != null && prototype.x() < constraints.minX()) {
-                throw new IllegalStateException("Node '" + prototype.id() + "' in tree '" + treeId
-                        + "' has X position " + prototype.x() + " < minX " + constraints.minX());
-            }
-            if (constraints.maxX() != null && prototype.x() > constraints.maxX()) {
-                throw new IllegalStateException("Node '" + prototype.id() + "' in tree '" + treeId
-                        + "' has X position " + prototype.x() + " > maxX " + constraints.maxX());
-            }
-            if (constraints.minY() != null && prototype.y() < constraints.minY()) {
-                throw new IllegalStateException("Node '" + prototype.id() + "' in tree '" + treeId
-                        + "' has Y position " + prototype.y() + " < minY " + constraints.minY());
-            }
-            if (constraints.maxY() != null && prototype.y() > constraints.maxY()) {
-                throw new IllegalStateException("Node '" + prototype.id() + "' in tree '" + treeId
-                        + "' has Y position " + prototype.y() + " > maxY " + constraints.maxY());
+        if (!Boolean.TRUE.equals(constraints.autoArrange())) {
+            for (SkillNodePrototype prototype : nodeMap.values()) {
+                if (constraints.minX() != null && prototype.x() < constraints.minX()) {
+                    throw new IllegalStateException("Node '" + prototype.id() + "' in tree '" + treeId
+                            + "' has X position " + prototype.x() + " < minX " + constraints.minX());
+                }
+                if (constraints.maxX() != null && prototype.x() > constraints.maxX()) {
+                    throw new IllegalStateException("Node '" + prototype.id() + "' in tree '" + treeId
+                            + "' has X position " + prototype.x() + " > maxX " + constraints.maxX());
+                }
+                if (constraints.minY() != null && prototype.y() < constraints.minY()) {
+                    throw new IllegalStateException("Node '" + prototype.id() + "' in tree '" + treeId
+                            + "' has Y position " + prototype.y() + " < minY " + constraints.minY());
+                }
+                if (constraints.maxY() != null && prototype.y() > constraints.maxY()) {
+                    throw new IllegalStateException("Node '" + prototype.id() + "' in tree '" + treeId
+                            + "' has Y position " + prototype.y() + " > maxY " + constraints.maxY());
+                }
             }
         }
 
@@ -169,5 +182,64 @@ public final class AdvancementGraphBuilder {
 
         LOGGER.warn("Unknown material '{}' for {}, falling back to STONE", raw, context);
         return Material.STONE;
+    }
+
+    private Map<String, SkillNodePrototype> applyAutoLayoutIfNeeded(String treeId,
+                                                                    Map<String, SkillNodePrototype> original,
+                                                                    SkillTreeLayoutConstraints layout) {
+        if (layout == null || !Boolean.TRUE.equals(layout.autoArrange())) {
+            return original;
+        }
+        float horizontalStep = layout.horizontalStep() != null && layout.horizontalStep() > 0 ? layout.horizontalStep() : 3.0f;
+        float verticalSpacing = layout.verticalSpacing() != null && layout.verticalSpacing() > 0 ? layout.verticalSpacing() : 2.0f;
+
+        Map<String, SkillNodePrototype> adjusted = new LinkedHashMap<>();
+        Map<String, java.util.List<String>> children = new LinkedHashMap<>();
+        for (SkillNodePrototype prototype : original.values()) {
+            children.computeIfAbsent(prototype.parentId(), key -> new java.util.ArrayList<>()).add(prototype.id());
+        }
+        children.values().forEach(list -> list.sort(String::compareTo));
+
+        java.util.List<String> roots = children.getOrDefault(null, java.util.List.of());
+        roots.sort(String::compareTo);
+
+        java.util.Map<String, float[]> positions = new java.util.HashMap<>();
+        float currentY = 0.0f;
+        for (String rootId : roots) {
+            currentY = placeNode(rootId, 1, currentY, horizontalStep, verticalSpacing, children, positions);
+            currentY += verticalSpacing; // space between root groups
+        }
+
+        for (var entry : original.entrySet()) {
+            SkillNodePrototype prototype = entry.getValue();
+            float[] pos = positions.get(prototype.id());
+            if (pos != null) {
+                prototype = prototype.withPosition(pos[0], pos[1]);
+            } else {
+                LOGGER.warn("Layout for node '{}' in tree '{}' missing, defaulting to (0,0)", prototype.id(), treeId);
+            }
+            adjusted.put(entry.getKey(), prototype);
+        }
+        return adjusted;
+    }
+
+    private float placeNode(String nodeId, int depth, float currentY,
+                            float horizontalStep, float verticalSpacing,
+                            Map<String, java.util.List<String>> children,
+                            Map<String, float[]> positions) {
+        var childList = children.getOrDefault(nodeId, java.util.List.of());
+        if (childList.isEmpty()) {
+            float y = currentY;
+            positions.put(nodeId, new float[]{depth * horizontalStep, y});
+            return currentY + verticalSpacing;
+        }
+        float startY = currentY;
+        for (String child : childList) {
+            currentY = placeNode(child, depth + 1, currentY, horizontalStep, verticalSpacing, children, positions);
+        }
+        float endY = currentY - verticalSpacing;
+        float y = (startY + endY) / 2f;
+        positions.put(nodeId, new float[]{depth * horizontalStep, y});
+        return currentY;
     }
 }

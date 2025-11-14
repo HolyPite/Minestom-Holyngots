@@ -8,6 +8,9 @@ public record SkillTreeLayoutConstraints(
         Float maxX,
         Float minY,
         Float maxY,
-        Float minDistance
+        Float minDistance,
+        Boolean autoArrange,
+        Float horizontalStep,
+        Float verticalSpacing
 ) {
 }
